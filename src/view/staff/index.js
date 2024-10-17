@@ -2,10 +2,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Badge, Spinner } from 'react-bootstrap';
 import ModelViewBox from '../../components/Atom/ModelViewBox';
 import FormLayout from '../../utils/formLayout';
-import { designationContainer } from './formFieldData';
+import { staffContainer } from './formFieldData';
 import Table from '../../components/Table';
 import { showConfirmationDialog, showMessage } from '../../utils/AllFunction';
-import { createDesignationRequest, getDesignationRequest, resetCreateDesignation, resetGetDesignation, resetUpdateDesignation, updateDesignationRequest } from '../../redux/actions';
+import { createStaffRequest, getStaffRequest, resetCreateStaff, resetGetStaff, resetUpdateStaff, updateStaffRequest } from '../../redux/actions';
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 
@@ -15,25 +15,25 @@ function Index() {
 
     const { dispatch, appSelector } = useRedux();
 
-    const { getDesignationSuccess, getDesignationList, getDesignationFailure,
-        createDesignationSuccess, createDesignationData, createDesignationFailure,
-        updateDesignationSuccess, updateDesignationData, updateDesignationFailure,
+    const { getStaffSuccess, getStaffList, getStaffFailure,
+        createStaffSuccess, createStaffData, createStaffFailure,
+        updateStaffSuccess, updateStaffData, updateStaffFailure,
         errorMessage,
 
     } = appSelector((state) => ({
-        getDesignationSuccess: state.designationReducer.getDesignationSuccess,
-        getDesignationList: state.designationReducer.getDesignationList,
-        getDesignationFailure: state.designationReducer.getDesignationFailure,
+        getStaffSuccess: state.staffReducer.getStaffSuccess,
+        getStaffList: state.staffReducer.getStaffList,
+        getStaffFailure: state.staffReducer.getStaffFailure,
 
-        createDesignationSuccess: state.designationReducer.createDesignationSuccess,
-        createDesignationData: state.designationReducer.createDesignationData,
-        createDesignationFailure: state.designationReducer.createDesignationFailure,
+        createStaffSuccess: state.staffReducer.createStaffSuccess,
+        createStaffData: state.staffReducer.createStaffData,
+        createStaffFailure: state.staffReducer.createStaffFailure,
 
-        updateDesignationSuccess: state.designationReducer.updateDesignationSuccess,
-        updateDesignationData: state.designationReducer.updateDesignationData,
-        updateDesignationFailure: state.designationReducer.updateDesignationFailure,
+        updateStaffSuccess: state.staffReducer.updateStaffSuccess,
+        updateStaffData: state.staffReducer.updateStaffData,
+        updateStaffFailure: state.staffReducer.updateStaffFailure,
 
-        errorMessage: state.designationReducer.errorMessage,
+        errorMessage: state.staffReducer.errorMessage,
     }));
 
     const columns = [
@@ -48,8 +48,8 @@ function Index() {
             sort: true,
         },
         {
-            Header: 'Designation Name',
-            accessor: 'designationName',
+            Header: 'Staff Name',
+            accessor: 'staffName',
             sort: true,
         },
         
@@ -109,47 +109,47 @@ function Index() {
 
     useEffect(() => {
         setIsLoading(true)
-        dispatch(getDesignationRequest());
+        dispatch(getStaffRequest());
     }, []);
 
     useEffect(() => {
-        if (getDesignationSuccess) {
+        if (getStaffSuccess) {
             setIsLoading(false)
-            setParentList(getDesignationList)
-            dispatch(resetGetDesignation())
-        } else if (getDesignationFailure) {
+            setParentList(getStaffList)
+            dispatch(resetGetStaff())
+        } else if (getStaffFailure) {
             setIsLoading(false)
             setParentList([])
-            dispatch(resetGetDesignation())
+            dispatch(resetGetStaff())
         }
-    }, [getDesignationSuccess, getDesignationFailure]);
+    }, [getStaffSuccess, getStaffFailure]);
 
     useEffect(() => {
-        if (createDesignationSuccess) {
-            const temp_state = [createDesignationData[0], ...parentList];
+        if (createStaffSuccess) {
+            const temp_state = [createStaffData[0], ...parentList];
             setParentList(temp_state)
             showMessage('success', 'Created Successfully');
             closeModel()
-            dispatch(resetCreateDesignation())
-        } else if (createDesignationFailure) {
+            dispatch(resetCreateStaff())
+        } else if (createStaffFailure) {
             showMessage('warning', errorMessage);
-            dispatch(resetCreateDesignation())
+            dispatch(resetCreateStaff())
         }
-    }, [createDesignationSuccess, createDesignationFailure]);
+    }, [createStaffSuccess, createStaffFailure]);
 
     useEffect(() => {
-        if (updateDesignationSuccess) {
+        if (updateStaffSuccess) {
             const temp_state = [...parentList];
-            temp_state[selectedIndex] = updateDesignationData[0];
+            temp_state[selectedIndex] = updateStaffData[0];
             setParentList(temp_state)
             isEdit && showMessage('success', 'Updated Successfully');
             closeModel()
-            dispatch(resetUpdateDesignation())
-        } else if (updateDesignationFailure) {
+            dispatch(resetUpdateStaff())
+        } else if (updateStaffFailure) {
             showMessage('warning', errorMessage);
-            dispatch(resetUpdateDesignation())
+            dispatch(resetUpdateStaff())
         }
-    }, [updateDesignationSuccess, updateDesignationFailure]);
+    }, [updateStaffSuccess, updateStaffFailure]);
 
     const closeModel = () => {
         isEdit = false;
@@ -160,7 +160,7 @@ function Index() {
     const onFormClear = () => {
         setState({
             ...state,
-            designationName: '',
+            staffName: '',
         });
     };
 
@@ -173,7 +173,7 @@ function Index() {
     const onEditForm = (data, index) => {
         setState({
             ...state,
-            designationName: data?.designationName || "",
+            staffName: data?.staffName || "",
         });
         isEdit = true;
         setSelectedItem(data)
@@ -187,12 +187,12 @@ function Index() {
 
     const onFormSubmit = async () => {
         const submitRequest = {
-            designationName: state?.designationName || ""
+            staffName: state?.staffName || ""
         }
         if (isEdit) {
-            dispatch(updateDesignationRequest(submitRequest, selectedItem.designationId))
+            dispatch(updateStaffRequest(submitRequest, selectedItem.staffId))
         } else {
-            dispatch(createDesignationRequest(submitRequest))
+            dispatch(createStaffRequest(submitRequest))
         }
     };
 
@@ -201,7 +201,7 @@ function Index() {
             isActive: activeChecker == 0 ? 1 : 0
         }
         setSelectedIndex(index)
-        dispatch(updateDesignationRequest(submitRequest, data.designationId))
+        dispatch(updateStaffRequest(submitRequest, data.staffId))
     };
 
     return (
@@ -214,7 +214,7 @@ function Index() {
             </div> :
             <Table
                 columns={columns}
-                Title={'Designation List'}
+                Title={'Staff List'}
                 data={parentList || []}
                 pageSize={5}
                 toggle={createModel}
@@ -223,12 +223,12 @@ function Index() {
             <ModelViewBox
                 modal={modal}
                 setModel={setModal}
-                modelHeader={'Designation'}
+                modelHeader={'Staff'}
                 modelSize={'md'}
                 isEdit={isEdit}
                 handleSubmit={handleValidation}>
                 <FormLayout
-                    dynamicForm={designationContainer}
+                    dynamicForm={staffContainer}
                     handleSubmit={onFormSubmit}
                     setState={setState}
                     state={state}

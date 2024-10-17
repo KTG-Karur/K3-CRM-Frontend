@@ -18,6 +18,7 @@ export const Designation = React.lazy(() => import('../view/designation'));
 export const BankAccount = React.lazy(() => import('../view/bank-account'));
 export const Role = React.lazy(() => import('../view/role'));
 export const LoanReportDashboard = React.lazy(() => import('../view/dashboard'));
+export const Staff = React.lazy(() => import('../view/staff'));
 
 // apps
 export const CalendarApp = React.lazy(() => import('../pages/apps/Calendar'));

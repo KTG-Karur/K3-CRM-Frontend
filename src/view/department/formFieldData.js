@@ -6,7 +6,8 @@ const employeeFormContainer = [
                 'name': "departmentName",
                 'inputType': "text",
                 'placeholder': "Enter Department Name",
-                'require': true
+                'require': true,
+                'classStyle':'col-6'
             },
         ]
     },
