@@ -8,6 +8,7 @@ import designationReducer from './designation/reducers';
 import roleReducer from './role/reducers';
 import loginReducer from './login/reducers';
 import uploadImagesReducer from './uploads/reducers';
+import staffReducer from './staff/reducers';
 
 export default combineReducers({
     Auth,
@@ -15,6 +16,7 @@ export default combineReducers({
     PageTitle,
     departmentReducer,
     designationReducer,
+    staffReducer,
     roleReducer,
     loginReducer,
     uploadImagesReducer,

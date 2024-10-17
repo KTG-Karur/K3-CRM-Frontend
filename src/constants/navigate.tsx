@@ -64,6 +64,11 @@ const Navigate: NavigateTypes[] = [
                 url: '/view/designation',
                 parentKey: 'Master',
             },
+            {
+                label: 'Staff',
+                url: '/view/staff',
+                parentKey: 'Master',
+            },
         ],
     },
 

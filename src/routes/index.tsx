@@ -89,6 +89,7 @@ import {
     BankAccount,
     Role,
     LoanReportDashboard,
+    Staff,
 } from './Route_Menu';
 
 
@@ -191,6 +192,10 @@ const AllRoutes = () => {
                             element: <LoadComponent component={Designation} />,
                         },
                         {
+                            path: 'staff',
+                            element: <LoadComponent component={Staff} />,
+                        },
+                        {
                             path: 'bank-account',
                             element: <LoadComponent component={BankAccount} />,
                         },
@@ -202,7 +207,7 @@ const AllRoutes = () => {
                 },
                 {
                     path: 'apps',
-                    children: [
+                    children: [                        
                         {
                             path: 'calendar',
                             element: <LoadComponent component={CalendarApp} />,

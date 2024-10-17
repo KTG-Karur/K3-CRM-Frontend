@@ -8,6 +8,7 @@ import bankAccountSaga from './bank-account/saga';
 import roleSaga from './role/saga';
 import loginSaga from './login/saga';
 import uploadImagesSaga from './uploads/saga';
+import staffSaga from './staff/saga';
 
 export default function* rootSaga() {
     yield all([
@@ -15,6 +16,7 @@ export default function* rootSaga() {
         layoutSaga(),
         departmentSaga(),
         designationSaga(),
+        staffSaga(),
         bankAccountSaga(),
         roleSaga(),
         loginSaga(),
