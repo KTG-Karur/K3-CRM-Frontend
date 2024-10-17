@@ -11,7 +11,7 @@ import { NotificationContainer } from 'react-notifications';
 
 let isEdit = false;
 
-function Index() {
+function Index() { 
 
     const { dispatch, appSelector } = useRedux();
 
