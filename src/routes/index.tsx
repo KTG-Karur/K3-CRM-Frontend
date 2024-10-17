@@ -89,6 +89,8 @@ import {
     BankAccount,
     Role,
     LoanReportDashboard,
+    PetrolAllowance,
+    VisitEntry,
 } from './Route_Menu';
 
 
@@ -197,6 +199,19 @@ const AllRoutes = () => {
                         {
                             path: 'role',
                             element: <LoadComponent component={Role} />,
+                        },
+                    ],
+                },
+                {
+                    path: 'allowance',
+                    children: [
+                        {
+                            path: 'visit-entry',
+                            element: <LoadComponent component={VisitEntry} />,
+                        },
+                        {
+                            path: 'petrol-allowance',
+                            element: <LoadComponent component={PetrolAllowance} />,
                         },
                     ],
                 },

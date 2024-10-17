@@ -8,6 +8,7 @@ import designationReducer from './designation/reducers';
 import roleReducer from './role/reducers';
 import loginReducer from './login/reducers';
 import uploadImagesReducer from './uploads/reducers';
+import petrolAllowanceReducer from './petrol-allowance/reducers';
 
 export default combineReducers({
     Auth,
@@ -18,4 +19,5 @@ export default combineReducers({
     roleReducer,
     loginReducer,
     uploadImagesReducer,
+    petrolAllowanceReducer,
 });

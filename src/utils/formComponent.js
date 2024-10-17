@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FormInput } from '../components/form';
 import Select from 'react-select';
 import { Button, Col, Form, Row } from 'react-bootstrap';
-import { formatDate, findObj, dateConversion } from './AllFunction';
+import { formatDate, findObj, dateConversion, findMultiSelectObj } from './AllFunction';
 import _ from 'lodash';
 
 function FormComponent(props) {
@@ -20,7 +20,7 @@ function FormComponent(props) {
         IsEditArrVal = false,
     } = props;
 
-    const handleChange = async (e, formType, formName, uniqueKey = null) => {
+    const handleChange = async (e, formType, formName, uniqueKey = null, selectIsMulti = false) => {
         switch (formType) {
             case 'text':
             case 'number':
@@ -53,6 +53,12 @@ function FormComponent(props) {
                 setState((prev) => ({
                     ...prev,
                     [formName]: e,
+                }));
+                break;
+            case 'multiSelect':
+                setState((prevState) => ({
+                    ...prevState,
+                    [formName]: e.map((option) => option[uniqueKey]),
                 }));
                 break;
             case 'file':
@@ -271,6 +277,64 @@ function FormComponent(props) {
                                 )}
                             </div>
                         );
+                    case 'multiSelect':
+                        return (
+                            <div className={`${form?.classStyle || ""} mb-2`} key={index}>
+                                <Form.Label>
+                                    <span>
+                                        {form?.label}{' '}
+                                        {form?.require ? (
+                                            <span style={{ fontWeight: 'bold', color: 'red' }}>*</span>
+                                        ) : null}
+                                        {
+                                            // Add Option Modal Btn
+                                            (showSelectmodel || []).includes(form?.name) && (
+                                                <Button
+                                                    variant="success"
+                                                    className="waves-effect waves-light mx-1"
+                                                    style={{ padding: '3px', lineHeight: '1.0' }}
+                                                    onClick={() => {
+                                                        toggleModal(form);
+                                                    }}>
+                                                    <i className="mdi mdi-plus-circle "></i>
+                                                </Button>
+                                            )
+                                        }
+                                    </span>
+                                </Form.Label>
+                                <Select
+                                    isMulti={true} 
+                                    required={form?.require || false}
+                                    disabled={form?.isDisabled || false}
+                                    onChange={(option) => {
+                                        handleChange(option, 'multiSelect', form?.name, form.uniqueKey, true);
+                                    }}
+                                    getOptionLabel={(option) =>
+                                        form.displayKey ? option[form.displayKey] : option.label
+                                    }
+                                    getOptionValue={(option) =>
+                                        form.uniqueKey ? option[form.uniqueKey] : option
+                                    }
+                                    value={findMultiSelectObj(
+                                            optionListState[form?.optionList] || [], 
+                                            form.uniqueKey, 
+                                            state[form.name]
+                                        )
+                                    }
+                                    className="react-select react-select-container"
+                                    classNamePrefix="react-select"
+                                    isSearchable
+                                    onFocus={form?.require ? () => removeHanldeErrors(form?.name) : null}
+                                    options={optionListState?.[form?.optionList] || []}
+                                />
+                                {errors?.includes(form?.name) && (
+                                    <p
+                                        className="text-danger"
+                                        style={{ fontWeight: 'bold' }}>{`* Please Enter ${form?.name}`}</p>
+                                )}
+                            </div>
+                        );
+                        
                     case 'select':
                         return (
                             <div className={`${form?.classStyle || ""} mb-2`} key={index}>
@@ -297,12 +361,12 @@ function FormComponent(props) {
                                     </span>
                                 </Form.Label>
                                 <Select
-                                    isMulti={form?.isMultiple}
-                                    required={form?.require}
-                                    disabled={form?.isDisabled}
+                                    isMulti={form?.isMultiple || false}
+                                    required={form?.require || false}
+                                    disabled={form?.isDisabled || false}
                                     onChange={(option) => {
                                         form.onChange ? onChangeCallBack[form.onChange](option, form?.name, form.uniqueKey, form.displayKey) :
-                                            handleChange(option, 'select', form?.name, form.uniqueKey);
+                                            handleChange(option, 'select', form?.name, form.uniqueKey, form?.isMultiple || false);
                                     }}
                                     // getOptionLabel={(option) => option?.label}
                                     getOptionLabel={(option) => form.displayKey ? option[form.displayKey] : option.label}

@@ -9,6 +9,8 @@ export const Logout = React.lazy(() => import('../pages/auth/Logout'));
 
 // dashboards
 export const DashBoard1 = React.lazy(() => import('../pages/dashboards/DashBoard1/'));
+export const PetrolAllowance = React.lazy(() => import('../view/petrol-allowance'));
+export const VisitEntry = React.lazy(() => import('../view/visit-entry'));
 
 // master
 export const Department = React.lazy(() => import('../view/department'));

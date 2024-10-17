@@ -21,6 +21,14 @@ const showMessage = (type, msg, title = null) => {
     }
 };
 
+const findMultiSelectObj = (optionList, uniqueKey, selectedValues) => {
+    if(selectedValues){
+        return optionList.filter((option) =>
+            selectedValues.includes(option[uniqueKey])
+        );
+    }
+};
+
 const amountFormat = (amount)=>{
     console.log(amount)
     let formattedNumber = parseInt(amount).toFixed(2);
@@ -265,6 +273,7 @@ export {
     dateConversion,
     findLastDate,
     findDueDate,
+    findMultiSelectObj,
     emiCalculation,
     interestForMonth,
     principalRepayment,

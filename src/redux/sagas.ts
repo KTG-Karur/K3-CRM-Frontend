@@ -8,6 +8,7 @@ import bankAccountSaga from './bank-account/saga';
 import roleSaga from './role/saga';
 import loginSaga from './login/saga';
 import uploadImagesSaga from './uploads/saga';
+import petrolAllowanceSaga from './petrol-allowance/saga';
 
 export default function* rootSaga() {
     yield all([
@@ -19,5 +20,6 @@ export default function* rootSaga() {
         roleSaga(),
         loginSaga(),
         uploadImagesSaga(),
+        petrolAllowanceSaga(),
     ]);
 }

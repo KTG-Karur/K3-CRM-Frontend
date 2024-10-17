@@ -6,3 +6,4 @@ export * from './designation/actions';
 export * from './role/actions';
 export * from './login/actions';
 export * from './bank-account/actions';
+export * from './petrol-allowance/actions';

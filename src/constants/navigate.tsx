@@ -31,6 +31,19 @@ const Navigate: NavigateTypes[] = [
             },
         ]
     },
+    { label: 'Allowance', isTitle: true },
+    {
+        label: 'Visit Entry',
+        isTitle: false,
+        icon: 'mdi mdi-account-check',
+        url: '/allowance/visit-entry',
+    },
+    {
+        label: 'Petrol Allowance',
+        isTitle: false,
+        icon: 'mdi mdi-account-check',
+        url: '/allowance/petrol-allowance',
+    },
     { label: 'Invesment', isTitle: true },
     {
         label: 'Customer',

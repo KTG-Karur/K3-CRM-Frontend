@@ -71,7 +71,7 @@ const Table = (props) => {
     const sizePerPageListData = sizePerPageList
     const columnData = props['columns']
     const columnLength = columnData.length || 4
-    const { toggle = null, addBtn = true, defaultState = [], tableIcon = false, footerTable = false, btnName = false, Title, filterFormContainer, optionListState, filterSubmitFunction, onChangeCallBack, state, setState, filterColNo } = props;
+    const { toggle = null, addBtn = true, onClickCallBack={}, defaultState = [], tableIcon = false, footerTable = false, btnName = false, Title, filterFormContainer, optionListState, filterSubmitFunction, onChangeCallBack, state, setState, filterColNo } = props;
 
     let otherProps = {};
 
@@ -198,6 +198,7 @@ const Table = (props) => {
                                                         setState={setState}
                                                         state={state}
                                                         noOfColumns={filterColNo}
+                                                        onClickCallBack={onClickCallBack}
                                                     />
                                                 }
                                             </Col>

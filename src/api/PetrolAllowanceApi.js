@@ -1,14 +1,14 @@
 import { apiReturnCallBack } from './ApiConfig';
 import apiContainer from './apiContainer';
-const dayBookHistory = apiContainer.dayBookHistory
+const petrolAllowance = apiContainer.petrolAllowance
 //GET--->
-export async function getDayBookHistory(request) {
+export async function getPetrolAllowance(request) {
   try {
-    const response = await apiReturnCallBack("GET", dayBookHistory, request);
+    const response = await apiReturnCallBack("GET", petrolAllowance, request);
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.message || JSON.stringify(data));
-    }    
+    }
     return data;
   } catch (error) {
     console.error(error);
@@ -16,9 +16,9 @@ export async function getDayBookHistory(request) {
   }
 }
 //CREATE---->
-export async function createDayBookHistory(request) {
+export async function createPetrolAllowance(request) {
   try {
-    const response = await apiReturnCallBack("POST", dayBookHistory, request);
+    const response = await apiReturnCallBack("POST", petrolAllowance, request);
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.message || JSON.stringify(data));
@@ -30,9 +30,9 @@ export async function createDayBookHistory(request) {
   }
 }
 //UPDATE---->
-export async function updateDayBookHistory(request, dayBookHistoryId) {
+export async function updatePetrolAllowance(request, petrolAllowanceId) {
   try {
-    const response = await apiReturnCallBack("PUT", dayBookHistory+`/${dayBookHistoryId}`, request);
+    const response = await apiReturnCallBack("PUT", petrolAllowance+`/${petrolAllowanceId}`, request);
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.message || JSON.stringify(data));
@@ -44,11 +44,11 @@ export async function updateDayBookHistory(request, dayBookHistoryId) {
   }
 }
 //DELETE---->
-// export async function deleteDayBookHistory(dayBookHistoryId) {
+// export async function deletePetrolAllowance(petrolAllowanceId) {
 //   try {
-//     const response = await apiReturnCallBack("DELETE", dayBookHistory+`/${dayBookHistoryId}`);
+//     const response = await apiReturnCallBack("DELETE", petrolAllowance+`/${petrolAllowanceId}`);
 //     if (!response.ok) {
-//       throw new Error(data.message || JSON.stringify(data));
+//       throw new Error(`HTTP error! Status: ${response.status}`);
 //     }
 //     const data = await response.json();
 //     return data;
