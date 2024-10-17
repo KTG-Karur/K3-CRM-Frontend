@@ -31,6 +31,13 @@ const Navigate: NavigateTypes[] = [
             },
         ]
     },
+    { label: 'Claim', isTitle: true },
+    {
+        label: 'Claim',
+        isTitle: false,
+        icon: 'mdi mdi-account-check',
+        url: '/claim',
+    },
     { label: 'Allowance', isTitle: true },
     {
         label: 'Visit Entry',
@@ -63,6 +70,11 @@ const Navigate: NavigateTypes[] = [
         icon: 'mdi mdi-chart-donut-variant',
         children: [
             {
+                label: 'Branch',
+                url: '/view/branch',
+                parentKey: 'Master',
+            },
+            {
                 label: 'Bank Account',
                 url: '/view/bank-account',
                 parentKey: 'Master',
@@ -70,6 +82,16 @@ const Navigate: NavigateTypes[] = [
             {
                 label: 'Department',
                 url: '/view/department',
+                parentKey: 'Master',
+            },
+            {
+                label: 'Activity',
+                url: '/view/activity',
+                parentKey: 'Master',
+            },
+            {
+                label: 'Claim Type',
+                url: '/view/claim-type',
                 parentKey: 'Master',
             },
             {

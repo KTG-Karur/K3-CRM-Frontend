@@ -6,6 +6,10 @@ const apiContainer = {
   role: "/role",
   uploadImages: "/upload-proof",
   petrolAllowance: "/petrol-allowance",
+  activity: "/activity",
+  claimType: "/claim-type",
+  claim: "/claim",
+  branch: "/branch",
 };
 
 export default apiContainer;

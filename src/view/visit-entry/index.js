@@ -5,7 +5,7 @@ import FormLayout from '../../utils/formLayout';
 import { petrolAllowanceContainer } from './formFieldData';
 import Table from '../../components/Table';
 import { dateConversion, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
-import { createPetrolAllowanceRequest, getPetrolAllowanceRequest, resetCreatePetrolAllowance, resetGetPetrolAllowance, resetUpdatePetrolAllowance, updatePetrolAllowanceRequest } from '../../redux/actions';
+import { createPetrolAllowanceRequest, getActivityRequest, getPetrolAllowanceRequest, resetCreatePetrolAllowance, resetGetActivity, resetGetPetrolAllowance, resetUpdatePetrolAllowance, updatePetrolAllowanceRequest } from '../../redux/actions';
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 import _ from 'lodash';
@@ -17,6 +17,7 @@ function Index() {
     const { dispatch, appSelector } = useRedux();
 
     const { getPetrolAllowanceSuccess, getPetrolAllowanceList, getPetrolAllowanceFailure,
+        getActivitySuccess, getActivityList, getActivityFailure,
         createPetrolAllowanceSuccess, createPetrolAllowanceData, createPetrolAllowanceFailure,
         updatePetrolAllowanceSuccess, updatePetrolAllowanceData, updatePetrolAllowanceFailure,
         errorMessage,
@@ -25,6 +26,10 @@ function Index() {
         getPetrolAllowanceSuccess: state.petrolAllowanceReducer.getPetrolAllowanceSuccess,
         getPetrolAllowanceList: state.petrolAllowanceReducer.getPetrolAllowanceList,
         getPetrolAllowanceFailure: state.petrolAllowanceReducer.getPetrolAllowanceFailure,
+
+        getActivitySuccess: state.activityReducer.getActivitySuccess,
+        getActivityList: state.activityReducer.getActivityList,
+        getActivityFailure: state.activityReducer.getActivityFailure,
 
         createPetrolAllowanceSuccess: state.petrolAllowanceReducer.createPetrolAllowanceSuccess,
         createPetrolAllowanceData: state.petrolAllowanceReducer.createPetrolAllowanceData,
@@ -118,11 +123,6 @@ function Index() {
             { staffId: 2, staffName: 'Ragul' },
             { staffId: 3, staffName: 'Mohan' },
         ],
-        activityList:[
-            { activityId: 1, activityName: 'Regular Collection' },
-            { activityId: 2, activityName: 'Arrear Collection' },
-            { activityId: 3, activityName: 'New Area Formation' },
-        ]
     })
     const [selectedItem, setSelectedItem] = useState({});
     const [selectedIndex, setSelectedIndex] = useState(false);
@@ -138,6 +138,7 @@ function Index() {
             isActive : 1
         }
         dispatch(getPetrolAllowanceRequest(getReq));
+        dispatch(getActivityRequest(getReq));
     }, []);
 
     useEffect(() => {
@@ -151,6 +152,24 @@ function Index() {
             dispatch(resetGetPetrolAllowance())
         }
     }, [getPetrolAllowanceSuccess, getPetrolAllowanceFailure]);
+
+    useEffect(() => {
+        if (getActivitySuccess) {
+            setIsLoading(false)
+            setOptionListState({
+                ...optionListState,
+                activityList : getActivityList
+            })
+            dispatch(resetGetActivity())
+        } else if (getActivityFailure) {
+            setIsLoading(false)
+            setOptionListState({
+                ...optionListState,
+                activityList : []
+            })
+            dispatch(resetGetActivity())
+        }
+    }, [getActivitySuccess, getActivityFailure]);
 
     useEffect(() => {
         if (createPetrolAllowanceSuccess) {

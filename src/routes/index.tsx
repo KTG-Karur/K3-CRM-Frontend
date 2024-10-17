@@ -92,6 +92,10 @@ import {
     PetrolAllowance,
     VisitEntry,
     Staff,
+    Activity,
+    ClaimType,
+    Claim,
+    Branch,
 } from './Route_Menu';
 
 
@@ -183,8 +187,20 @@ const AllRoutes = () => {
                     element: <LoadComponent component={LoanReportDashboard} />,
                 },
                 {
+                    path: 'claim',
+                    element: <LoadComponent component={Claim} />,
+                },
+                {
                     path: 'view',
                     children: [
+                        {
+                            path: 'activity',
+                            element: <LoadComponent component={Activity} />,
+                        },
+                        {
+                            path: 'branch',
+                            element: <LoadComponent component={Branch} />,
+                        },
                         {
                             path: 'department',
                             element: <LoadComponent component={Department} />,
@@ -196,6 +212,10 @@ const AllRoutes = () => {
                         {
                             path: 'staff',
                             element: <LoadComponent component={Staff} />,
+                        },
+                        {
+                            path: 'claim-type',
+                            element: <LoadComponent component={ClaimType} />,
                         },
                         {
                             path: 'bank-account',

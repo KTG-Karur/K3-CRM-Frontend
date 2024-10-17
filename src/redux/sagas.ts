@@ -10,6 +10,10 @@ import loginSaga from './login/saga';
 import uploadImagesSaga from './uploads/saga';
 import petrolAllowanceSaga from './petrol-allowance/saga';
 import staffSaga from './staff/saga';
+import activitySaga from './activity/saga';
+import claimTypeSaga from './claim-type/saga';
+import claimSaga from './claim/saga';
+import branchSaga from './branch/saga';
 
 export default function* rootSaga() {
     yield all([
@@ -23,5 +27,9 @@ export default function* rootSaga() {
         loginSaga(),
         uploadImagesSaga(),
         petrolAllowanceSaga(),
+        activitySaga(),
+        claimTypeSaga(),
+        claimSaga(),
+        branchSaga(),
     ]);
 }

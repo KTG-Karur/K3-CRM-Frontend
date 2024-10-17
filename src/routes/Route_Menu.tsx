@@ -11,6 +11,10 @@ export const Logout = React.lazy(() => import('../pages/auth/Logout'));
 export const DashBoard1 = React.lazy(() => import('../pages/dashboards/DashBoard1/'));
 export const PetrolAllowance = React.lazy(() => import('../view/petrol-allowance'));
 export const VisitEntry = React.lazy(() => import('../view/visit-entry'));
+export const Activity = React.lazy(() => import('../view/activity'));
+export const ClaimType = React.lazy(() => import('../view/claim-type'));
+export const Claim = React.lazy(() => import('../view/claim'));
+export const Branch = React.lazy(() => import('../view/branch'));
 
 // master
 export const Department = React.lazy(() => import('../view/department'));
