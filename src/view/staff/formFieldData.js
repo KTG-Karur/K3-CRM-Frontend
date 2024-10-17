@@ -9,7 +9,7 @@ const staffTabs = [
             {
                 formFields: [
                     {
-                        label: 'Sur Name',
+                        label: 'Surname',
                         name: 'surNameId',
                         inputType: 'select',
                         optionList: 'surNameList',
