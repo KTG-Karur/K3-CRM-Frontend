@@ -96,6 +96,9 @@ import {
     ClaimType,
     Claim,
     Branch,
+    TransferStaff,
+    Deputation,
+    StaffAdvance,
 } from './Route_Menu';
 
 
@@ -220,6 +223,18 @@ const AllRoutes = () => {
                         {
                             path: 'bank-account',
                             element: <LoadComponent component={BankAccount} />,
+                        },
+                        {
+                            path: 'transfer-staff',
+                            element: <LoadComponent component={TransferStaff} />,
+                        },
+                        {
+                            path: 'staff-advance',
+                            element: <LoadComponent component={StaffAdvance} />,
+                        },
+                        {
+                            path: 'deputation',
+                            element: <LoadComponent component={Deputation} />,
                         },
                         {
                             path: 'role',

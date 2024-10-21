@@ -47,19 +47,15 @@ function Index() {
             sort: true,
         },
         {
-            Header: 'Status',
-            accessor: 'isActive',
-            Cell: ({ row }) => (
-                <div>
-                    {row?.original?.isActive ? (
-                        <Badge bg={'success'}>Active</Badge>
-                    ) : (
-                        <Badge bg={'danger'}>In active</Badge>
-                    )}
-                </div>
-            ),
+            Header: 'Email',
+            accessor: 'email',
+            sort: true,
         },
         {
+            Header: 'Contact No',
+            accessor: 'contactNo',
+            sort: true,
+        },        {
             Header: 'Actions',
             accessor: 'actions',
             Cell: ({ row }) => {
@@ -71,19 +67,7 @@ function Index() {
                         <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index)}>
                             <i className={'fe-edit-1'}></i>
                         </span>
-                        <span
-                            className={`${iconColor} cursor-pointer`}
-                            onClick={() =>
-                                showConfirmationDialog(
-                                    deleteMessage,
-                                    () => onDeleteForm(row.original, row.index, activeChecker),
-                                    'Yes'
-                                )
-                            }>
-                            {
-                                row?.original?.isActive ? <i className={'fe-trash-2'}></i> : <i className={'fas fa-recycle'}></i>
-                            }
-                        </span>
+                        
                     </div>
                 )
             },
@@ -154,11 +138,18 @@ function Index() {
         setState({
             ...state,
             branchName: '',
+            address: '',
+            city: '',
+            pincode: '',
+            email: '',
+            contactNo: '',
+            state
         });
     };
 
     const createModel = () => {
         onFormClear()
+        setErrors([]);
         isEdit = false;
         setModal(true)
     };
@@ -167,6 +158,11 @@ function Index() {
         setState({
             ...state,
             branchName: data?.branchName || "",
+            address: data?.address || "",
+            city: data?.city || "",
+            pincode: data?.pincode || "",
+            email: data?.email || "",
+            contactNo: data?.contactNo || "",
         });
         isEdit = true;
         setSelectedItem(data)
@@ -180,7 +176,12 @@ function Index() {
 
     const onFormSubmit = async () => {
         const submitRequest = {
-            branchName: state?.branchName || ""
+            branchName: state?.branchName || "",
+            address: state?.address || "",
+            city: state?.city || "",
+            pincode: state?.pincode || "",
+            email: state?.email || "",
+            contactNo: state?.contactNo || "",
         }
         if (isEdit) {
             dispatch(updateBranchRequest(submitRequest, selectedItem.branchId))

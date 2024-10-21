@@ -1,14 +1,14 @@
 import { apiReturnCallBack } from './ApiConfig';
 import apiContainer from './apiContainer';
-const branch = apiContainer.branch
+const transferStaff = apiContainer.transferStaff
 //GET--->
-export async function getBranch(request) {
+export async function getTransferStaff(request) {
   try {
-    const response = await apiReturnCallBack("GET", branch, request);
+    const response = await apiReturnCallBack("GET", transferStaff, request);
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.message || JSON.stringify(data));
-    }    
+    }
     return data;
   } catch (error) {
     console.error(error);
@@ -16,10 +16,11 @@ export async function getBranch(request) {
   }
 }
 //CREATE---->
-export async function createBranch(request) {
-  
+export async function createTransferStaff(request) {
+
+  console.log(request);
   try {
-    const response = await apiReturnCallBack("POST", branch, request);
+    const response = await apiReturnCallBack("POST", transferStaff, request);
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.message || JSON.stringify(data));
@@ -31,9 +32,9 @@ export async function createBranch(request) {
   }
 }
 //UPDATE---->
-export async function updateBranch(request, branchId) {
+export async function updateTransferStaff(request, transferStaffId) {
   try {
-    const response = await apiReturnCallBack("PUT", branch+`/${branchId}`, request);
+    const response = await apiReturnCallBack("PUT", transferStaff+`/${transferStaffId}`, request);
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.message || JSON.stringify(data));
@@ -45,11 +46,11 @@ export async function updateBranch(request, branchId) {
   }
 }
 //DELETE---->
-// export async function deleteBranch(branchId) {
+// export async function deleteTransferStaff(transferStaffId) {
 //   try {
-//     const response = await apiReturnCallBack("DELETE", branch+`/${branchId}`);
+//     const response = await apiReturnCallBack("DELETE", transferStaff+`/${transferStaffId}`);
 //     if (!response.ok) {
-//       throw new Error(data.message || JSON.stringify(data));
+//       throw new Error(`HTTP error! Status: ${response.status}`);
 //     }
 //     const data = await response.json();
 //     return data;

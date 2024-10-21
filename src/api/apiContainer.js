@@ -10,6 +10,9 @@ const apiContainer = {
   claimType: "/claim-type",
   claim: "/claim",
   branch: "/branch",
+  transferStaff: "/transfer-staff",
+  staffAdvance: "/staff-advance",
+  deputation: "/deputation",
 };
 
 export default apiContainer;

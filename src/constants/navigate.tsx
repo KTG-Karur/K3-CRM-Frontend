@@ -80,6 +80,21 @@ const Navigate: NavigateTypes[] = [
                 parentKey: 'Master',
             },
             {
+                label: 'Transfer Staff',
+                url: '/view/transfer-staff',
+                parentKey: 'Master',
+            },
+            {
+                label: 'Staff Advance',
+                url: '/view/staff-advance',
+                parentKey: 'Master',
+            },
+            {
+                label: 'Deputation',
+                url: '/view/deputation',
+                parentKey: 'Master',
+            },
+            {
                 label: 'Department',
                 url: '/view/department',
                 parentKey: 'Master',

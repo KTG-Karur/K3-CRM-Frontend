@@ -14,6 +14,9 @@ import activityReducer from './activity/reducers';
 import claimTypeReducer from './claim-type/reducers';
 import claimReducer from './claim/reducers';
 import branchReducer from './branch/reducers';
+import transferStaffReducer from './transfer-staff/reducers';
+import deputationReducer from './deputation/reducers';
+import staffAdvanceReducer from './staff-advance/reducers';
 
 export default combineReducers({
     Auth,
@@ -26,6 +29,9 @@ export default combineReducers({
     loginReducer,
     uploadImagesReducer,
     petrolAllowanceReducer,
+    transferStaffReducer,
+    staffAdvanceReducer,
+    deputationReducer,
     activityReducer,
     claimTypeReducer,
     claimReducer,
