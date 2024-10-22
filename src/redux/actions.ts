@@ -12,3 +12,4 @@ export * from './activity/actions';
 export * from './claim-type/actions';
 export * from './claim/actions';
 export * from './branch/actions';
+export * from './proof-type/actions';

@@ -10,6 +10,7 @@ const apiContainer = {
   claimType: "/claim-type",
   claim: "/claim",
   branch: "/branch",
+  proofType: "/proof-type",
 };
 
 export default apiContainer;

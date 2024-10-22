@@ -7,7 +7,7 @@ const employeeFormContainer = [
                 'inputType': "date",
                 'require': true,
                 'classStyle': 'col-12'
-            }, ,
+            },
             {
                 label: 'Payment Mode',
                 name: 'modeOfPaymentId',
@@ -73,6 +73,29 @@ const employeeFormContainer = [
     },
 ]
 
+const approvedFormContainer = [
+    {
+        formFields: [
+            {
+                'label': "Approved Date",
+                'name': "approvedDate",
+                'inputType': "date",
+                'require': true,
+                'classStyle': 'col-12'
+            },
+            {
+                'label': "Claim Amount",
+                'name': "claimAmount",
+                'inputType': "text",
+                'placeholder': "Enter Claim Amount",
+                'require': true,
+                'classStyle': 'col-12'
+            },
+        ]
+    },
+]
+
 export {
-    employeeFormContainer
+    employeeFormContainer,
+    approvedFormContainer
 }

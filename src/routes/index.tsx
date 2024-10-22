@@ -96,6 +96,8 @@ import {
     ClaimType,
     Claim,
     Branch,
+    ClaimTemplate,
+    ProofType,
 } from './Route_Menu';
 
 
@@ -191,6 +193,10 @@ const AllRoutes = () => {
                     element: <LoadComponent component={Claim} />,
                 },
                 {
+                    path: 'claim-approved',
+                    element: <LoadComponent component={ClaimTemplate} />,
+                },
+                {
                     path: 'view',
                     children: [
                         {
@@ -224,6 +230,10 @@ const AllRoutes = () => {
                         {
                             path: 'role',
                             element: <LoadComponent component={Role} />,
+                        },
+                        {
+                            path: 'proof-type',
+                            element: <LoadComponent component={ProofType} />,
                         },
                     ],
                 },

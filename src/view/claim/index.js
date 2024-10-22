@@ -2,18 +2,21 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Badge, Spinner } from 'react-bootstrap';
 import ModelViewBox from '../../components/Atom/ModelViewBox';
 import FormLayout from '../../utils/formLayout';
-import { employeeFormContainer } from './formFieldData';
+import { approvedFormContainer, employeeFormContainer } from './formFieldData';
 import Table from '../../components/Table';
 import { dateConversion, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
 import { createClaimRequest, getBranchRequest, getClaimRequest, getClaimTypeRequest, resetCreateClaim, resetGetBranch, resetGetClaim, resetGetClaimType, resetUpdateClaim, updateClaimRequest } from '../../redux/actions';
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
+import moment from 'moment';
+import { useNavigate } from 'react-router-dom';
 
 let isEdit = false;
 
 function Index() { 
 
     const { dispatch, appSelector } = useRedux();
+    const navigate = useNavigate();
 
     const { getClaimSuccess, getClaimList, getClaimFailure,
         getBranchSuccess, getBranchList, getBranchFailure,
@@ -91,7 +94,11 @@ function Index() {
                         <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index)}>
                             <i className={'fe-edit-1'}></i>
                         </span>
+                        <span className="text-success  me-2 cursor-pointer" onClick={() => onApprovedClaim(row.original, row.index)}>
+                            <i className={'fe-check-circle'}></i>
+                        </span>
                     </div>
+                    
                 )
             },
         },
@@ -119,6 +126,7 @@ function Index() {
     const [selectedItem, setSelectedItem] = useState({});
     const [selectedIndex, setSelectedIndex] = useState(false);
     const [modal, setModal] = useState(false);
+    const [approvedModal, setApprovedModal] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState([]);
 
@@ -200,6 +208,7 @@ function Index() {
             const temp_state = [...parentList];
             temp_state[selectedIndex] = updateClaimData[0];
             setParentList(temp_state)
+            approvedModal && navigate('/claim-approved', { state: { data: updateClaimData[0] } });
             isEdit && showMessage('success', 'Updated Successfully');
             closeModel()
             dispatch(resetUpdateClaim())
@@ -213,6 +222,20 @@ function Index() {
         isEdit = false;
         onFormClear()
         setModal(false)
+        setApprovedModal(false)
+    }
+
+    const onApprovedClaim = (data, index)=>{
+        setState({
+            ...state,
+            approvedDate : moment().format("YYYY-MM-DD"),
+            claimAmount : ""
+        })
+        setSelectedItem(data)
+        setSelectedIndex(index)
+        setApprovedModal(true)
+        // navigate('/claim-approved', { state: { data: data } });
+
     }
 
     const onFormClear = () => {
@@ -268,10 +291,19 @@ function Index() {
         if (isEdit) {
             dispatch(updateClaimRequest(submitRequest, selectedItem.claimId))
         } else {
-            // console.log(submitRequest)
             dispatch(createClaimRequest(submitRequest))
         }
     };
+
+    const onApprovedFormSubmit = ()=>{
+        const submitRequest = {
+            approvedDate: state.approvedDate ? dateConversion(state.approvedDate, "YYYY-MM-DD") : "",
+            claimAmount: state?.claimAmount || "",
+            claimStatus: 29,
+            approvedBy : 1
+        }
+        dispatch(updateClaimRequest(submitRequest, selectedItem.claimId))
+    }
 
     const onDeleteForm = (data, index, activeChecker) => {
         const submitRequest = {
@@ -307,6 +339,27 @@ function Index() {
                 <FormLayout
                     dynamicForm={employeeFormContainer}
                     handleSubmit={onFormSubmit}
+                    optionListState={optionListState}
+                    setState={setState}
+                    state={state}
+                    ref={errorHandle}
+                    noOfColumns={1}
+                    errors={errors}
+                    setErrors={setErrors}
+                />
+            </ModelViewBox>
+
+            <ModelViewBox
+                modal={approvedModal}
+                setModel={setApprovedModal}
+                modelHeader={'Approved Claim'}
+                modelHead={'true'}
+                modelSize={'md'}
+                isEdit={isEdit}
+                handleSubmit={handleValidation}>
+                <FormLayout
+                    dynamicForm={approvedFormContainer}
+                    handleSubmit={onApprovedFormSubmit}
                     optionListState={optionListState}
                     setState={setState}
                     state={state}

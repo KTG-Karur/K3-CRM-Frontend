@@ -265,10 +265,16 @@ function FormComponent(props) {
                                     disabled={form?.isDisabled}
                                     onFocus={form?.require ? () => removeHanldeErrors(form?.name) : null}
                                     onChange={(e) => {
+                                        form.onChange ? onChangeCallBack[form.onChange](e, form?.name) :
                                         handleChange(e, 'date', form?.name);
                                     }}
+                                    /* onChange={(option) => {
+                                        form.onChange ? onChangeCallBack[form.onChange](option, form?.name, form.uniqueKey, form.displayKey) :
+                                            handleChange(option, 'select', form?.name, form.uniqueKey, form?.isMultiple || false);
+                                    }} */
                                     // min={new Date().toISOString().split("T")[0]}
                                     min={form.minmumDate ? state[form.minmumDate] : "" }
+                                    max={form.maximumDate ? state[form.maximumDate] : ""}
                                 />
                                 {errors?.includes(form?.name) && (
                                     <p

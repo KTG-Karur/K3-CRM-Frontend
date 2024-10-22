@@ -14,6 +14,7 @@ import activitySaga from './activity/saga';
 import claimTypeSaga from './claim-type/saga';
 import claimSaga from './claim/saga';
 import branchSaga from './branch/saga';
+import proofTypeSaga from './proof-type/saga';
 
 export default function* rootSaga() {
     yield all([
@@ -31,5 +32,6 @@ export default function* rootSaga() {
         claimTypeSaga(),
         claimSaga(),
         branchSaga(),
+        proofTypeSaga(),
     ]);
 }

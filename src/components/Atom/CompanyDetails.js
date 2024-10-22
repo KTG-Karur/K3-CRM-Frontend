@@ -20,10 +20,10 @@ function CompanyDetails(props) {
             </div>
             <div>
             <span style={{ fontSize }}>
-           <b> <i style={{color: 'orange'}} className={'fe-mail'}></i> support@harshinifincorp.com</b>
+           <b> <i style={{color: 'orange'}} className={'fe-mail'}></i> support@ktg.com</b>
             </span>
             <span style={{ fontSize }} className='mx-2'>
-            <b><i style={{color: 'blue'}} className={'fe-phone'}></i> +91 9876543210 </b>
+            <b><i style={{color: 'blue'}} className={'fe-phone'}></i> +91 9991234567 </b>
             </span>
             </div>
         </div>
