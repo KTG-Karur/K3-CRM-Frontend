@@ -15,6 +15,7 @@ export const Activity = React.lazy(() => import('../view/activity'));
 export const ClaimType = React.lazy(() => import('../view/claim-type'));
 export const Claim = React.lazy(() => import('../view/claim'));
 export const Branch = React.lazy(() => import('../view/branch'));
+export const Holiday = React.lazy(() => import('../view/holiday'));
 
 // master
 export const Department = React.lazy(() => import('../view/department'));

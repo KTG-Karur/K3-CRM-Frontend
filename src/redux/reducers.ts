@@ -14,6 +14,7 @@ import activityReducer from './activity/reducers';
 import claimTypeReducer from './claim-type/reducers';
 import claimReducer from './claim/reducers';
 import branchReducer from './branch/reducers';
+import holidayReducer from './holiday/reducers';
 
 export default combineReducers({
     Auth,
@@ -30,4 +31,5 @@ export default combineReducers({
     claimTypeReducer,
     claimReducer,
     branchReducer,
+    holidayReducer,
 });

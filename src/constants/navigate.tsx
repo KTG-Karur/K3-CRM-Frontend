@@ -65,6 +65,12 @@ const Navigate: NavigateTypes[] = [
         url: '/view/monthly-reciept',
     },
     {
+        label: 'Holiday',
+        isTitle: false,
+        icon: 'mdi mdi-account-cash',
+        url: '/view/holiday',
+    },
+    {
         label: 'Master',
         isTitle: false,
         icon: 'mdi mdi-chart-donut-variant',
