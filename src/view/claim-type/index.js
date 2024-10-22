@@ -9,7 +9,7 @@ import { createClaimTypeRequest, getClaimTypeRequest, resetCreateClaimType, rese
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 
-let isEdit = false;
+let isEdit = false; 
 
 function Index() { 
 
