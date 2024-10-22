@@ -153,6 +153,13 @@ const staffTabs = [
                         // require: true,
                         classStyle: 'col-3'
                     },
+                    {
+                        label: 'User Creditial',
+                        name: 'userCreditial',
+                        inputType: 'checkbox',
+                        onChange : "onHandleProofType",
+                        'classStyle': 'col-3'
+                    },
                 ],
             },
             {
