@@ -14,6 +14,7 @@ const apiContainer = {
   transferStaff: "/transfer-staff",
   staffAdvance: "/staff-advance",
   deputation: "/deputation",
+  holiday: "/holiday",
 };
 
 export default apiContainer;

@@ -18,6 +18,7 @@ import proofTypeSaga from './proof-type/saga';
 import transferStaffSaga from './transfer-staff/saga';
 import deputationSaga from './deputation/saga';
 import staffAdvanceSaga from './staff-advance/saga';
+import holidaySaga from './holiday/saga';
 
 export default function* rootSaga() {
     yield all([
@@ -39,5 +40,6 @@ export default function* rootSaga() {
         claimSaga(),
         branchSaga(),
         proofTypeSaga(),
+        holidaySaga(),
     ]);
 }

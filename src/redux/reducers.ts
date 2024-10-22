@@ -18,6 +18,7 @@ import proofTypeReducer from './proof-type/reducers';
 import transferStaffReducer from './transfer-staff/reducers';
 import deputationReducer from './deputation/reducers';
 import staffAdvanceReducer from './staff-advance/reducers';
+import holidayReducer from './holiday/reducers';
 
 export default combineReducers({
     Auth,
@@ -38,4 +39,5 @@ export default combineReducers({
     claimReducer,
     branchReducer,
     proofTypeReducer,
+    holidayReducer,
 });
