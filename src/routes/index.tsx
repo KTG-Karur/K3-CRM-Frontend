@@ -85,6 +85,7 @@ import {
     GoogleMaps,
     VectorMaps,
     Landing,
+    Holiday,
     Designation,
     BankAccount,
     Role,
@@ -205,6 +206,10 @@ const AllRoutes = () => {
                         {
                             path: 'activity',
                             element: <LoadComponent component={Activity} />,
+                        },
+                        {
+                            path: 'holiday',
+                            element: <LoadComponent component={Holiday} />,
                         },
                         {
                             path: 'branch',
