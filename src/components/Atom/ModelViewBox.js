@@ -4,7 +4,6 @@ import { Modal, Button } from 'react-bootstrap';
 
 function ModelViewBox(props) {
     const { modal, setModel, children, modelHeader, cancelBtn = true, modelSize,saveBtn = true, handleSubmit, btnName = false, isEdit, modelHead = false, backgroundColor = "", headerBg = "" } = props;
-
     const handleClose = () => {
         setModel(false);
     };

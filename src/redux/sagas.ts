@@ -14,7 +14,13 @@ import activitySaga from './activity/saga';
 import claimTypeSaga from './claim-type/saga';
 import claimSaga from './claim/saga';
 import branchSaga from './branch/saga';
+<<<<<<< HEAD
 import proofTypeSaga from './proof-type/saga';
+=======
+import transferStaffSaga from './transfer-staff/saga';
+import deputationSaga from './deputation/saga';
+import staffAdvanceSaga from './staff-advance/saga';
+>>>>>>> 1b5e067a758654ba2f978d59b552828d019b2cd4
 
 export default function* rootSaga() {
     yield all([
@@ -28,6 +34,9 @@ export default function* rootSaga() {
         loginSaga(),
         uploadImagesSaga(),
         petrolAllowanceSaga(),
+        transferStaffSaga(),
+        staffAdvanceSaga(),
+        deputationSaga(),
         activitySaga(),
         claimTypeSaga(),
         claimSaga(),

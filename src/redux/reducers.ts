@@ -14,7 +14,13 @@ import activityReducer from './activity/reducers';
 import claimTypeReducer from './claim-type/reducers';
 import claimReducer from './claim/reducers';
 import branchReducer from './branch/reducers';
+<<<<<<< HEAD
 import proofTypeReducer from './proof-type/reducers';
+=======
+import transferStaffReducer from './transfer-staff/reducers';
+import deputationReducer from './deputation/reducers';
+import staffAdvanceReducer from './staff-advance/reducers';
+>>>>>>> 1b5e067a758654ba2f978d59b552828d019b2cd4
 
 export default combineReducers({
     Auth,
@@ -27,6 +33,9 @@ export default combineReducers({
     loginReducer,
     uploadImagesReducer,
     petrolAllowanceReducer,
+    transferStaffReducer,
+    staffAdvanceReducer,
+    deputationReducer,
     activityReducer,
     claimTypeReducer,
     claimReducer,
