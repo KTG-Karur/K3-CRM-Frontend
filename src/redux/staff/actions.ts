@@ -18,6 +18,26 @@ export const resetGetStaff = () => ({
   type: 'RESET_GET_STAFF',
 });
 
+//Get Reducer Call--->
+export const getStaffDetailsRequest = (params?: any) => ({
+  type: 'GET_STAFF_DETAILS_REQUEST',
+  payload: params,
+});
+
+export const getStaffDetailsSuccess = (data: any) => ({
+  type: 'GET_STAFF_DETAILS_SUCCESS',
+  payload: { data },
+});
+
+export const getStaffDetailsFailure = (errorMessage: string) => ({
+  type: 'GET_STAFF_DETAILS_FAILURE',
+  errorMessage: { errorMessage },
+});
+
+export const resetGetDetailsStaff = () => ({
+  type: 'RESET_GET_STAFF_DETAILS',
+});
+
 //Create Reducer Call--->
 export const createStaffRequest = (data: any) => ({
   type: 'CREATE_STAFF_REQUEST',

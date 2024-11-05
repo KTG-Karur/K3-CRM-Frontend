@@ -19,6 +19,9 @@ import transferStaffSaga from './transfer-staff/saga';
 import deputationSaga from './deputation/saga';
 import staffAdvanceSaga from './staff-advance/saga';
 import holidaySaga from './holiday/saga';
+import staffProofSaga from './staff-proof/saga';
+import staffQualificationSaga from './staff-qualification/saga';
+import staffLeaveSaga from './staff-leave/saga';
 
 export default function* rootSaga() {
     yield all([
@@ -41,5 +44,8 @@ export default function* rootSaga() {
         branchSaga(),
         proofTypeSaga(),
         holidaySaga(),
+        staffProofSaga(),
+        staffQualificationSaga(),
+        staffLeaveSaga(),
     ]);
 }

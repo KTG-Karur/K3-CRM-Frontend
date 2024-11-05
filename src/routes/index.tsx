@@ -102,6 +102,7 @@ import {
     TransferStaff,
     Deputation,
     StaffAdvance,
+    StaffLeave,
 } from './Route_Menu';
 
 
@@ -199,6 +200,10 @@ const AllRoutes = () => {
                 {
                     path: 'claim-approved',
                     element: <LoadComponent component={ClaimTemplate} />,
+                },
+                {
+                    path: 'staff-leave',
+                    element: <LoadComponent component={StaffLeave} />,
                 },
                 {
                     path: 'view',

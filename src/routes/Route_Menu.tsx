@@ -18,6 +18,7 @@ export const Branch = React.lazy(() => import('../view/branch'));
 export const ClaimTemplate = React.lazy(() => import('../view/claim/approvedTemplate'));
 export const ProofType = React.lazy(() => import('../view/proof-type'));
 export const Holiday = React.lazy(() => import('../view/holiday'));
+export const StaffLeave = React.lazy(() => import('../view/staff-leave'));
 
 // master
 export const Department = React.lazy(() => import('../view/department'));

@@ -701,45 +701,6 @@ function FormComponent(props) {
                     //             </div>
                     //         )
                     //     );
-                    case 'checkbox':
-                        return (
-                            (
-                                <div className={`${form?.classStyle || ''} mb-2`} key={index}>
-                                    <p className="mb-1 fw-bold text-muted">
-                                        {' '}
-                                        {
-                                            <span>
-                                                {form?.label}{' '}
-                                                {form?.require ? (
-                                                    <span style={{ fontWeight: 'bold', color: 'red' }}>*</span>
-                                                ) : null}
-                                            </span>
-                                        }
-                                    </p>
-                                    {[
-                                        { label: 'a', value: 'a' },
-                                        { label: 'b', value: 'b' },
-                                        { label: 'c', value: 'c' },
-                                    ].map((item, i) => {
-                                        return (
-                                            <Form.Check
-                                                key={i}
-                                                label={form?.label}
-                                                value={state[form?.name]}
-                                                type="checkbox"
-                                                id={`basic-checkbox-${i}`}
-                                                name={form?.name}
-                                                className={'mb-2 form-check-Primary'}
-                                                defaultChecked={form?.defaultChecked}
-                                                onChange={(e) => {
-                                                    handleChange(item, 'checkbox', form?.name);
-                                                }}
-                                            />
-                                        );
-                                    })}
-                                </div>
-                            )
-                        );
                     case 'radio':
                         return (
                             (

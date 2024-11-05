@@ -19,6 +19,9 @@ import transferStaffReducer from './transfer-staff/reducers';
 import deputationReducer from './deputation/reducers';
 import staffAdvanceReducer from './staff-advance/reducers';
 import holidayReducer from './holiday/reducers';
+import staffProofReducer from './staff-proof/reducers';
+import staffQualificationReducer from './staff-qualification/reducers';
+import staffLeaveReducer from './staff-leave/reducers';
 
 export default combineReducers({
     Auth,
@@ -40,4 +43,7 @@ export default combineReducers({
     branchReducer,
     proofTypeReducer,
     holidayReducer,
+    staffProofReducer,
+    staffQualificationReducer,
+    staffLeaveReducer,
 });

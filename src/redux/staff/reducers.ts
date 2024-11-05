@@ -42,6 +42,32 @@ export default function staffReducer(state = initialState, action: any) {
         errorMessage: null,
       };
     }
+    
+    case "GET_STAFF_DETAILS_SUCCESS": {
+      return {
+        ...state,
+        getStaffDetailsSuccess: true,
+        getStaffDetailsList: action.payload.data.data,
+        getStaffDetailsFailure: false,
+      };
+    }
+    case "GET_STAFF_DETAILS_FAILURE": {
+      return {
+        ...state,
+        getStaffDetailsFailure: true,
+        errorMessage: action.errorMessage.errorMessage,
+        getStaffDetailsSuccess: false,
+      };
+    }
+    case "RESET_GET_STAFF_DETAILS": {
+      return {
+        ...state,
+        getStaffDetailsSuccess: false,
+        getStaffDetailsFailure: false,
+        getStaffDetailsList: [],
+        errorMessage: null,
+      };
+    }
 
     case "CREATE_STAFF_SUCCESS": {
       return {

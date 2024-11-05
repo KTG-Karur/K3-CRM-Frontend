@@ -17,3 +17,6 @@ export * from './claim/actions';
 export * from './branch/actions';
 export * from './proof-type/actions';
 export * from './holiday/actions';
+export * from './staff-proof/actions';
+export * from './staff-qualification/actions';
+export * from './staff-leave/actions';
