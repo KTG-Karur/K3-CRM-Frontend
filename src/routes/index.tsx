@@ -103,11 +103,15 @@ import {
     SettingLeaveDeduction,
     Deputation,
     StaffAdvance,
+<<<<<<< HEAD
     AttendanceIncharge,
     Permission,
     Setting,
     SettingWorkingDay,
     SettingBenefit,
+=======
+    StaffLeave,
+>>>>>>> 0b032fb35f93fa6bab27cc88b3cddd8666938b81
 } from './Route_Menu';
 
 
@@ -205,6 +209,10 @@ const AllRoutes = () => {
                 {
                     path: 'claim-approved',
                     element: <LoadComponent component={ClaimTemplate} />,
+                },
+                {
+                    path: 'staff-leave',
+                    element: <LoadComponent component={StaffLeave} />,
                 },
                 {
                     path: 'view',

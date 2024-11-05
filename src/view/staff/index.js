@@ -11,8 +11,12 @@ import { NotificationContainer } from 'react-notifications';
 import _ from 'lodash';
 import { Form } from 'react-bootstrap';
 import Select from 'react-select';
-import { getBranchRequest, getDepartmentRequest, getDesignationRequest, getProofTypeRequest, getStaffRequest, resetCreateStaff, resetGetBranch, resetGetDepartment, resetGetDesignation, resetGetProofType, resetGetStaff, resetUpdateStaff } from '../../redux/actions';
+import { createStaffRequest, deleteStaffProofRequest, deleteStaffQualificationRequest, getBranchRequest, getDepartmentRequest, getDesignationRequest, getProofTypeRequest, getStaffDetailsRequest, getStaffRequest, resetCreateStaff, resetGetBranch, resetGetDepartment, resetGetDesignation, resetGetDetailsStaff, resetGetProofType, resetGetStaff, resetUpdateStaff, updateStaffRequest } from '../../redux/actions';
 import moment from 'moment';
+import { deleteStaffWorkExperienceRequest } from '../../redux/staff-work-experience/actions';
+import { deleteStaffLanguageRequest } from '../../redux/staff-language/actions';
+import { deleteStaffRelationRequest } from '../../redux/staff-relation/actions';
+import { createUploadImagesRequest } from '../../redux/uploads/actions';
 
 let uploadImages = false;
 
@@ -22,6 +26,7 @@ function Index() {
 
     const {
         getStaffSuccess, getStaffList, getStaffFailure,
+        getStaffDetailsSuccess, getStaffDetailsList, getStaffDetailsFailure,
         getBranchSuccess, getBranchList, getBranchFailure,
         getDesignationSuccess, getDesignationList, getDesignationFailure,
         getDepartmentSuccess, getDepartmentList, getDepartmentFailure,
@@ -33,6 +38,10 @@ function Index() {
         getStaffSuccess: state.staffReducer.getStaffSuccess,
         getStaffList: state.staffReducer.getStaffList,
         getStaffFailure: state.staffReducer.getStaffFailure,
+
+        getStaffDetailsSuccess: state.staffReducer.getStaffDetailsSuccess,
+        getStaffDetailsList: state.staffReducer.getStaffDetailsList,
+        getStaffDetailsFailure: state.staffReducer.getStaffDetailsFailure,
 
         getDesignationSuccess: state.designationReducer.getDesignationSuccess,
         getDesignationList: state.designationReducer.getDesignationList,
@@ -78,8 +87,18 @@ function Index() {
             sort: false,
         },
         {
+            Header: 'Department',
+            accessor: 'departmentName',
+            sort: false,
+        },
+        {
             Header: 'Contact No',
             accessor: 'contactNo',
+            sort: false,
+        },
+        {
+            Header: 'Role',
+            accessor: 'roleName',
             sort: false,
         },
         {
@@ -299,7 +318,7 @@ function Index() {
             },
             {
                 Header: 'Proof Number',
-                accessor: 'proofNo',
+                accessor: 'proofNumber',
                 sort: true,
             },
             {
@@ -398,18 +417,18 @@ function Index() {
             { genderId: 2, genderName: 'Female' },
             { genderId: 3, genderName: 'Others' },
         ],
-        surNameList: [
+        surnameList: [
             {
-                surNameId: 40,
-                surName: "Mr."
+                surnameId: 40,
+                surname: "Mr."
             },
             {
-                surNameId: 41,
-                surName: "Ms."
+                surnameId: 41,
+                surname: "Ms."
             },
             {
-                surNameId: 42,
-                surName: "Mrs."
+                surnameId: 42,
+                surname: "Mrs."
             },
         ],
         relationTypeList: [
@@ -512,7 +531,7 @@ function Index() {
         const req = {
             isActive: 1
         }
-        dispatch(getBranchRequest(req));
+        dispatch(getBranchRequest());
         dispatch(getDesignationRequest(req));
         dispatch(getDepartmentRequest(req));
         dispatch(getProofTypeRequest(req));
@@ -529,6 +548,19 @@ function Index() {
             dispatch(resetGetStaff())
         }
     }, [getStaffSuccess, getStaffFailure]);
+
+    useEffect(() => {
+        if (getStaffDetailsSuccess) {
+            setIsLoading(false)
+            setMultiStateValue([getStaffDetailsList])
+            setWizardModel(true)
+            dispatch(resetGetDetailsStaff())
+        } else if (getStaffDetailsFailure) {
+            setIsLoading(false)
+            setMultiStateValue([])
+            dispatch(resetGetDetailsStaff())
+        }
+    }, [getStaffDetailsSuccess, getStaffDetailsFailure]);
 
     useEffect(() => {
         if (getBranchSuccess) {
@@ -609,6 +641,20 @@ function Index() {
             showMessage('success', 'Created Successfully');
             closeModel()
             dispatch(resetCreateStaff())
+
+            const formData = new FormData();
+            state.proofImage.map((ele) => {
+                const originalFile = ele[0];
+                const renamedFile = new File([originalFile], `${createStaffData[0].staffCode}-${originalFile.name}`, {
+                    type: originalFile.type,
+                    lastModified: originalFile.lastModified,
+                });
+                formData.append("proofImages", renamedFile);
+                // filterImageName.push([renamedFile]);
+            })
+            dispatch(createUploadImagesRequest(formData))
+
+
         } else if (createStaffFailure) {
             showMessage('warning', errorMessage);
             dispatch(resetCreateStaff())
@@ -623,6 +669,20 @@ function Index() {
             isEdit && showMessage('success', 'Updated Successfully');
             closeModel()
             dispatch(resetUpdateStaff())
+
+            if(uploadImages){
+                uploadImages = false;
+                const formData = new FormData();
+                state.proofImage.map((ele) => {
+                    const originalFile = ele[0];
+                    const renamedFile = new File([originalFile], `${updateStaffData[0].staffCode}-${originalFile.name}`, {
+                        type: originalFile.type,
+                        lastModified: originalFile.lastModified,
+                    });
+                    formData.append("proofImages", renamedFile);
+                })
+                dispatch(createUploadImagesRequest(formData))
+            }
         } else if (updateStaffFailure) {
             showMessage('warning', errorMessage);
             dispatch(resetUpdateStaff())
@@ -658,7 +718,7 @@ function Index() {
         const editReq = {
             staffId: data.staffId
         }
-        // dispatch(getStaffInfoRequest(editReq))
+        dispatch(getStaffDetailsRequest(editReq))
         setSelectedItem(data)
         setSelectedIndex(index)
     };
@@ -682,20 +742,25 @@ function Index() {
             proofImage: proofImage
         })
 
+        const keysToMove = ['departmentId', 'designationId', 'branchId', 'dateOfJoining', 'roleId'];
+
+        const extracted = _.pick(multiStateValue[0]?.jobRoleDetails, keysToMove);
+        const newSourceObj = _.omit(multiStateValue[0]?.jobRoleDetails, keysToMove);
+        const targetObj = { ...multiStateValue[0]?.personalInfo, ...extracted };
+
         const submitRequest = {
-            personalInfoData: multiStateValue[0]?.personalInfo || {},
-            jobRoleDetails: multiStateValue[0]?.jobRoleDetails || {},
+            personalInfoData: targetObj || {},
+            jobRoleDetails: newSourceObj || {},
             idProof: multiStateValue[0]?.idProof || [],
             staffDetails: multiStateValue[0]?.staffDetails || [],
             staffQualification: multiStateValue[0]?.staffQualification || [],
             language: multiStateValue[0]?.language || [],
             workExperience: multiStateValue[0]?.workExperience || [],
         }
-        console.log(JSON.stringify(submitRequest))
         if (isEdit) {
-            // dispatch(updateStaffRequest(submitRequest, selectedItem.staffId))
+            dispatch(updateStaffRequest(submitRequest, selectedItem.staffId))
         } else {
-            // dispatch(createStaffRequest(submitRequest))
+            dispatch(createStaffRequest(submitRequest))
         }
     };
 
@@ -718,7 +783,67 @@ function Index() {
         }));
     }
 
+    const onHandleUserCreditial = (e, formName) =>{
+        setState((prev) => ({
+            ...prev,
+            [formName]: e.target.checked,
+        }));
+
+        const updatedTabList = _.cloneDeep(tabList);
+        const changedArr = [
+            {
+                'label': 'User Name',
+                'name': 'userName',
+                'inputType': 'text',
+                'placeholder': "Enter User Name",
+                'classStyle': 'col-3',
+                 // require: true,
+            },
+            {
+                'label': 'Password',
+                'name': 'password',
+                'inputType': 'text',
+                'placeholder': "Enter Password",
+                'classStyle': 'col-3',
+                 // require: true,
+            },
+        ]
+        if (e.target.checked) {
+            updatedTabList[1].children[1].formFields = _.concat(
+                updatedTabList[1].children[1].formFields,
+                changedArr
+            );
+        } else {
+            updatedTabList[1].children[1].formFields = _.reject(
+                updatedTabList[1].children[1].formFields,
+                (field) => _.some(changedArr, { name: field.name })
+            );
+        }
+        setTabList(updatedTabList);
+    }
+
+    const onHandleSalary = (e) =>{
+        const esi = 0.0175
+        const pf = 0.12
+        const annualAmount = e.target.value
+        const monthlyAmount = parseInt(annualAmount / 12)
+        const esiAmount = parseInt(monthlyAmount * esi / 100)
+        const pfAmount = parseInt(monthlyAmount * pf / 100)
+        const monthlySalary = monthlyAmount - esiAmount - pfAmount
+        console.log(parseInt(monthlySalary))
+        setState({
+            ...state,
+            [e.target.name] : annualAmount,
+            monthlyAmount : monthlySalary,
+            esiAmount : esiAmount,
+            pfAmount : pfAmount,
+        })
+    }
+
     const handleEditTabTable = async (data, index) => {
+        data.read = JSON.parse(data.read)
+        data.write = JSON.parse(data.write)
+        data.speak = JSON.parse(data.speak)
         setIsEditArrVal(true);
         const updatedState = { ...data, selectedIdx: index };
         setState(updatedState);
@@ -726,11 +851,16 @@ function Index() {
     //handleDelete
     const handleDeleteTabTable = async (data, idx, selectedName) => {
         if (isEdit) {
-            if (selectedName === "addressInfo") {
-                // dispatch(deleteStaffAddressRequest(data.staffAddressInfoId))
-            } else if (selectedName === "idProof") {
-                // console.log(data)
-                // dispatch(deleteStaffProofRequest(data.staffProofId))
+            if (selectedName === "idProof") {
+                dispatch(deleteStaffProofRequest(data.staffProofId))
+            } else if (selectedName === "workExperience") {
+                dispatch(deleteStaffWorkExperienceRequest(data.workExperienceId))
+            } else if (selectedName === "language") {
+                dispatch(deleteStaffLanguageRequest(data.staffKnownLanguageId))
+            } else if (selectedName === "staffQualification") {
+                dispatch(deleteStaffQualificationRequest(data.staffQualificationId))
+            }else if (selectedName === "staffDetails") {
+                dispatch(deleteStaffRelationRequest(data.staffRelationDetailsId))
             }
         }
         let remainingData = _.remove(arrVal, function (item, index) {
@@ -781,7 +911,7 @@ function Index() {
                             isEdit={isEdit}
                             setTab={setTab}
                             tab={tab}
-                            onChangeCallBack={{ "onHandleProofType": onHandleProofType, "handleDateChange" : handleDateChange }}
+                            onChangeCallBack={{"onHandleSalary": onHandleSalary, "onHandleProofType": onHandleProofType, "handleDateChange" : handleDateChange, "onHandleUserCreditial": onHandleUserCreditial }}
                             state={state}
                             setState={setState}
                             multiStateValue={multiStateValue}

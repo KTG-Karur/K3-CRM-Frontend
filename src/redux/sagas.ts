@@ -19,12 +19,18 @@ import transferStaffSaga from './transfer-staff/saga';
 import deputationSaga from './deputation/saga';
 import staffAdvanceSaga from './staff-advance/saga';
 import holidaySaga from './holiday/saga';
+<<<<<<< HEAD
 import attendanceInchargeSaga from './attendance-incharge/saga';
 import permissionSaga from './permission/saga';
 import settingSaga from './setting/saga';
 import settingWorkingDaySaga from './setting-working-day/saga';
 import settingLeaveDeductionSaga from './setting-leave-deduction/saga';
 import settingBenefitSaga from './setting-benefit/saga';
+=======
+import staffProofSaga from './staff-proof/saga';
+import staffQualificationSaga from './staff-qualification/saga';
+import staffLeaveSaga from './staff-leave/saga';
+>>>>>>> 0b032fb35f93fa6bab27cc88b3cddd8666938b81
 
 export default function* rootSaga() {
     yield all([
@@ -53,5 +59,8 @@ export default function* rootSaga() {
         branchSaga(),
         proofTypeSaga(),
         holidaySaga(),
+        staffProofSaga(),
+        staffQualificationSaga(),
+        staffLeaveSaga(),
     ]);
 }

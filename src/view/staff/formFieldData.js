@@ -10,11 +10,11 @@ const staffTabs = [
                 formFields: [
                     {
                         label: 'Surname',
-                        name: 'surNameId',
+                        name: 'surnameId',
                         inputType: 'select',
-                        optionList: 'surNameList',
-                        displayKey: 'surName',
-                        uniqueKey: 'surNameId',
+                        optionList: 'surnameList',
+                        displayKey: 'surname',
+                        uniqueKey: 'surnameId',
                         // require: true,
                         classStyle: 'col-2'
                     },
@@ -157,7 +157,7 @@ const staffTabs = [
                         label: 'User Credential',
                         name: 'userCreditial',
                         inputType: 'checkbox',
-                        onChange : "onHandleProofType",
+                        onChange : "onHandleUserCreditial",
                         'classStyle': 'col-3'
                     },
                 ],
@@ -213,7 +213,8 @@ const staffTabs = [
                         'name': 'annualAmount',
                         'inputType': 'text',
                         'placeholder': "Enter Annual Package",
-                        'classStyle': 'col-3'
+                        'classStyle': 'col-3',
+                        'onChange' : 'onHandleSalary'
                     },
                     {
                         'label': 'Montly Salary(in-hand)',
@@ -221,7 +222,8 @@ const staffTabs = [
                         'inputType': 'text',
                         'isDisabled': true,
                         'placeholder': "Enter Monthly Salary",
-                        'classStyle': 'col-3'
+                        'classStyle': 'col-3',
+                        'isDisabled' : true
                     },
                 ],
             },
@@ -303,7 +305,7 @@ const staffTabs = [
                     },
                     {
                         label: 'Proof Id No.',
-                        name: 'proofNo',
+                        name: 'proofNumber',
                         inputType: 'text',
                         placeholder: 'Enter Proof Id No',
                         'classStyle': 'col-3'

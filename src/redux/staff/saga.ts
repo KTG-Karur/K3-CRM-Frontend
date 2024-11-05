@@ -1,12 +1,14 @@
 // saga.ts
 import { call, put, takeEvery } from 'redux-saga/effects';
-import { createStaff, getStaff, updateStaff } from '../../api/StaffApi'; // Adjust the path as needed
+import { createStaff, getStaff, getStaffDetails, updateStaff } from '../../api/StaffApi'; // Adjust the path as needed
 import {
   getStaffSuccess, getStaffFailure,
   createStaffSuccess,
   createStaffFailure,
   updateStaffSuccess,
   updateStaffFailure,
+  getStaffDetailsSuccess,
+  getStaffDetailsFailure,
 } from './actions';
 
 // Saga to handle fetching staffs
@@ -21,6 +23,21 @@ function* fetchStaffSaga(action: any): Generator<any, any, any> {
         ? error.message
         : 'An unexpected error occurred';
     yield put(getStaffFailure(errorMessage));
+  }
+}
+
+// Saga to handle fetching staffs
+function* fetchStaffDetailsSaga(action: any): Generator<any, any, any> {
+  try {
+    const data = yield call(getStaffDetails, action.payload);
+    yield put(getStaffDetailsSuccess(data));
+  } catch (error: any) {
+    const errorMessage = error.response && error.response.data && error.response.data.message
+      ? error.response.data.message
+      : error.message
+        ? error.message
+        : 'An unexpected error occurred';
+    yield put(getStaffDetailsFailure(errorMessage));
   }
 }
 
@@ -67,6 +84,7 @@ function* updateStaffSaga(action: any): Generator<any, any, any> {
 
 export default function* staffSaga() {
   yield takeEvery('GET_STAFF_REQUEST', fetchStaffSaga);
+  yield takeEvery('GET_STAFF_DETAILS_REQUEST', fetchStaffDetailsSaga);
   yield takeEvery('CREATE_STAFF_REQUEST', createStaffSaga);
   yield takeEvery('UPDATE_STAFF_REQUEST', updateStaffSaga);
   // yield takeEvery('DELETE_STAFF_REQUEST', deleteStaffSaga);

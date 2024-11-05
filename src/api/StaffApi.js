@@ -1,10 +1,27 @@
 import { apiReturnCallBack } from './ApiConfig';
 import apiContainer from './apiContainer';
 const staff = apiContainer.staff
+const staffDetails = apiContainer.staffDetails
+
 //GET--->
 export async function getStaff(request) {
   try {
     const response = await apiReturnCallBack("GET", staff, request);
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || JSON.stringify(data));
+    }
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+//GET--->
+export async function getStaffDetails(request) {
+  try {
+    const response = await apiReturnCallBack("GET", staffDetails, request);
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.message || JSON.stringify(data));
@@ -29,6 +46,7 @@ export async function createStaff(request) {
     throw error;
   }
 }
+
 //UPDATE---->
 export async function updateStaff(request, staffId) {
   try {
@@ -39,10 +57,10 @@ export async function updateStaff(request, staffId) {
     }
     return data;
   } catch (error) {
-    console.error(error);
     throw error;
   }
 }
+
 //DELETE---->
 // export async function deleteStaff(staffId) {
 //   try {

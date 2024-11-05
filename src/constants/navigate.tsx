@@ -38,6 +38,12 @@ const Navigate: NavigateTypes[] = [
         icon: 'mdi mdi-account-check',
         url: '/claim',
     },
+    {
+        label: 'Staff Leave',
+        isTitle: false,
+        icon: 'mdi mdi-account-check',
+        url: '/staff-leave',
+    },
     { label: 'Allowance', isTitle: true },
     {
         label: 'Visit Entry',
