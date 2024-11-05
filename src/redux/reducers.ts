@@ -19,18 +19,15 @@ import transferStaffReducer from './transfer-staff/reducers';
 import deputationReducer from './deputation/reducers';
 import staffAdvanceReducer from './staff-advance/reducers';
 import holidayReducer from './holiday/reducers';
-<<<<<<< HEAD
 import attendanceInchargeReducer from './attendance-incharge/reducers';
 import permissionReducer from './permission/reducers';
 import settingReducer from './setting/reducers';
 import settingWorkingDayReducer from './setting-working-day/reducers';
 import settingLeaveDeductionReducer from './setting-leave-deduction/reducers';
 import settingBenefitReducer from './setting-benefit/reducers';
-=======
 import staffProofReducer from './staff-proof/reducers';
 import staffQualificationReducer from './staff-qualification/reducers';
 import staffLeaveReducer from './staff-leave/reducers';
->>>>>>> 0b032fb35f93fa6bab27cc88b3cddd8666938b81
 
 export default combineReducers({
     Auth,
