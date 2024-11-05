@@ -163,7 +163,7 @@ function FormComponent(props) {
                                     onFocus={form?.require ? () => removeHanldeErrors(form?.name) : null}
                                     onChange={(e) => {
                                         form.onChange ? onChangeCallBack[form.onChange](e) :
-                                        handleChange(e, 'text', form?.name);
+                                            handleChange(e, 'text', form?.name);
                                     }}
                                 />
                                 {errors?.includes(form?.name) && (
@@ -228,8 +228,8 @@ function FormComponent(props) {
                                         const value = e.target.value;
                                         // Check if the value exceeds the maxlength
                                         if (!form?.maxlength || value.length <= form?.maxlength) {
-                                            form.onChange ? onChangeCallBack[form.onChange](e, form?.name) : 
-                                            handleChange(e, 'number', form?.name);
+                                            form.onChange ? onChangeCallBack[form.onChange](e, form?.name) :
+                                                handleChange(e, 'number', form?.name);
                                         }
                                     }}
                                 />
@@ -266,14 +266,14 @@ function FormComponent(props) {
                                     onFocus={form?.require ? () => removeHanldeErrors(form?.name) : null}
                                     onChange={(e) => {
                                         form.onChange ? onChangeCallBack[form.onChange](e, form?.name) :
-                                        handleChange(e, 'date', form?.name);
+                                            handleChange(e, 'date', form?.name);
                                     }}
                                     /* onChange={(option) => {
                                         form.onChange ? onChangeCallBack[form.onChange](option, form?.name, form.uniqueKey, form.displayKey) :
                                             handleChange(option, 'select', form?.name, form.uniqueKey, form?.isMultiple || false);
                                     }} */
                                     // min={new Date().toISOString().split("T")[0]}
-                                    min={form.minmumDate ? state[form.minmumDate] : "" }
+                                    min={form.minmumDate ? state[form.minmumDate] : ""}
                                     max={form.maximumDate ? state[form.maximumDate] : ""}
                                 />
                                 {errors?.includes(form?.name) && (
@@ -309,7 +309,7 @@ function FormComponent(props) {
                                     </span>
                                 </Form.Label>
                                 <Select
-                                    isMulti={true} 
+                                    isMulti={true}
                                     required={form?.require || false}
                                     disabled={form?.isDisabled || false}
                                     onChange={(option) => {
@@ -322,10 +322,10 @@ function FormComponent(props) {
                                         form.uniqueKey ? option[form.uniqueKey] : option
                                     }
                                     value={findMultiSelectObj(
-                                            optionListState[form?.optionList] || [], 
-                                            form.uniqueKey, 
-                                            state[form.name]
-                                        )
+                                        optionListState[form?.optionList] || [],
+                                        form.uniqueKey,
+                                        state[form.name]
+                                    )
                                     }
                                     className="react-select react-select-container"
                                     classNamePrefix="react-select"
@@ -340,7 +340,7 @@ function FormComponent(props) {
                                 )}
                             </div>
                         );
-                        
+
                     case 'select':
                         return (
                             <div className={`${form?.classStyle || ""} mb-2`} key={index}>
@@ -418,14 +418,19 @@ function FormComponent(props) {
                                                             key={i}
                                                             label={form.displayKey ? item[form?.displayKey] || form?.label : ""}
                                                             value={state[form?.name]}
-                                                            checked={state[form?.name] === item[form?.uniqueKey]}
+                                                            checked={
+                                                                Array.isArray(state[form?.name]) ? 
+                                                                state[form?.name]?.includes(item[form?.uniqueKey]) : 
+                                                                state[form?.name] === item[form?.uniqueKey]}
+                                                            // checked={state[form?.name] === item[form?.uniqueKey]}
                                                             type="checkbox"
                                                             id={`basic-checkbox-${i}`}
                                                             name={form?.name}
                                                             className={'mb-2 form-check-Primary'}
                                                             defaultChecked={i == 0}
                                                             onChange={(e) => {
-                                                                handleChange(item[form?.uniqueKey], 'checkbox', form?.name);
+                                                                form.onChange ? onChangeCallBack[form.onChange](item[form?.uniqueKey], form.name) :
+                                                                    handleChange(item[form?.uniqueKey], 'checkbox', form?.name);
                                                             }}
                                                         /></Col>
                                                 );
@@ -565,7 +570,7 @@ function FormComponent(props) {
                                         </span>
                                     </Form.Label>
                                     <Form.Control
-                                        type="time" 
+                                        type="time"
                                         name={form?.name}
                                         className="mb-2"
                                         key={index}
@@ -575,7 +580,7 @@ function FormComponent(props) {
                                         disabled={form?.isDisabled}
                                         onFocus={form?.require ? () => removeHanldeErrors(form?.name) : null}
                                         onChange={(e) => {
-                                            handleChange(e, 'time', form?.name); 
+                                            handleChange(e, 'time', form?.name);
                                         }}
                                     />
                                     {errors?.includes(form?.name) && (
@@ -701,45 +706,6 @@ function FormComponent(props) {
                     //             </div>
                     //         )
                     //     );
-                    case 'checkbox':
-                        return (
-                            (
-                                <div className={`${form?.classStyle || ''} mb-2`} key={index}>
-                                    <p className="mb-1 fw-bold text-muted">
-                                        {' '}
-                                        {
-                                            <span>
-                                                {form?.label}{' '}
-                                                {form?.require ? (
-                                                    <span style={{ fontWeight: 'bold', color: 'red' }}>*</span>
-                                                ) : null}
-                                            </span>
-                                        }
-                                    </p>
-                                    {[
-                                        { label: 'a', value: 'a' },
-                                        { label: 'b', value: 'b' },
-                                        { label: 'c', value: 'c' },
-                                    ].map((item, i) => {
-                                        return (
-                                            <Form.Check
-                                                key={i}
-                                                label={form?.label}
-                                                value={state[form?.name]}
-                                                type="checkbox"
-                                                id={`basic-checkbox-${i}`}
-                                                name={form?.name}
-                                                className={'mb-2 form-check-Primary'}
-                                                defaultChecked={form?.defaultChecked}
-                                                onChange={(e) => {
-                                                    handleChange(item, 'checkbox', form?.name);
-                                                }}
-                                            />
-                                        );
-                                    })}
-                                </div>
-                            )
-                        );
                     case 'radio':
                         return (
                             (

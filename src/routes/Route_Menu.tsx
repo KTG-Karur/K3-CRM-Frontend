@@ -21,12 +21,18 @@ export const Holiday = React.lazy(() => import('../view/holiday'));
 
 // master
 export const Department = React.lazy(() => import('../view/department'));
+export const Permission = React.lazy(() => import('../view/permission'));
+export const Setting = React.lazy(() => import('../view/setting'));
+export const SettingWorkingDay = React.lazy(() => import('../view/setting-working-day'));
 export const Designation = React.lazy(() => import('../view/designation'));
 export const BankAccount = React.lazy(() => import('../view/bank-account'));
 export const Role = React.lazy(() => import('../view/role'));
 export const LoanReportDashboard = React.lazy(() => import('../view/dashboard'));
 export const Staff = React.lazy(() => import('../view/staff'));
 export const TransferStaff = React.lazy(() => import('../view/transfer-staff'));
+export const SettingLeaveDeduction = React.lazy(() => import('../view/setting-leave-deduction'));
+export const SettingBenefit = React.lazy(() => import('../view/setting-benefit'));
+export const AttendanceIncharge = React.lazy(() => import('../view/attendance-incharge'));
 export const StaffAdvance = React.lazy(() => import('../view/staff-advance'));
 export const Deputation = React.lazy(() => import('../view/deputation'));
 

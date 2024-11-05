@@ -19,12 +19,20 @@ import transferStaffSaga from './transfer-staff/saga';
 import deputationSaga from './deputation/saga';
 import staffAdvanceSaga from './staff-advance/saga';
 import holidaySaga from './holiday/saga';
+import attendanceInchargeSaga from './attendance-incharge/saga';
+import permissionSaga from './permission/saga';
+import settingSaga from './setting/saga';
+import settingWorkingDaySaga from './setting-working-day/saga';
+import settingLeaveDeductionSaga from './setting-leave-deduction/saga';
+import settingBenefitSaga from './setting-benefit/saga';
 
 export default function* rootSaga() {
     yield all([
         authSaga(),
         layoutSaga(),
         departmentSaga(),
+        permissionSaga(),
+        settingSaga(),
         designationSaga(),
         staffSaga(),
         bankAccountSaga(),
@@ -33,6 +41,10 @@ export default function* rootSaga() {
         uploadImagesSaga(),
         petrolAllowanceSaga(),
         transferStaffSaga(),
+        settingWorkingDaySaga(),
+        settingLeaveDeductionSaga(),
+        settingBenefitSaga(),
+        attendanceInchargeSaga(),
         staffAdvanceSaga(),
         deputationSaga(),
         activitySaga(),

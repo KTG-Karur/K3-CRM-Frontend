@@ -19,12 +19,20 @@ import transferStaffReducer from './transfer-staff/reducers';
 import deputationReducer from './deputation/reducers';
 import staffAdvanceReducer from './staff-advance/reducers';
 import holidayReducer from './holiday/reducers';
+import attendanceInchargeReducer from './attendance-incharge/reducers';
+import permissionReducer from './permission/reducers';
+import settingReducer from './setting/reducers';
+import settingWorkingDayReducer from './setting-working-day/reducers';
+import settingLeaveDeductionReducer from './setting-leave-deduction/reducers';
+import settingBenefitReducer from './setting-benefit/reducers';
 
 export default combineReducers({
     Auth,
     Layout,
     PageTitle,
     departmentReducer,
+    permissionReducer,
+    settingReducer,
     designationReducer,
     staffReducer,
     roleReducer,
@@ -32,6 +40,10 @@ export default combineReducers({
     uploadImagesReducer,
     petrolAllowanceReducer,
     transferStaffReducer,
+    settingWorkingDayReducer,
+    settingLeaveDeductionReducer,
+    settingBenefitReducer,
+    attendanceInchargeReducer,
     staffAdvanceReducer,
     deputationReducer,
     activityReducer,

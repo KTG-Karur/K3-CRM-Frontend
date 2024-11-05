@@ -1,5 +1,7 @@
 const apiContainer = {
   department: "/department",
+  permission: "/permission",
+  setting: "/setting",
   designation: "/designation",
   bankAccount: "/bank-account",
   employeeLogin: "/organization-login",
@@ -12,6 +14,10 @@ const apiContainer = {
   branch: "/branch",
   proofType: "/proof-type",
   transferStaff: "/transfer-staff",
+  settingWorkingDay: "/setting-working-day",  
+  settingLeaveDeduction: "/setting-leave-deduction",
+  settingBenefit: "/setting-benefit",
+  attendanceIncharge: "/attendance-incharge",
   staffAdvance: "/staff-advance",
   deputation: "/deputation",
   holiday: "/holiday",

@@ -100,8 +100,14 @@ import {
     ClaimTemplate,
     ProofType,
     TransferStaff,
+    SettingLeaveDeduction,
     Deputation,
     StaffAdvance,
+    AttendanceIncharge,
+    Permission,
+    Setting,
+    SettingWorkingDay,
+    SettingBenefit,
 } from './Route_Menu';
 
 
@@ -238,6 +244,31 @@ const AllRoutes = () => {
                         {
                             path: 'transfer-staff',
                             element: <LoadComponent component={TransferStaff} />,
+                        },
+                        {
+                            path: 'setting-leave-deduction',
+                            element: <LoadComponent component={SettingLeaveDeduction} />,
+                        },
+                        
+                        {
+                            path: 'permission',
+                            element: <LoadComponent component={Permission} />,
+                        },
+                        {
+                            path: 'setting',
+                            element: <LoadComponent component={Setting} />,
+                        },
+                        {
+                            path: 'setting-working-day',
+                            element: <LoadComponent component={SettingWorkingDay} />,
+                        },
+                        {
+                            path: 'setting-benefit',
+                            element: <LoadComponent component={SettingBenefit} />,
+                        },
+                        {
+                            path: 'attendance-incharge',
+                            element: <LoadComponent component={AttendanceIncharge} />,
                         },
                         {
                             path: 'staff-advance',

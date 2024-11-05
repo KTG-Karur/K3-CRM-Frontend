@@ -91,6 +91,16 @@ const Navigate: NavigateTypes[] = [
                 parentKey: 'Master',
             },
             {
+                label: 'Permission',
+                url: '/view/permission',
+                parentKey: 'Master',
+            },
+            {
+                label: 'Attendance Incharge',
+                url: '/view/attendance-incharge',
+                parentKey: 'Master',
+            },
+            {
                 label: 'Staff Advance',
                 url: '/view/staff-advance',
                 parentKey: 'Master',
@@ -130,6 +140,30 @@ const Navigate: NavigateTypes[] = [
                 url: '/view/proof-type',
                 parentKey: 'Master',
             },
+        ],
+    },
+    {
+        label: 'Setting',
+        isTitle: false,
+        icon: 'mdi mdi-chart-donut-variant',
+        children: [
+            
+            {
+                label: 'Working Day',
+                url: '/view/setting-working-day',
+                parentKey: 'Setting',
+            },
+            {
+                label: 'Leave Deduction',
+                url: '/view/setting-leave-deduction',
+                parentKey: 'Setting',
+            },
+            {
+                label: 'Benefit',
+                url: '/view/setting-benefit',
+                parentKey: 'Setting',
+            },
+            
         ],
     },
 
