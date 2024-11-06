@@ -5,7 +5,7 @@ import FormLayout from '../../utils/formLayout';
 import { deputationContainer } from './formFieldData';
 import Table from '../../components/Table';
 import { dateConversion, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
-import { createDeputationRequest, getDeputationRequest, resetCreateDeputation, resetGetDeputation, resetUpdateDeputation, updateDeputationRequest } from '../../redux/actions';
+import { createDeputationRequest, getDeputationRequest, resetCreateDeputation, resetGetDeputation, resetUpdateDeputation, resetGetBranch, updateDeputationRequest, getBranchRequest } from '../../redux/actions';
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 import _ from 'lodash';
@@ -19,12 +19,16 @@ function Index() {
     const { getDeputationSuccess, getDeputationList, getDeputationFailure,
         createDeputationSuccess, createDeputationData, createDeputationFailure,
         updateDeputationSuccess, updateDeputationData, updateDeputationFailure,
-        errorMessage,
+        errorMessage, getBranchFailure, getBranchList, getBranchSuccess
 
     } = appSelector((state) => ({
         getDeputationSuccess: state.deputationReducer.getDeputationSuccess,
         getDeputationList: state.deputationReducer.getDeputationList,
         getDeputationFailure: state.deputationReducer.getDeputationFailure,
+
+        getBranchSuccess: state.branchReducer.getBranchSuccess,
+        getBranchList: state.branchReducer.getBranchList,
+        getBranchFailure: state.branchReducer.getBranchFailure,
 
         createDeputationSuccess: state.deputationReducer.createDeputationSuccess,
         createDeputationData: state.deputationReducer.createDeputationData,
@@ -61,12 +65,12 @@ function Index() {
         },
         {
             Header: 'From',
-            accessor: 'fromPlace',
+            accessor: 'fromPlaceName',
             sort: true,
         },
         {
             Header: 'To',
-            accessor: 'toPlace',
+            accessor: 'toPlaceName',
             sort: true,
         },
        
@@ -97,6 +101,7 @@ function Index() {
             { staffId: 2, staffName: 'Ragul' },
             { staffId: 3, staffName: 'Mohan' },
         ],
+        branchList: [],
     })
     const [selectedItem, setSelectedItem] = useState({});
     const [selectedIndex, setSelectedIndex] = useState(false);
@@ -108,7 +113,8 @@ function Index() {
 
     useEffect(() => {
         setIsLoading(true)        
-        dispatch(getDeputationRequest());        
+        dispatch(getDeputationRequest());  
+        dispatch(getBranchRequest());      
     }, []);
 
     useEffect(() => {
@@ -122,6 +128,25 @@ function Index() {
             dispatch(resetGetDeputation())
         }
     }, [getDeputationSuccess, getDeputationFailure]);
+
+    useEffect(() => {
+        if (getBranchSuccess) {
+            setIsLoading(false)
+            console.log(getBranchList)
+            setOptionListState({
+                ...optionListState,
+                branchList: getBranchList
+            })
+            dispatch(resetGetBranch())
+        } else if (getBranchFailure) {
+            setIsLoading(false)
+            setOptionListState({
+                ...optionListState,
+                branchList: []
+            })
+            dispatch(resetGetBranch())
+        }
+    }, [getBranchSuccess, getBranchFailure]);
 
     useEffect(() => {
         if (createDeputationSuccess) {

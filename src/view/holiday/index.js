@@ -4,7 +4,7 @@ import ModelViewBox from '../../components/Atom/ModelViewBox';
 import FormLayout from '../../utils/formLayout';
 import { holidayContainer } from './formFieldData';
 import Table from '../../components/Table';
-import { showConfirmationDialog, showMessage } from '../../utils/AllFunction';
+import { dateConversion, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
 import { createHolidayRequest, getHolidayRequest, resetCreateHoliday, resetGetHoliday, resetUpdateHoliday, updateHolidayRequest } from '../../redux/actions';
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
@@ -43,13 +43,19 @@ function Index() {
             Cell: (row) => <div>{row?.row?.index + 1}</div>,
         },
         {
-            Header: 'Department Name',
-            accessor: 'departmentName',
-            sort: true,
-        },
+            Header: 'Date',
+            accessor: 'holidayDate',
+            Cell: ({ row }) => {
+                return (
+                    <div>
+                       {dateConversion(row.original.holidayDate, "DD-MM-YYYY") }
+                    </div>
+                )
+            },
+        },        
         {
             Header: 'Holiday Name',
-            accessor: 'holidayName',
+            accessor: 'reason',
             sort: true,
         },
         
@@ -160,7 +166,8 @@ function Index() {
     const onFormClear = () => {
         setState({
             ...state,
-            holidayName: '',
+            holidayDate: '',
+            reason: '',
         });
     };
 
@@ -173,7 +180,8 @@ function Index() {
     const onEditForm = (data, index) => {
         setState({
             ...state,
-            holidayName: data?.holidayName || "",
+            reason: data?.reason || "",
+            holidayDate: data.holidayDate ? dateConversion(data.holidayDate, "YYYY-MM-DD") : ""
         });
         isEdit = true;
         setSelectedItem(data)
@@ -187,7 +195,8 @@ function Index() {
 
     const onFormSubmit = async () => {
         const submitRequest = {
-            holidayName: state?.holidayName || ""
+            holidayDate: state.holidayDate ? dateConversion(state.holidayDate, "YYYY-MM-DD") : "",
+            reason: state?.reason || ""
         }
         if (isEdit) {
             dispatch(updateHolidayRequest(submitRequest, selectedItem.holidayId))

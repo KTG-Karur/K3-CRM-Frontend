@@ -5,7 +5,7 @@ import FormLayout from '../../utils/formLayout';
 import { designationContainer } from './formFieldData';
 import Table from '../../components/Table';
 import { showConfirmationDialog, showMessage } from '../../utils/AllFunction';
-import { createDesignationRequest, getDesignationRequest, resetCreateDesignation, resetGetDesignation, resetUpdateDesignation, updateDesignationRequest } from '../../redux/actions';
+import { createDesignationRequest, getDesignationRequest,resetGetDepartment, getDepartmentRequest, resetCreateDesignation, resetGetDesignation, resetUpdateDesignation, updateDesignationRequest } from '../../redux/actions';
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 
@@ -15,15 +15,17 @@ function Index() {
 
     const { dispatch, appSelector } = useRedux();
 
-    const { getDesignationSuccess, getDesignationList, getDesignationFailure,
-        createDesignationSuccess, createDesignationData, createDesignationFailure,
-        updateDesignationSuccess, updateDesignationData, updateDesignationFailure,
+    const { getDepartmentSuccess, getDepartmentList, getDepartmentFailure,getDesignationSuccess, getDesignationList, getDesignationFailure, createDesignationSuccess, createDesignationData, createDesignationFailure, updateDesignationSuccess, updateDesignationData, updateDesignationFailure,
         errorMessage,
 
     } = appSelector((state) => ({
         getDesignationSuccess: state.designationReducer.getDesignationSuccess,
         getDesignationList: state.designationReducer.getDesignationList,
         getDesignationFailure: state.designationReducer.getDesignationFailure,
+
+        getDepartmentSuccess: state.departmentReducer.getDepartmentSuccess,
+        getDepartmentList: state.departmentReducer.getDepartmentList,
+        getDepartmentFailure: state.departmentReducer.getDepartmentFailure,        
 
         createDesignationSuccess: state.designationReducer.createDesignationSuccess,
         createDesignationData: state.designationReducer.createDesignationData,
@@ -104,12 +106,17 @@ function Index() {
     const [modal, setModal] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState([]);
+    const [optionListState, setOptionListState] = useState({
+        
+        departmentList: [],
+    })
 
     const errorHandle = useRef();
 
     useEffect(() => {
         setIsLoading(true)
         dispatch(getDesignationRequest());
+        dispatch(getDepartmentRequest());
     }, []);
 
     useEffect(() => {
@@ -123,6 +130,25 @@ function Index() {
             dispatch(resetGetDesignation())
         }
     }, [getDesignationSuccess, getDesignationFailure]);
+
+    useEffect(() => {
+        if (getDepartmentSuccess) {
+            setIsLoading(false)
+            // console.log(getDepartmentList)
+            setOptionListState({
+                ...optionListState,
+                departmentList: getDepartmentList
+            })
+            dispatch(resetGetDepartment())
+        } else if (getDepartmentFailure) {
+            setIsLoading(false)
+            setOptionListState({
+                ...optionListState,
+                departmentList: []
+            })
+            dispatch(resetGetDepartment())
+        }
+    }, [getDepartmentSuccess, getDepartmentFailure]);
 
     useEffect(() => {
         if (createDesignationSuccess) {
@@ -161,6 +187,7 @@ function Index() {
         setState({
             ...state,
             designationName: '',
+            departmentId: '',
         });
     };
 
@@ -174,6 +201,7 @@ function Index() {
         setState({
             ...state,
             designationName: data?.designationName || "",
+            departmentId: data?.departmentId || "",
         });
         isEdit = true;
         setSelectedItem(data)
@@ -187,7 +215,8 @@ function Index() {
 
     const onFormSubmit = async () => {
         const submitRequest = {
-            designationName: state?.designationName || ""
+            designationName: state?.designationName || "",
+            departmentId: state?.departmentId || ""
         }
         if (isEdit) {
             dispatch(updateDesignationRequest(submitRequest, selectedItem.designationId))
@@ -230,6 +259,7 @@ function Index() {
                 <FormLayout
                     dynamicForm={designationContainer}
                     handleSubmit={onFormSubmit}
+                    optionListState={optionListState}
                     setState={setState}
                     state={state}
                     ref={errorHandle}

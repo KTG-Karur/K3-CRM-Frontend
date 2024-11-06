@@ -18,23 +18,29 @@ const transferStaffContainer = [
                 uniqueKey: 'staffId',
                 require: true,
                 'classStyle' : 'col-6'
-            },            
-            {
-                'label': "From Place",
-                'name': "transferFrom",
-                'inputType': "textarea",
-                'placeholder': "Enter From Place",
-                'require': true,
-                'classStyle' : 'col-6'
             },
             {
-                'label': "To Place",
-                'name': "transferTo",
-                'inputType': "textarea",
-                'placeholder': "Enter To Place",
-                'require': true,
+                label: 'From Place',
+                name: 'transferFrom',
+                inputType: 'select',
+                optionList: 'branchList',
+                displayKey: 'branchName',
+                uniqueKey: 'branchId',
+                require: true,
                 'classStyle' : 'col-6'
-            },
+            },  
+            
+            {
+                label: 'To Place',
+                name: 'transferTo',
+                inputType: 'select',
+                optionList: 'branchList',
+                displayKey: 'branchName',
+                uniqueKey: 'branchId',
+                require: true,
+                'classStyle' : 'col-6'
+            },  
+
         ]
     },
 ]

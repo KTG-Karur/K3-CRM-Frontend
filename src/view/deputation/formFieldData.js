@@ -32,23 +32,27 @@ const deputationContainer = [
                 'inputType': "date",
                 'require': true,
                 'classStyle' : 'col-6'
-            },          
-            {
-                'label': "From Place",
-                'name': "fromPlace",
-                'inputType': "textarea",
-                'placeholder': "Enter From Place",
-                'require': true,
-                'classStyle' : 'col-6'
             },
             {
-                'label': "To Place",
-                'name': "toPlace",
-                'inputType': "textarea",
-                'placeholder': "Enter To Place",
-                'require': true,
+                label: 'From Place',
+                name: 'fromPlace',
+                inputType: 'select',
+                optionList: 'branchList',
+                displayKey: 'branchName',
+                uniqueKey: 'branchId',
+                require: true,
                 'classStyle' : 'col-6'
-            },
+            },            
+            {
+                label: 'To Place',
+                name: 'toPlace',
+                inputType: 'select',
+                optionList: 'branchList',
+                displayKey: 'branchName',
+                uniqueKey: 'branchId',
+                require: true,
+                'classStyle' : 'col-6'
+            },            
             {
                 'label': "Reason",
                 'name': "reason",

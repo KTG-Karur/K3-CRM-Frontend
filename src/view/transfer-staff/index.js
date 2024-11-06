@@ -5,12 +5,12 @@ import FormLayout from '../../utils/formLayout';
 import { transferStaffContainer } from './formFieldData';
 import Table from '../../components/Table';
 import { dateConversion, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
-import { createTransferStaffRequest, getActivityRequest, getTransferStaffRequest, resetCreateTransferStaff, resetGetActivity, resetGetTransferStaff, resetUpdateTransferStaff, updateTransferStaffRequest } from '../../redux/actions';
+import { createTransferStaffRequest, getActivityRequest, getBranchRequest, getTransferStaffRequest, resetCreateTransferStaff, resetGetActivity, resetGetBranch, resetGetTransferStaff, resetUpdateTransferStaff, updateTransferStaffRequest } from '../../redux/actions';
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 import _ from 'lodash';
 
-let isEdit = false; 
+let isEdit = false;
 
 function Index() {
 
@@ -20,12 +20,16 @@ function Index() {
         getActivitySuccess, getActivityList, getActivityFailure,
         createTransferStaffSuccess, createTransferStaffData, createTransferStaffFailure,
         updateTransferStaffSuccess, updateTransferStaffData, updateTransferStaffFailure,
-        errorMessage,
+        errorMessage, getBranchFailure, getBranchList, getBranchSuccess
 
     } = appSelector((state) => ({
         getTransferStaffSuccess: state.transferStaffReducer.getTransferStaffSuccess,
         getTransferStaffList: state.transferStaffReducer.getTransferStaffList,
         getTransferStaffFailure: state.transferStaffReducer.getTransferStaffFailure,
+
+        getBranchSuccess: state.branchReducer.getBranchSuccess,
+        getBranchList: state.branchReducer.getBranchList,
+        getBranchFailure: state.branchReducer.getBranchFailure,
 
         getActivitySuccess: state.activityReducer.getActivitySuccess,
         getActivityList: state.activityReducer.getActivityList,
@@ -54,7 +58,7 @@ function Index() {
             Cell: ({ row }) => {
                 return (
                     <div>
-                       {dateConversion(row.original.transferDate, "DD-MM-YYYY") }
+                        {dateConversion(row.original.transferDate, "DD-MM-YYYY")}
                     </div>
                 )
             },
@@ -66,15 +70,15 @@ function Index() {
         },
         {
             Header: 'From',
-            accessor: 'transferFrom',
+            accessor: 'transferFromName',
             sort: true,
         },
         {
             Header: 'To',
-            accessor: 'transferTo',
+            accessor: 'transferToName',
             sort: true,
         },
-       
+
         {
             Header: 'Actions',
             accessor: 'actions',
@@ -87,7 +91,7 @@ function Index() {
                         <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index)}>
                             <i className={'fe-edit-1'}></i>
                         </span>
-                        
+
                     </div>
                 )
             },
@@ -102,6 +106,7 @@ function Index() {
             { staffId: 2, staffName: 'Ragul' },
             { staffId: 3, staffName: 'Mohan' },
         ],
+        branchList: [],
     })
     const [selectedItem, setSelectedItem] = useState({});
     const [selectedIndex, setSelectedIndex] = useState(false);
@@ -112,8 +117,9 @@ function Index() {
     const errorHandle = useRef();
 
     useEffect(() => {
-        setIsLoading(true)        
-        dispatch(getTransferStaffRequest());        
+        setIsLoading(true)
+        dispatch(getTransferStaffRequest());
+        dispatch(getBranchRequest());
     }, []);
 
     useEffect(() => {
@@ -127,6 +133,25 @@ function Index() {
             dispatch(resetGetTransferStaff())
         }
     }, [getTransferStaffSuccess, getTransferStaffFailure]);
+
+    useEffect(() => {
+        if (getBranchSuccess) {
+            setIsLoading(false)
+            // console.log(getBranchList)
+            setOptionListState({
+                ...optionListState,
+                branchList: getBranchList
+            })
+            dispatch(resetGetBranch())
+        } else if (getBranchFailure) {
+            setIsLoading(false)
+            setOptionListState({
+                ...optionListState,
+                branchList: []
+            })
+            dispatch(resetGetBranch())
+        }
+    }, [getBranchSuccess, getBranchFailure]);
 
     useEffect(() => {
         if (createTransferStaffSuccess) {
@@ -177,7 +202,7 @@ function Index() {
         setModal(true)
     };
 
-    const onEditForm = (data, index) => {
+    const onEditForm = (data, index) => {        
         setState({
             ...state,
             staffId: data?.staffId || "",
@@ -210,22 +235,22 @@ function Index() {
         }
     };
 
-    
+
     return (
         <React.Fragment>
             <NotificationContainer />
-           { isLoading ? <div className='bg-light opacity-0.25'>
-            <div className="d-flex justify-content-center m-5">
-                <Spinner className='mt-5 mb-5' animation="border" />
-            </div>
+            {isLoading ? <div className='bg-light opacity-0.25'>
+                <div className="d-flex justify-content-center m-5">
+                    <Spinner className='mt-5 mb-5' animation="border" />
+                </div>
             </div> :
-            <Table
-                columns={columns}
-                Title={'Transfer Order List'}
-                data={parentList || []}
-                pageSize={25}
-                toggle={createModel}
-            />}
+                <Table
+                    columns={columns}
+                    Title={'Transfer Order List'}
+                    data={parentList || []}
+                    pageSize={25}
+                    toggle={createModel}
+                />}
 
             <ModelViewBox
                 modal={modal}
