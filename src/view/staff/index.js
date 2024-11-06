@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Badge, Spinner } from 'react-bootstrap';
 import ModelViewBox from '../../components/Atom/ModelViewBox';
 import FormLayout from '../../utils/formLayout';
-import { staffTabs } from './formFieldData';
+import { staffTabs, modalFields } from './formFieldData';
 import Table from '../../components/Table';
 import { WizardWithProgressbar } from '../../components/Atom/WizardViewBox';
 import { showConfirmationDialog, showMessage } from '../../utils/AllFunction';
@@ -11,7 +11,7 @@ import { NotificationContainer } from 'react-notifications';
 import _ from 'lodash';
 import { Form } from 'react-bootstrap';
 import Select from 'react-select';
-import { createStaffRequest, deleteStaffProofRequest, deleteStaffQualificationRequest, getBranchRequest, getDepartmentRequest, getDesignationRequest, getProofTypeRequest, getStaffDetailsRequest, getStaffRequest, resetCreateStaff, resetGetBranch, resetGetDepartment, resetGetDesignation, resetGetDetailsStaff, resetGetProofType, resetGetStaff, resetUpdateStaff, updateStaffRequest } from '../../redux/actions';
+import { createBranchRequest, createDepartmentRequest, createDesignationRequest, createStaffRequest, deleteStaffProofRequest, deleteStaffQualificationRequest, getBranchRequest, getDepartmentRequest, getDesignationRequest, getProofTypeRequest, getStaffDetailsRequest, getStaffRequest, resetCreateBranch, resetCreateDepartment, resetCreateDesignation, resetCreateStaff, resetGetBranch, resetGetDepartment, resetGetDesignation, resetGetDetailsStaff, resetGetProofType, resetGetStaff, resetUpdateStaff, updateStaffRequest } from '../../redux/actions';
 import moment from 'moment';
 import { deleteStaffWorkExperienceRequest } from '../../redux/staff-work-experience/actions';
 import { deleteStaffLanguageRequest } from '../../redux/staff-language/actions';
@@ -32,7 +32,9 @@ function Index() {
         getDepartmentSuccess, getDepartmentList, getDepartmentFailure,
         getProofTypeSuccess, getProofTypeList, getProofTypeFailure,
         createStaffSuccess, createStaffData, createStaffFailure,
-        updateStaffSuccess, updateStaffData, updateStaffFailure, errorMessage
+        updateStaffSuccess, updateStaffData, updateStaffFailure, errorMessage,
+        createBranchSuccess, createBranchData, createBranchFailure, createDepartmentSuccess,
+        createDepartmentData, createDepartmentFailure, createDesignationSuccess, createDesignationData, createDesignationFailure,
 
     } = appSelector((state) => ({
         getStaffSuccess: state.staffReducer.getStaffSuccess,
@@ -62,6 +64,18 @@ function Index() {
         createStaffSuccess: state.staffReducer.createStaffSuccess,
         createStaffData: state.staffReducer.createStaffData,
         createStaffFailure: state.staffReducer.createStaffFailure,
+
+        createBranchSuccess: state.branchReducer.createBranchSuccess,
+        createBranchData: state.branchReducer.createBranchData,
+        createBranchFailure: state.branchReducer.createBranchFailure,
+
+        createDepartmentSuccess: state.departmentReducer.createDepartmentSuccess,
+        createDepartmentData: state.departmentReducer.createDepartmentData,
+        createDepartmentFailure: state.departmentReducer.createDepartmentFailure,
+
+        createDesignationSuccess: state.designationReducer.createDesignationSuccess,
+        createDesignationData: state.designationReducer.createDesignationData,
+        createDesignationFailure: state.designationReducer.createDesignationFailure,
 
         updateStaffSuccess: state.staffReducer.updateStaffSuccess,
         updateStaffData: state.staffReducer.updateStaffData,
@@ -227,7 +241,6 @@ function Index() {
                 Header: 'Actions',
                 accessor: 'actions',
                 Cell: ({ row }) => {
-                    console.log(row.original)
                     return (
                         <div>
                             <span
@@ -325,7 +338,6 @@ function Index() {
                 Header: 'Actions',
                 accessor: 'actions',
                 Cell: ({ row }) => {
-                    console.log(row.original)
                     return (
                         <div>
                             <span
@@ -379,7 +391,6 @@ function Index() {
                 Header: 'Actions',
                 accessor: 'actions',
                 Cell: ({ row }) => {
-                    console.log(row.original)
                     return (
                         <div>
                             <span
@@ -503,6 +514,9 @@ function Index() {
             { casteTypeId: 24, casteTypeName: 'SC' },
             { casteTypeId: 25, casteTypeName: 'ST' },
         ],
+        branchList: [],
+        departmentList: [],
+        designationList: [],
     })
 
     const [wizardModel, setWizardModel] = useState(false);
@@ -514,12 +528,15 @@ function Index() {
     const showSelectmodel = ['branchId', 'departmentId', 'designationId', 'bankAccountId'];
     const [stored, setStored] = useState([{ id: 1 }, { id: 2 }]);
     const showMultiAdd = ['staffDetails', 'qualification', 'language', 'workExperience', 'idProof', 'workExperience', 'staffQualification'];
-    const [getModelForm, setModelForm] = useState({});
     const [isEdit, setIsEdit] = useState(false);
     const [tabList, setTabList] = useState(staffTabs);
 
     const [modal, setModal] = useState(false);
-    const [handleState, setHandleState] = useState({});
+    const [modelForm, setModelForm] = useState({});
+    const [modelState, setModelState] = useState({});
+    const [modelErrors, setModelErrors] = useState([]);
+    // const [handleState, setHandleState] = useState({});
+
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState([]);
 
@@ -670,7 +687,7 @@ function Index() {
             closeModel()
             dispatch(resetUpdateStaff())
 
-            if(uploadImages){
+            if (uploadImages) {
                 uploadImages = false;
                 const formData = new FormData();
                 state.proofImage.map((ele) => {
@@ -689,6 +706,84 @@ function Index() {
         }
     }, [updateStaffSuccess, updateStaffFailure]);
 
+    // Branch Model Data
+    useEffect(() => {
+        if (createBranchSuccess) {
+            const temp_state = [createBranchData[0], ...optionListState.branchList];
+            setOptionListState({
+                ...optionListState,
+                branchList: temp_state
+            })
+            showMessage('success', 'Created Successfully');
+            setModal(false)
+            dispatch(resetCreateBranch())
+        } else if (createBranchFailure) {
+            showMessage('warning', errorMessage);
+            dispatch(resetCreateBranch())
+        }
+    }, [createBranchSuccess, createBranchFailure]);
+
+    // Department Model Data
+    useEffect(() => {
+        if (createDepartmentSuccess) {
+            const temp_state = [createDepartmentData[0], ...optionListState.departmentList];
+            setOptionListState({
+                ...optionListState,
+                departmentList: temp_state
+            })
+            showMessage('success', 'Created Successfully');
+            setModal(false)
+            dispatch(resetCreateDepartment())
+        } else if (createDepartmentFailure) {
+            showMessage('warning', errorMessage);
+            dispatch(resetCreateDepartment())
+        }
+    }, [createDepartmentSuccess, createDepartmentFailure]);
+
+    // Designation Model Data
+    useEffect(() => {
+        if (createDesignationSuccess) {
+            const temp_state = [createDesignationData[0], ...optionListState.designationList];
+            setOptionListState({
+                ...optionListState,
+                designationList: temp_state
+            })
+            showMessage('success', 'Created Successfully');
+            setModal(false)
+            dispatch(resetCreateDesignation())
+        } else if (createDesignationFailure) {
+            showMessage('warning', errorMessage);
+            dispatch(resetCreateDesignation())
+        }
+    }, [createDesignationSuccess, createDesignationFailure]);
+
+    useEffect(() => {
+        if (isEdit && tab === "jobRoleDetails" && Number.isInteger(state?.userId) && (state?.userId !== null || state?.userId !== undefined)) {
+            const updatedTabList = _.cloneDeep(tabList);
+            const changedArr = [
+                {
+                    'label': 'User Name',
+                    'name': 'userName',
+                    'inputType': 'text',
+                    'placeholder': "Enter User Name",
+                    'classStyle': 'col-3',
+                },
+                {
+                    'label': 'Password',
+                    'name': 'password',
+                    'inputType': 'text',
+                    'placeholder': "Enter Password",
+                    'classStyle': 'col-3',
+                },
+            ]
+            updatedTabList[1].children[1].formFields = _.concat(
+                updatedTabList[1].children[1].formFields,
+                changedArr
+            );
+            setTabList(updatedTabList);
+        }
+    }, [tab, state.userId])
+
     const closeModel = () => {
         onFormClear()
         setWizardModel(false)
@@ -705,6 +800,12 @@ function Index() {
             ...state,
             maximumDOB: moment().format("YYYY-MM-DD")
         });
+        setErrors([]);
+    };
+
+    const onModelFormClear = () => {
+        setModelState({});
+        setModelErrors([]);
     };
 
     const createModel = () => {
@@ -718,6 +819,7 @@ function Index() {
         const editReq = {
             staffId: data.staffId
         }
+
         dispatch(getStaffDetailsRequest(editReq))
         setSelectedItem(data)
         setSelectedIndex(index)
@@ -779,15 +881,16 @@ function Index() {
         setState((prev) => ({
             ...prev,
             [name]: formate,
-            age :age
+            age: age
         }));
     }
 
-    const onHandleUserCreditial = (e, formName) =>{
+    const onHandleUserCreditial = (e, formName) => {
         setState((prev) => ({
             ...prev,
             [formName]: e.target.checked,
         }));
+
 
         const updatedTabList = _.cloneDeep(tabList);
         const changedArr = [
@@ -797,7 +900,7 @@ function Index() {
                 'inputType': 'text',
                 'placeholder': "Enter User Name",
                 'classStyle': 'col-3',
-                 // require: true,
+                // require: true,
             },
             {
                 'label': 'Password',
@@ -805,7 +908,7 @@ function Index() {
                 'inputType': 'text',
                 'placeholder': "Enter Password",
                 'classStyle': 'col-3',
-                 // require: true,
+                // require: true,
             },
         ]
         if (e.target.checked) {
@@ -822,7 +925,7 @@ function Index() {
         setTabList(updatedTabList);
     }
 
-    const onHandleSalary = (e) =>{
+    const onHandleSalary = (e) => {
         const esi = 0.0175
         const pf = 0.12
         const annualAmount = e.target.value
@@ -830,20 +933,21 @@ function Index() {
         const esiAmount = parseInt(monthlyAmount * esi / 100)
         const pfAmount = parseInt(monthlyAmount * pf / 100)
         const monthlySalary = monthlyAmount - esiAmount - pfAmount
-        console.log(parseInt(monthlySalary))
         setState({
             ...state,
-            [e.target.name] : annualAmount,
-            monthlyAmount : monthlySalary,
-            esiAmount : esiAmount,
-            pfAmount : pfAmount,
+            [e.target.name]: annualAmount,
+            monthlyAmount: monthlySalary,
+            esiAmount: esiAmount,
+            pfAmount: pfAmount,
         })
     }
 
     const handleEditTabTable = async (data, index) => {
-        data.read = JSON.parse(data.read)
-        data.write = JSON.parse(data.write)
-        data.speak = JSON.parse(data.speak)
+        if (tab === "language") {
+            data.read = JSON.parse(data.read)
+            data.write = JSON.parse(data.write)
+            data.speak = JSON.parse(data.speak)
+        }
         setIsEditArrVal(true);
         const updatedState = { ...data, selectedIdx: index };
         setState(updatedState);
@@ -859,7 +963,7 @@ function Index() {
                 dispatch(deleteStaffLanguageRequest(data.staffKnownLanguageId))
             } else if (selectedName === "staffQualification") {
                 dispatch(deleteStaffQualificationRequest(data.staffQualificationId))
-            }else if (selectedName === "staffDetails") {
+            } else if (selectedName === "staffDetails") {
                 dispatch(deleteStaffRelationRequest(data.staffRelationDetailsId))
             }
         }
@@ -880,6 +984,7 @@ function Index() {
     };
 
     const toggleModal = (form) => {
+        onModelFormClear();
         setModal(true);
         setModelForm(form);
     };
@@ -893,6 +998,42 @@ function Index() {
         setWizardModel(!wizardModel);
     };
 
+    const onFormModelSubmit = async () => {
+        let submitRequest = {};
+        switch (modelForm?.name) {
+            case "designationId":
+                submitRequest = {
+                    designationName: modelState?.designationName || ""
+                }
+                dispatch(createDesignationRequest(submitRequest))
+                break;
+            case "departmentId":
+                submitRequest = {
+                    departmentName: modelState?.departmentName || ""
+                }
+                dispatch(createDepartmentRequest(submitRequest))
+                break;
+            case "branchId":
+                submitRequest = {
+                    branchName: modelState?.branchName || "",
+                    address: modelState?.address || "",
+                    city: modelState?.city || "",
+                    pincode: modelState?.pincode || "",
+                    email: modelState?.email || "",
+                    contactNo: modelState?.contactNo || "",
+                }
+                dispatch(createBranchRequest(submitRequest))
+                break;
+        }
+
+
+
+    };
+
+    // console.log(state)
+    // console.log("multiStateValue")
+    // console.log(multiStateValue)
+
     return (
         <React.Fragment>
             <NotificationContainer />
@@ -903,6 +1044,25 @@ function Index() {
             </div> :
                 wizardModel ? (
                     <React.Fragment>
+                        <ModelViewBox
+                            modal={modal}
+                            setModel={setModal}
+                            modelHeader={'Branch'}
+                            modelSize={'md'}
+                            isEdit={isEdit}
+                            handleSubmit={handleValidation}
+                        >
+                            <FormLayout
+                                dynamicForm={modalFields[modelForm?.name]}
+                                handleSubmit={onFormModelSubmit}
+                                setState={setModelState}
+                                state={modelState}
+                                ref={errorHandle}
+                                noOfColumns={1}
+                                errors={modelErrors}
+                                setErrors={setModelErrors}
+                            />
+                        </ModelViewBox>
                         <WizardWithProgressbar
                             arrVal={arrVal}
                             setArrVal={setArrVal}
@@ -911,7 +1071,7 @@ function Index() {
                             isEdit={isEdit}
                             setTab={setTab}
                             tab={tab}
-                            onChangeCallBack={{"onHandleSalary": onHandleSalary, "onHandleProofType": onHandleProofType, "handleDateChange" : handleDateChange, "onHandleUserCreditial": onHandleUserCreditial }}
+                            onChangeCallBack={{ "onHandleSalary": onHandleSalary, "onHandleProofType": onHandleProofType, "handleDateChange": handleDateChange, "onHandleUserCreditial": onHandleUserCreditial }}
                             state={state}
                             setState={setState}
                             multiStateValue={multiStateValue}

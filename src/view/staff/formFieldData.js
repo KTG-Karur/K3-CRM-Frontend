@@ -42,9 +42,9 @@ const staffTabs = [
                         label: 'DOB',
                         name: 'dob',
                         inputType: 'date',
-                        'maximumDate' : 'maximumDOB',
+                        'maximumDate': 'maximumDOB',
                         // require: true,
-                        onChange : "handleDateChange",
+                        onChange: "handleDateChange",
                         classStyle: 'col-3'
                     },
                     {
@@ -155,9 +155,9 @@ const staffTabs = [
                     },
                     {
                         label: 'User Credential',
-                        name: 'userCreditial',
+                        name: 'userId',
                         inputType: 'checkbox',
-                        onChange : "onHandleUserCreditial",
+                        onChange: "onHandleUserCreditial",
                         'classStyle': 'col-3'
                     },
                 ],
@@ -209,12 +209,12 @@ const staffTabs = [
             {
                 formFields: [
                     {
-                        'label': 'Salary Package',
+                        'label': 'Salary Package (Annual)',
                         'name': 'annualAmount',
                         'inputType': 'text',
                         'placeholder': "Enter Annual Package",
                         'classStyle': 'col-3',
-                        'onChange' : 'onHandleSalary'
+                        'onChange': 'onHandleSalary'
                     },
                     {
                         'label': 'Montly Salary(in-hand)',
@@ -223,7 +223,7 @@ const staffTabs = [
                         'isDisabled': true,
                         'placeholder': "Enter Monthly Salary",
                         'classStyle': 'col-3',
-                        'isDisabled' : true
+                        'isDisabled': true
                     },
                 ],
             },
@@ -300,7 +300,7 @@ const staffTabs = [
                         optionList: 'proofTypeList',
                         displayKey: 'proofTypeName',
                         uniqueKey: 'proofTypeId',
-                        onChange : "onHandleProofType",
+                        onChange: "onHandleProofType",
                         'classStyle': 'col-3'
                     },
                     {
@@ -397,7 +397,7 @@ const staffTabs = [
                         optionList: 'relationTypeList',
                         displayKey: 'relationTypeName',
                         uniqueKey: 'relationTypeId',
-                        onChange : "onHandleProofType",
+                        onChange: "onHandleProofType",
                         'classStyle': 'col-3'
                     },
                 ],
@@ -425,7 +425,7 @@ const staffTabs = [
                         optionList: 'qualificationList',
                         displayKey: 'qualificationName',
                         uniqueKey: 'qualificationId',
-                        onChange : "onHandleProofType",
+                        onChange: "onHandleProofType",
                         'classStyle': 'col-3'
                     },
                     {
@@ -453,7 +453,7 @@ const staffTabs = [
                         optionList: 'qualificationList',
                         displayKey: 'qualificationName',
                         uniqueKey: 'qualificationId',
-                        onChange : "onHandleProofType",
+                        onChange: "onHandleProofType",
                         'classStyle': 'col-3'
                     },
                     {
@@ -506,7 +506,7 @@ const staffTabs = [
                         optionList: 'languageList',
                         displayKey: 'languageName',
                         uniqueKey: 'languageId',
-                        onChange : "onHandleProofType",
+                        onChange: "onHandleProofType",
                         'classStyle': 'col-4'
                     },
                     {
@@ -533,4 +533,95 @@ const staffTabs = [
     },
 ];
 
-export { staffTabs };
+
+const modalFields = {
+    "branchId": [
+        {
+            formFields: [
+                {
+                    'label': "Branch Name",
+                    'name': "branchName",
+                    'inputType': "text",
+                    'placeholder': "Enter Branch Name",
+                    'require': true,
+                    'classStyle': 'col-6',
+
+                },
+                {
+                    label: 'Contact No',
+                    name: 'contactNo',
+                    placeholder: 'Enter Contact No',
+                    maxlength: '10',
+                    inputType: 'number',
+                    require: true,
+                    'classStyle': 'col-6',
+
+                },
+                {
+                    label: 'Email',
+                    name: 'email',
+                    placeholder: 'Enter Email',
+                    inputType: 'text',
+                    require: true,
+                    'classStyle': 'col-12',
+
+                },
+                {
+                    label: 'Address',
+                    name: 'address',
+                    inputType: 'textarea',
+                    placeholder: 'Enter Address',
+                    require: true,
+
+                },
+                {
+                    'label': "City",
+                    'name': "city",
+                    'inputType': "text",
+                    'placeholder': "Enter city",
+                    'require': true,
+                    'classStyle': 'col-6',
+                },
+                {
+                    label: 'Pincode',
+                    name: 'pincode',
+                    placeholder: 'Enter Pincode',
+                    maxlength: '6',
+                    inputType: 'number',
+                    require: true,
+                    'classStyle': 'col-6',
+                },
+            ]
+        }
+    ],
+    "departmentId": [
+        {
+            formFields: [
+                {
+                    'label': "Department Name",
+                    'name': "departmentName",
+                    'inputType': "text",
+                    'placeholder': "Enter Department Name",
+                    'require': true,
+                    'classStyle': 'col-6'
+                },
+            ]
+        },
+    ],
+    "designationId": [
+        {
+            formFields: [
+                {
+                    'label': "Designation Name",
+                    'name': "designationName",
+                    'inputType': "text",
+                    'placeholder': "Enter Designation Name",
+                    'require': true
+                },
+            ]
+        }
+    ]
+}
+
+export { staffTabs, modalFields };
+
