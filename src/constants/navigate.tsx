@@ -44,6 +44,13 @@ const Navigate: NavigateTypes[] = [
         icon: 'mdi mdi-account-check',
         url: '/staff-leave',
     },
+    { label: 'Attendance', isTitle: true },
+    {
+        label: 'Staff Attendance',
+        isTitle: false,
+        icon: 'mdi mdi-account-check',
+        url: '/staff-attendance',
+    },
     { label: 'Allowance', isTitle: true },
     {
         label: 'Visit Entry',

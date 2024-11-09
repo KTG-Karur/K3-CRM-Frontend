@@ -117,6 +117,8 @@ const CalendarApp = () => {
 
     // on event click
     const onEventClick = (arg: EventClickArg) => {
+        console.log("arg")
+        console.log(arg)
         const event = {
             id: String(arg.event.id),
             title: arg.event.title,

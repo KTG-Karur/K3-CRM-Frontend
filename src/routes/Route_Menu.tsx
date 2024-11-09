@@ -19,6 +19,7 @@ export const ClaimTemplate = React.lazy(() => import('../view/claim/approvedTemp
 export const ProofType = React.lazy(() => import('../view/proof-type'));
 export const Holiday = React.lazy(() => import('../view/holiday'));
 export const StaffLeave = React.lazy(() => import('../view/staff-leave'));
+export const Attendance = React.lazy(() => import('../view/attendance'));
 
 // master
 export const Department = React.lazy(() => import('../view/department'));

@@ -109,6 +109,7 @@ import {
     SettingWorkingDay,
     SettingBenefit,
     StaffLeave,
+    Attendance
 } from './Route_Menu';
 
 
@@ -206,6 +207,10 @@ const AllRoutes = () => {
                 {
                     path: 'claim-approved',
                     element: <LoadComponent component={ClaimTemplate} />,
+                },
+                {
+                    path: 'staff-attendance',
+                    element: <LoadComponent component={Attendance} />,
                 },
                 {
                     path: 'staff-leave',

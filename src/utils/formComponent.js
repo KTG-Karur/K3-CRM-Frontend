@@ -419,9 +419,9 @@ function FormComponent(props) {
                                                             label={form.displayKey ? item[form?.displayKey] || form?.label : ""}
                                                             value={state[form?.name]}
                                                             checked={
-                                                                Array.isArray(state[form?.name]) ? 
-                                                                state[form?.name]?.includes(item[form?.uniqueKey]) : 
-                                                                state[form?.name] === item[form?.uniqueKey]}
+                                                                Array.isArray(state[form?.name]) ?
+                                                                    state[form?.name]?.includes(item[form?.uniqueKey]) :
+                                                                    state[form?.name] === item[form?.uniqueKey]}
                                                             // checked={state[form?.name] === item[form?.uniqueKey]}
                                                             type="checkbox"
                                                             id={`basic-checkbox-${i}`}
@@ -722,25 +722,39 @@ function FormComponent(props) {
                                         }
                                     </p>
                                     <div className="d-flex">
-                                        {(optionListState?.[form?.optionList] || []).map((item, i) => {
-                                            return (
-                                                <Form.Check
-                                                    key={i}
-                                                    label={item[form.displayKey] || ''}
-                                                    type="radio"
-                                                    id={`basic-radio-${i}`}
-                                                    name={form?.name || ''}
-                                                    className={'mb-2 form-check-Primary mx-2'}
-                                                    checked={item[form.uniqueKey] == state[form?.name]}
-                                                    value={state[form?.name] || ""}
-                                                    onChange={(e) => {
-                                                        form.onChange
-                                                            ? onChangeCallBack[form.onChange](item, form.name)
-                                                            : handleChange(item[form.uniqueKey], 'radio', form?.name);
-                                                    }}
-                                                />
-                                            );
-                                        })}
+                                        {((optionListState?.[form?.optionList] || []).length > 0 ?
+                                            (optionListState?.[form?.optionList] || []).map((item, i) => {
+                                                return (
+                                                    <Form.Check
+                                                        key={i}
+                                                        label={item[form.displayKey] || ''}
+                                                        type="radio"
+                                                        id={`basic-radio-${i}`}
+                                                        name={form?.name || ''}
+                                                        className={'mb-2 form-check-Primary mx-2'}
+                                                        checked={item[form.uniqueKey] == state[form?.name]}
+                                                        value={state[form?.name] || ""}
+                                                        onChange={(e) => {
+                                                            form.onChange
+                                                                ? onChangeCallBack[form.onChange](item, form.name)
+                                                                : handleChange(item[form.uniqueKey], 'radio', form?.name);
+                                                        }}
+                                                    />
+                                                );
+                                            }) :
+                                            <Form.Check
+                                                label={form.displayKey || ''}
+                                                type="radio"
+                                                id={`basic-radio-0`}
+                                                name={form?.name || ''}
+                                                className={'mb-2 form-check-Primary mx-2'}
+                                                checked={state[form?.name] || false}
+                                                value={state[form?.name] || ""}
+                                                onChange={(e) => {
+                                                    form.onChange ? onChangeCallBack[form.onChange](e, form.name) :
+                                                        handleChange(e, 'checkbox', form?.name);
+                                                }}
+                                            />)}
                                     </div>
                                 </div>
                             )
