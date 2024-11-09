@@ -20,6 +20,70 @@ import { createUploadImagesRequest } from '../../redux/uploads/actions';
 
 let uploadImages = false;
 
+let optionList = {
+    proofTypeList: [],
+    relationTypeList: [
+        {
+            relationId: 31,
+            relationTypeName: "Father"
+        },
+        {
+            relationId: 32,
+            relationTypeName: "Mother"
+        },
+        {
+            relationId: 33,
+            relationTypeName: "Husband"
+        },
+        {
+            relationId: 34,
+            relationTypeName: "Wife"
+        },
+        {
+            relationId: 35,
+            relationTypeName: "Son"
+        },
+        {
+            relationId: 36,
+            relationTypeName: "Daughter"
+        },
+    ],
+    qualificationList: [
+        {
+            qualificationId: 12,
+            qualificationName: "Bsc"
+        },
+        {
+            qualificationId: 13,
+            qualificationName: "Msc"
+        },
+        {
+            qualificationId: 14,
+            qualificationName: "BE"
+        },
+        {
+            qualificationId: 15,
+            qualificationName: "ME"
+        },
+        {
+            qualificationId: 16,
+            qualificationName: "BA"
+        },
+        {
+            qualificationId: 17,
+            qualificationName: "MA"
+        },
+        {
+            qualificationId: 3,
+            qualificationName: "Others"
+        },
+    ],
+    languageList: [
+        { languageId: 9, languageName: 'Tamil' },
+        { languageId: 10, languageName: 'English' },
+        { languageId: 11, languageName: 'Hindi' },
+    ]
+}
 function Index() {
 
     const { dispatch, appSelector } = useRedux();
@@ -186,7 +250,7 @@ function Index() {
                         <span
                             className="text-success  me-2 cursor-pointer"
                             onClick={() => {
-                                handleEditTabTable(row?.original, row?.index);
+                                handleEditTabTable(row?.original, row?.index, "staffDetails");
                             }}>
                             <i className={'fe-edit-1'}></i> Edit
                         </span>
@@ -245,7 +309,7 @@ function Index() {
                         <div>
                             <span
                                 className="text-success  me-2 cursor-pointer"
-                                onClick={() => handleEditTabTable(row?.original, row?.index)}>
+                                onClick={() => handleEditTabTable(row?.original, row?.index, "staffQualification")}>
                                 <i className={'fe-edit-1'}></i> Edit
                             </span>
                             <span
@@ -279,17 +343,18 @@ function Index() {
             {
                 Header: 'Speak',
                 accessor: 'speak',
-                sort: true,
+                Cell: ({ row }) => <div>{row?.original?.speak ? "Yes" : "No"}</div>
+
             },
             {
                 Header: 'Read',
                 accessor: 'read',
-                sort: true,
+                Cell: ({ row }) => <div>{row?.original?.read ? "Yes" : "No"}</div>
             },
             {
                 Header: 'Write',
                 accessor: 'write',
-                sort: true,
+                Cell: ({ row }) => <div>{row?.original?.write ? "Yes" : "No"}</div>
             },
             {
                 Header: 'Actions',
@@ -299,7 +364,7 @@ function Index() {
                         <div>
                             <span
                                 className="text-success  me-2 cursor-pointer"
-                                onClick={() => handleEditTabTable(row?.original, row?.index)}>
+                                onClick={() => handleEditTabTable(row?.original, row?.index, "language")}>
                                 <i className={'fe-edit-1'}></i> Edit
                             </span>
                             <span
@@ -342,7 +407,7 @@ function Index() {
                         <div>
                             <span
                                 className="text-success  me-2 cursor-pointer"
-                                onClick={() => handleEditTabTable(row?.original, row?.index)}>
+                                onClick={() => handleEditTabTable(row?.original, row?.index, "idProof")}>
                                 <i className={'fe-edit-1'}></i> Edit
                             </span>
                             <span
@@ -395,7 +460,7 @@ function Index() {
                         <div>
                             <span
                                 className="text-success  me-2 cursor-pointer"
-                                onClick={() => handleEditTabTable(row?.original, row?.index)}>
+                                onClick={() => handleEditTabTable(row?.original, row?.index, "workExperience")}>
                                 <i className={'fe-edit-1'}></i> Edit
                             </span>
                             <span
@@ -442,71 +507,13 @@ function Index() {
                 surname: "Mrs."
             },
         ],
-        relationTypeList: [
-            {
-                relationTypeId: 31,
-                relationTypeName: "Father"
-            },
-            {
-                relationTypeId: 32,
-                relationTypeName: "Mother"
-            },
-            {
-                relationTypeId: 33,
-                relationTypeName: "Husband"
-            },
-            {
-                relationTypeId: 34,
-                relationTypeName: "Wife"
-            },
-            {
-                relationTypeId: 35,
-                relationTypeName: "Son"
-            },
-            {
-                relationTypeId: 36,
-                relationTypeName: "Daughter"
-            },
-        ],
-        qualificationList: [
-            {
-                qualificationId: 12,
-                qualificationName: "Bsc"
-            },
-            {
-                qualificationId: 13,
-                qualificationName: "Msc"
-            },
-            {
-                qualificationId: 14,
-                qualificationName: "BE"
-            },
-            {
-                qualificationId: 15,
-                qualificationName: "ME"
-            },
-            {
-                qualificationId: 16,
-                qualificationName: "BA"
-            },
-            {
-                qualificationId: 17,
-                qualificationName: "MA"
-            },
-            {
-                qualificationId: 3,
-                qualificationName: "Others"
-            },
-        ],
+        relationTypeList: optionList.relationTypeList,
+        qualificationList: optionList.qualificationList,
         martialStatusList: [
             { martialStatusId: 7, martialStatusName: 'Single' },
             { martialStatusId: 8, martialStatusName: 'Married' },
         ],
-        languageList: [
-            { languageId: 9, languageName: 'Tamil' },
-            { languageId: 10, languageName: 'English' },
-            { languageId: 11, languageName: 'Hindi' },
-        ],
+        languageList: optionList.languageList,
         casteTypeList: [
             { casteTypeId: 21, casteTypeName: 'OC' },
             { casteTypeId: 22, casteTypeName: 'BC' },
@@ -514,6 +521,7 @@ function Index() {
             { casteTypeId: 24, casteTypeName: 'SC' },
             { casteTypeId: 25, casteTypeName: 'ST' },
         ],
+        proofTypeList: [],
         branchList: [],
         departmentList: [],
         designationList: [],
@@ -640,6 +648,7 @@ function Index() {
                 ...optionListState,
                 proofTypeList: getProofTypeList
             })
+            optionList.proofTypeList = getProofTypeList
             dispatch(resetGetProofType())
         } else if (getProofTypeFailure) {
             setIsLoading(false)
@@ -647,6 +656,7 @@ function Index() {
                 ...optionListState,
                 proofTypeList: []
             })
+            optionList.proofTypeList = [];
             dispatch(resetGetProofType())
         }
     }, [getProofTypeSuccess, getProofTypeFailure]);
@@ -758,7 +768,7 @@ function Index() {
     }, [createDesignationSuccess, createDesignationFailure]);
 
     useEffect(() => {
-        if (isEdit && tab === "jobRoleDetails" && Number.isInteger(state?.userId) && (state?.userId !== null || state?.userId !== undefined)) {
+        if (isEdit && tab === "jobRoleDetails" && Number.isInteger(state?.userId)) {
             const updatedTabList = _.cloneDeep(tabList);
             const changedArr = [
                 {
@@ -781,8 +791,49 @@ function Index() {
                 changedArr
             );
             setTabList(updatedTabList);
+        } else if (state?.userId === null || state?.userId === undefined) {
+            setTabList(staffTabs);
         }
     }, [tab, state.userId])
+
+    useEffect(() => {
+        if (IsEditArrVal != true) {
+            if (tab == "idProof") {
+                const remainingProofTypeList = optionList.proofTypeList.filter(proofData => {
+                    return !arrVal.some(arrData => arrData.proofTypeId === proofData.proofTypeId);
+                });
+                setOptionListState({
+                    ...optionListState,
+                    proofTypeList: remainingProofTypeList
+                })
+            } else if (tab === "staffDetails") {
+                const remainingRelationTypeList = optionList.relationTypeList.filter(relationData => {
+                    return !arrVal.some(arrData => arrData.relationId === relationData.relationId);
+                });
+                setOptionListState({
+                    ...optionListState,
+                    relationTypeList: remainingRelationTypeList
+                })
+            } else if (tab === "staffQualification") {
+                const remainingQualificationList = optionList.qualificationList.filter(qualificationData => {
+                    return !arrVal.some(arrData => arrData.qualificationId === qualificationData.qualificationId);
+                });
+                setOptionListState({
+                    ...optionListState,
+                    qualificationList: remainingQualificationList
+                })
+            }
+            else if (tab === "language") {
+                const remainingLanguageList = optionList.languageList.filter(languageData => {
+                    return !arrVal.some(arrData => arrData.languageId === languageData.languageId);
+                });
+                setOptionListState({
+                    ...optionListState,
+                    languageList: remainingLanguageList
+                })
+            }
+        }
+    }, [arrVal, IsEditArrVal])
 
     const closeModel = () => {
         onFormClear()
@@ -942,16 +993,44 @@ function Index() {
         })
     }
 
-    const handleEditTabTable = async (data, index) => {
-        if (tab === "language") {
-            data.read = JSON.parse(data.read)
-            data.write = JSON.parse(data.write)
-            data.speak = JSON.parse(data.speak)
+    const handleEditTabTable = async (data, index, tabName) => {
+        switch (tabName) {
+            case "idProof":
+                setOptionListState(prevState => {
+                    const updatedProofList = [...prevState.proofTypeList, data];
+                    return { ...prevState, proofTypeList: updatedProofList };
+                });
+                break;
+            case "staffDetails":
+                setOptionListState(prevState => {
+                    const updatedRelationList = [...prevState.relationTypeList, data];
+                    return { ...prevState, relationTypeList: updatedRelationList };
+                });
+                break;
+            case "staffQualification":
+                setOptionListState(prevState => {
+                    const updatedQualificationList = [...prevState.qualificationList, data];
+                    return { ...prevState, qualificationList: updatedQualificationList };
+                });
+                break;
+            case "language":
+                data.read = JSON.parse(data?.read || false)
+                data.write = JSON.parse(data?.write || false)
+                data.speak = JSON.parse(data?.speak || false)
+                setOptionListState(prevState => {
+                    const updatedLanguageList = [...prevState.languageList, data];
+                    return { ...prevState, languageList: updatedLanguageList };
+                });
+                break;
+            default:
+                break;
         }
+
         setIsEditArrVal(true);
         const updatedState = { ...data, selectedIdx: index };
         setState(updatedState);
     };
+    
     //handleDelete
     const handleDeleteTabTable = async (data, idx, selectedName) => {
         if (isEdit) {
@@ -1029,10 +1108,6 @@ function Index() {
 
 
     };
-
-    // console.log(state)
-    // console.log("multiStateValue")
-    // console.log(multiStateValue)
 
     return (
         <React.Fragment>

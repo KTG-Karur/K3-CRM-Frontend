@@ -396,7 +396,7 @@ const staffTabs = [
                         inputType: 'select',
                         optionList: 'relationTypeList',
                         displayKey: 'relationTypeName',
-                        uniqueKey: 'relationTypeId',
+                        uniqueKey: 'relationId',
                         onChange: "onHandleProofType",
                         'classStyle': 'col-3'
                     },
