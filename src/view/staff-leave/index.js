@@ -5,22 +5,44 @@ import FormLayout from '../../utils/formLayout';
 import { staffLeaveContainer } from './formFieldData';
 import Table from '../../components/Table';
 import { dateConversion, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
-import { createStaffLeaveRequest, getStaffLeaveRequest, resetCreateStaffLeave, resetGetStaffLeave, resetUpdateStaffLeave, updateStaffLeaveRequest } from '../../redux/actions';
-import { useRedux } from '../../hooks'
+import {
+    createStaffLeaveRequest,
+    getStaffLeaveRequest,
+    getStaffRequest,
+    resetCreateStaffLeave,
+    resetGetStaff,
+    resetGetStaffLeave,
+    resetUpdateStaffLeave,
+    updateStaffLeaveRequest,
+} from '../../redux/actions';
+import { useRedux } from '../../hooks';
 import { NotificationContainer } from 'react-notifications';
 
-let isEdit = false; 
+let isEdit = false;
 
 function Index() {
-
     const { dispatch, appSelector } = useRedux();
 
-    const { getStaffLeaveSuccess, getStaffLeaveList, getStaffLeaveFailure,
-        createStaffLeaveSuccess, createStaffLeaveData, createStaffLeaveFailure,
-        updateStaffLeaveSuccess, updateStaffLeaveData, updateStaffLeaveFailure,
+    const {
+        getStaffLeaveSuccess,
+        getStaffLeaveList,
+        getStaffLeaveFailure,
+        createStaffLeaveSuccess,
+        createStaffLeaveData,
+        createStaffLeaveFailure,
+        updateStaffLeaveSuccess,
+        updateStaffLeaveData,
+        updateStaffLeaveFailure,
         errorMessage,
 
+        getStaffSuccess,
+        getStaffList,
+        getStaffFailure,
     } = appSelector((state) => ({
+        getStaffSuccess: state.staffReducer.getStaffSuccess,
+        getStaffList: state.staffReducer.getStaffList,
+        getStaffFailure: state.staffReducer.getStaffFailure,
+
         getStaffLeaveSuccess: state.staffLeaveReducer.getStaffLeaveSuccess,
         getStaffLeaveList: state.staffLeaveReducer.getStaffLeaveList,
         getStaffLeaveFailure: state.staffLeaveReducer.getStaffLeaveFailure,
@@ -56,22 +78,14 @@ function Index() {
             Header: 'From Date',
             accessor: 'fromDate',
             Cell: ({ row }) => {
-                return (
-                    <div>
-                        {dateConversion(row.original.fromDate, "DD-MM-YYYY")}
-                    </div>
-                )
+                return <div>{dateConversion(row.original.fromDate, 'DD-MM-YYYY')}</div>;
             },
         },
         {
             Header: 'To Date',
             accessor: 'toDate',
             Cell: ({ row }) => {
-                return (
-                    <div>
-                        {dateConversion(row.original.toDate, "DD-MM-YYYY")}
-                    </div>
-                )
+                return <div>{dateConversion(row.original.toDate, 'DD-MM-YYYY')}</div>;
             },
         },
         {
@@ -80,32 +94,65 @@ function Index() {
             sort: true,
         },
         {
+            Header: 'Status',
+            accessor: 'nothig',
+            Cell: ({ row }) => (
+                <Badge
+                    bg={
+                        row.original.leaveStatusId === 30
+                            ? 'danger'
+                            : row.original.leaveStatusId === 28
+                            ? 'primary'
+                            : 'success'
+                    }>
+                    {row.original.leaveStatusId === 30
+                        ? 'Cancelled'
+                        : row.original.leaveStatusId === 28
+                        ? 'Request'
+                        : 'Approved'}
+                </Badge>
+            ),
+        },
+        {
             Header: 'Actions',
             accessor: 'actions',
             Cell: ({ row }) => {
-                const activeChecker = row.original.isActive
-                const iconColor = activeChecker ? "text-danger" : "text-warning";
-                const deleteMessage = activeChecker ? "You want to In-Active...?" : "You want to retrive this Data...?";
                 return (
                     <div>
-                        <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index)}>
+                        <span
+                            className="text-primary  me-2 cursor-pointer"
+                            onClick={() => onEditForm(row.original, row.index)}>
                             <i className={'fe-edit-1'}></i>
                         </span>
-                        <span
-                            className={`${iconColor} cursor-pointer`}
-                            onClick={() =>
-                                showConfirmationDialog(
-                                    deleteMessage,
-                                    () => onDeleteForm(row.original, row.index, activeChecker),
-                                    'Yes'
-                                )
-                            }>
-                            {
-                                row?.original?.isActive ? <i className={'fe-trash-2'}></i> : <i className={'fas fa-recycle'}></i>
-                            }
-                        </span>
+
+                        {row.original.leaveStatusId === 28 && (
+                            <span>
+                                <span
+                                    className={`text-success me-2 cursor-pointer`}
+                                    onClick={() =>
+                                        showConfirmationDialog(
+                                            'You want to Approved?',
+                                            () => onDeleteForm(row.original, row.index, 29),
+                                            'Yes'
+                                        )
+                                    }>
+                                    <i className={'fe-thumbs-up'}></i>
+                                </span>
+                                <span
+                                    className={`text-danger cursor-pointer`}
+                                    onClick={() =>
+                                        showConfirmationDialog(
+                                            'You want to Cancelled?',
+                                            () => onDeleteForm(row.original, row.index, 30),
+                                            'Yes'
+                                        )
+                                    }>
+                                    <i className={'fe-thumbs-down'}></i>
+                                </span>
+                            </span>
+                        )}
                     </div>
-                )
+                );
             },
         },
     ];
@@ -117,47 +164,63 @@ function Index() {
     const [modal, setModal] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [optionListState, setOptionListState] = useState({
-        staffList: [
-            { staffId: 1, staffName: 'Suki' },
-            { staffId: 2, staffName: 'Ragul' },
-            { staffId: 3, staffName: 'Mohan' },
-        ],
-        leaveTypeList : [
+        staffList: [],
+        leaveTypeList: [
             { leaveTypeId: 26, leaveTypeName: 'Causal Leave' },
-            { leaveTypeId: 27, leaveTypeName: 'Sick Leave' }
-        ]
-    })
+            { leaveTypeId: 27, leaveTypeName: 'Sick Leave' },
+        ],
+    });
     const [errors, setErrors] = useState([]);
 
     const errorHandle = useRef();
 
+    console.log(parentList)
     useEffect(() => {
-        setIsLoading(true)
+        setIsLoading(true);
         dispatch(getStaffLeaveRequest());
+        dispatch(getStaffRequest());
     }, []);
 
     useEffect(() => {
+        if (getStaffSuccess) {
+            setIsLoading(false);
+            setOptionListState({
+                ...optionListState,
+                staffList: getStaffList,
+            });
+            dispatch(resetGetStaff());
+        } else if (getStaffFailure) {
+            setIsLoading(false);
+            setOptionListState({
+                ...optionListState,
+                staffList: [],
+            });
+            dispatch(resetGetStaff());
+        }
+    }, [getStaffSuccess, getStaffFailure]);
+
+    useEffect(() => {
         if (getStaffLeaveSuccess) {
-            setIsLoading(false)
-            setParentList(getStaffLeaveList)
-            dispatch(resetGetStaffLeave())
+            setIsLoading(false);
+            setParentList(getStaffLeaveList);
+            dispatch(resetGetStaffLeave());
         } else if (getStaffLeaveFailure) {
-            setIsLoading(false)
-            setParentList([])
-            dispatch(resetGetStaffLeave())
+            setIsLoading(false);
+            setParentList([]);
+            dispatch(resetGetStaffLeave());
         }
     }, [getStaffLeaveSuccess, getStaffLeaveFailure]);
 
     useEffect(() => {
         if (createStaffLeaveSuccess) {
             const temp_state = [createStaffLeaveData[0], ...parentList];
-            setParentList(temp_state)
+            setParentList(temp_state);
             showMessage('success', 'Created Successfully');
-            closeModel()
-            dispatch(resetCreateStaffLeave())
+            closeModel();
+            dispatch(resetCreateStaffLeave());
         } else if (createStaffLeaveFailure) {
             showMessage('warning', errorMessage);
-            dispatch(resetCreateStaffLeave())
+            dispatch(resetCreateStaffLeave());
         }
     }, [createStaffLeaveSuccess, createStaffLeaveFailure]);
 
@@ -165,21 +228,23 @@ function Index() {
         if (updateStaffLeaveSuccess) {
             const temp_state = [...parentList];
             temp_state[selectedIndex] = updateStaffLeaveData[0];
-            setParentList(temp_state)
+            console.log('temp_state');
+            console.log(temp_state);
+            // setParentList(temp_state);
             isEdit && showMessage('success', 'Updated Successfully');
-            closeModel()
-            dispatch(resetUpdateStaffLeave())
+            closeModel();
+            dispatch(resetUpdateStaffLeave());
         } else if (updateStaffLeaveFailure) {
             showMessage('warning', errorMessage);
-            dispatch(resetUpdateStaffLeave())
+            dispatch(resetUpdateStaffLeave());
         }
     }, [updateStaffLeaveSuccess, updateStaffLeaveFailure]);
 
     const closeModel = () => {
         isEdit = false;
-        onFormClear()
-        setModal(false)
-    }
+        onFormClear();
+        setModal(false);
+    };
 
     const onFormClear = () => {
         setState({
@@ -193,68 +258,73 @@ function Index() {
     };
 
     const createModel = () => {
-        onFormClear()
+        onFormClear();
         isEdit = false;
-        setModal(true)
+        setModal(true);
     };
 
     const onEditForm = (data, index) => {
         setState({
             ...state,
-            staffId: data?.staffId || "",
-            leaveTypeId: data?.leaveTypeId || "",
-            fromDate: data?.fromDate || "",
-            toDate: data?.toDate || "",
-            reason: data?.reason || "",
+            staffId: data?.staffId || '',
+            leaveTypeId: data?.leaveTypeId || '',
+            fromDate: data?.fromDate || '',
+            toDate: data?.toDate || '',
+            reason: data?.reason || '',
         });
         isEdit = true;
-        setSelectedItem(data)
-        setSelectedIndex(index)
-        setModal(true)
+        setSelectedItem(data);
+        setSelectedIndex(index);
+        setModal(true);
     };
 
     const handleValidation = () => {
         errorHandle.current.validateFormFields();
-    }
+    };
 
+    // console.log("state")
+    // console.log(state)
     const onFormSubmit = async () => {
         const submitRequest = {
-            staffId: state?.staffId || "",
-            leaveTypeId: state?.leaveTypeId || "",
-            fromDate: state?.fromDate || "",
-            toDate: state?.toDate || "",
-            reason: state?.reason || "",
-        }
+            staffId: state?.staffId || '',
+            leaveTypeId: state?.leaveTypeId || '',
+            fromDate: state?.fromDate || '',
+            toDate: state?.toDate || '',
+            reason: state?.reason || '',
+        };
         if (isEdit) {
-            dispatch(updateStaffLeaveRequest(submitRequest, selectedItem.staffLeaveId))
+            dispatch(updateStaffLeaveRequest(submitRequest, selectedItem.staffLeaveId));
         } else {
-            dispatch(createStaffLeaveRequest(submitRequest))
+            dispatch(createStaffLeaveRequest(submitRequest));
         }
     };
 
     const onDeleteForm = (data, index, activeChecker) => {
         const submitRequest = {
-            isActive: activeChecker == 0 ? 1 : 0
-        }
-        setSelectedIndex(index)
-        dispatch(updateStaffLeaveRequest(submitRequest, data.staffLeaveId))
+            leaveStatusId: activeChecker,
+        };
+        setSelectedIndex(index);
+        dispatch(updateStaffLeaveRequest(submitRequest, data.staffLeaveId));
     };
 
     return (
         <React.Fragment>
             <NotificationContainer />
-           { isLoading ? <div className='bg-light opacity-0.25'>
-            <div className="d-flex justify-content-center m-5">
-                <Spinner className='mt-5 mb-5' animation="border" />
-            </div>
-            </div> :
-            <Table
-                columns={columns}
-                Title={'Leave Apply List'}
-                data={parentList || []}
-                pageSize={25}
-                toggle={createModel}
-            />}
+            {isLoading ? (
+                <div className="bg-light opacity-0.25">
+                    <div className="d-flex justify-content-center m-5">
+                        <Spinner className="mt-5 mb-5" animation="border" />
+                    </div>
+                </div>
+            ) : (
+                <Table
+                    columns={columns}
+                    Title={'Leave Apply List'}
+                    data={parentList || []}
+                    pageSize={25}
+                    toggle={createModel}
+                />
+            )}
 
             <ModelViewBox
                 modal={modal}
@@ -262,7 +332,7 @@ function Index() {
                 modelHeader={'Leave Request'}
                 modelSize={'md'}
                 isEdit={isEdit}
-                modelHead ={true}
+                modelHead={true}
                 handleSubmit={handleValidation}>
                 <FormLayout
                     dynamicForm={staffLeaveContainer}

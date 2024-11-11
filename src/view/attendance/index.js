@@ -9,6 +9,7 @@ import { resetGetHoliday, getHolidayRequest, getDepartmentRequest, resetGetDepar
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 import Calendar from '../../components/Atom/Calendar';
+import _ from "lodash"
 
 let isEdit = false;
 
@@ -212,11 +213,11 @@ function Index() {
             designationName: state?.designationName || "",
             departmentId: state?.departmentId || ""
         }
-        if (isEdit) {
-            dispatch(updateDesignationRequest(submitRequest, selectedItem.designationId))
-        } else {
-            dispatch(createDesignationRequest(submitRequest))
-        }
+        // if (isEdit) {
+        //     dispatch(updateDesignationRequest(submitRequest, selectedItem.designationId))
+        // } else {
+        //     dispatch(createDesignationRequest(submitRequest))
+        // }
     };
 
     const onDeleteForm = (data, index, activeChecker) => {
@@ -224,7 +225,7 @@ function Index() {
             isActive: activeChecker == 0 ? 1 : 0
         }
         setSelectedIndex(index)
-        dispatch(updateDesignationRequest(submitRequest, data.designationId))
+        // dispatch(updateDesignationRequest(submitRequest, data.designationId))
     };
 
     const onDateClick = (arg) => {
