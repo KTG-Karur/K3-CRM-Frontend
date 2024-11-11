@@ -174,7 +174,6 @@ function Index() {
 
     const errorHandle = useRef();
 
-    console.log(parentList)
     useEffect(() => {
         setIsLoading(true);
         dispatch(getStaffLeaveRequest());

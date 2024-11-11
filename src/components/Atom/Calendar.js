@@ -27,10 +27,10 @@ const Calendar = ({ onDateClick, onEventClick, onDrop, onEventDrop, events, Titl
         <>
             {/* full calendar control */}
             <Col md={4}>
-                <h4 style={{ lineHeight: '100%' }}>
+                <h3 style={{ lineHeight: '100%' }}>
                     {' '}
                     {Title}
-                </h4>
+                </h3>
             </Col>
             <div id="calendar">
                 <FullCalendar

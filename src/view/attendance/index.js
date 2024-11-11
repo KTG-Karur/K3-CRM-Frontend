@@ -1,18 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Badge, Card, Spinner } from 'react-bootstrap';
+import { Badge, Card, Col, Form, Row, Spinner } from 'react-bootstrap';
 import ModelViewBox from '../../components/Atom/ModelViewBox';
 import FormLayout from '../../utils/formLayout';
 import { attendanceContainer, attendancePresentAbsent } from './formFieldData';
 import Table from '../../components/Table';
-import { showConfirmationDialog, showMessage } from '../../utils/AllFunction';
-import { resetGetHoliday, getHolidayRequest, getDepartmentRequest, resetGetDepartment, resetGetBranch, getBranchRequest, resetGetStaff, getStaffRequest } from '../../redux/actions';
+import { formatDate, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
+import { resetGetHoliday, getHolidayRequest, getDepartmentRequest, resetGetDepartment, resetGetBranch, getBranchRequest, resetGetStaff, getStaffRequest, resetGetStaffLeave, getStaffLeaveRequest } from '../../redux/actions';
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 import Calendar from '../../components/Atom/Calendar';
 import _ from "lodash"
+import { createStaffAttendanceRequest, resetCreateStaffAttendance, updateStaffAttendanceRequest } from '../../redux/staff-attendance/actions';
 
 let isEdit = false;
-
+let parentList = [];
 function Index() {
 
     const { dispatch, appSelector } = useRedux();
@@ -22,10 +23,23 @@ function Index() {
         getHolidaySuccess, getHolidayList, getHolidayFailure, errorMessage,
         getDepartmentSuccess, getDepartmentList, getDepartmentFailure,
         getBranchSuccess, getBranchList, getBranchFailure,
+        createStaffAttendanceSuccess, createStaffAttendanceFailure, createStaffAttendanceData,
+        getStaffLeaveSuccess,
+        getStaffLeaveList,
+        getStaffLeaveFailure,
     } = appSelector((state) => ({
+
+        getStaffLeaveSuccess: state.staffLeaveReducer.getStaffLeaveSuccess,
+        getStaffLeaveList: state.staffLeaveReducer.getStaffLeaveList,
+        getStaffLeaveFailure: state.staffLeaveReducer.getStaffLeaveFailure,
+
         getHolidaySuccess: state.holidayReducer.getHolidaySuccess,
         getHolidayList: state.holidayReducer.getHolidayList,
         getHolidayFailure: state.holidayReducer.getHolidayFailure,
+
+        createStaffAttendanceSuccess: state.holidayReducer.createStaffAttendanceSuccess,
+        createStaffAttendanceData: state.holidayReducer.createStaffAttendanceData,
+        createStaffAttendanceFailure: state.holidayReducer.createStaffAttendanceFailure,
 
         getDepartmentSuccess: state.departmentReducer.getDepartmentSuccess,
         getDepartmentList: state.departmentReducer.getDepartmentList,
@@ -48,6 +62,11 @@ function Index() {
             Cell: (row) => <div>{row?.row?.index + 1}</div>,
         },
         {
+            Header: 'Employee Code',
+            accessor: 'staffCode',
+            sort: true,
+        },
+        {
             Header: 'Employee Name',
             accessor: 'staffName',
             sort: true,
@@ -59,28 +78,70 @@ function Index() {
         },
         {
             Header: 'Status',
-            accessor: 'isActive',
-            Cell: ({ row }) => (
-                <div>
-                    <FormLayout
-                        dynamicForm={attendancePresentAbsent}
-                        handleSubmit={onFormSubmit}
-                        optionListState={optionListState}
-                        setState={setState}
-                        state={state}
-                        ref={errorHandle}
-                        noOfColumns={1}
-                        errors={errors}
-                        setErrors={setErrors}
-                    />
-                </div>
-            )
+            accessor: 'Attendance',
+            Cell: ({ row }) => {
+                return (
+                    <div>
+                        <Row>
+                            <Col lg={6}>
+                                <Form.Check
+                                    label={"Present" || ''}
+                                    type="radio"
+                                    id={`basic-radio-present-${row.index}`}
+                                    name={`attendanceStatus-${row.index}`}
+                                    className={'mb-2 form-check-Primary mx-2'}
+                                    checked={state.staffAttendance[row.index]?.["attendanceStatus"] === 1 || false}
+                                    value={state.staffAttendance[row.index]?.["attendanceStatus"] || ""}
+                                    onChange={(e) => {
+                                        handleChange(row.original, 1, row.index);
+                                    }}
+                                />
+                            </Col>
+                            <Col lg={6}>
+                                <Form.Check
+                                    label="Absent"
+                                    type="radio"
+                                    id={`basic-radio-absent-${row.index}`}
+                                    name={`attendanceStatus-${row.index}`}
+                                    className="mb-2 form-check-Primary mx-2"
+                                    checked={state.staffAttendance[row.index]?.["attendanceStatus"] === 0 || false}
+                                    value={state.staffAttendance[row.index]?.["attendanceStatus"] || ""}
+                                    onChange={(e) => handleChange(row.original, 0, row.index)}
+                                />
+                            </Col>
+                        </Row>
+                    </div>
+                )
+            }
         }
     ];
 
+    const handleChange = (staffDetail, isPresentorAbsent, index) => {
+        setState(prev => {
+            const updatedStaffAttendance = [...prev.staffAttendance]
 
-    const [state, setState] = useState({});
-    const [parentList, setParentList] = useState([]);
+            updatedStaffAttendance[index] = {
+                ...updatedStaffAttendance[index],
+                "staffId": staffDetail.staffId,
+                "attendanceStatus": isPresentorAbsent,
+            };
+
+            return {
+                staffAttendance: updatedStaffAttendance
+            }
+
+        });
+    }
+
+
+
+    const [state, setState] = useState({
+        attendanceDate: formatDate(new Date()),
+        staffAttendance: [{
+            staffId: '',
+            attendanceStatus: '',
+        }]
+    });
     const [selectedItem, setSelectedItem] = useState({});
     const [selectedIndex, setSelectedIndex] = useState(false);
     const [modal, setModal] = useState(false);
@@ -104,13 +165,58 @@ function Index() {
     }, []);
 
     useEffect(() => {
+        if (getStaffLeaveSuccess) {
+            setIsLoading(false);
+            setState((prev) => {
+                const updateStaffData = [...prev.staffAttendance];
+                getStaffLeaveList.map(attendanceData => {
+                    const idx = updateStaffData.findIndex(staffData => staffData.staffId == attendanceData.staffId);
+                    updateStaffData[idx] = {
+                        ...updateStaffData[idx],
+                        attendanceStatus: attendanceData.leaveStatusId === 29 ? 0 : 1
+                    }
+                })
+                return {
+                    staffAttendance: updateStaffData
+                }
+            });
+            dispatch(resetGetStaffLeave());
+        } else if (getStaffLeaveFailure) {
+            setIsLoading(false);
+            parentList = []
+            dispatch(resetGetStaffLeave());
+        }
+    }, [getStaffLeaveSuccess, getStaffLeaveFailure]);
+
+    // console.log("state.staffAttendance")
+    // console.log(state.staffAttendance)
+
+    useEffect(() => {
         if (getStaffSuccess) {
             setIsLoading(false)
-            setParentList(getStaffList)
+
+            const staffList = getStaffList.map(staffData => {
+                return {
+                    staffId: staffData.staffId,
+                    staffName: staffData.staffName,
+                    departmentId: staffData.departmentId,
+                    branchId: staffData.branchId,
+                    departmentName: staffData.departmentName,
+                    staffCode: staffData.staffCode,
+                    attendanceStatus: staffData.leaveStatusId == 29 ? 0 : 1
+                }
+            })
+
+            parentList = staffList
+            setState((prev) => ({
+                ...prev,
+                staffAttendance: staffList
+            }))
+
             dispatch(resetGetStaff())
         } else if (getStaffFailure) {
             setIsLoading(false)
-            setParentList([])
+            parentList = []
             dispatch(resetGetStaff())
         }
     }, [getStaffSuccess, getStaffFailure]);
@@ -169,15 +275,23 @@ function Index() {
         }
     }, [getBranchSuccess, getBranchFailure]);
 
+    useEffect(() => {
+        if (createStaffAttendanceSuccess) {
+            showMessage('success', 'Created Successfully');
+            closeModel();
+            dispatch(resetCreateStaffAttendance());
+        } else if (createStaffAttendanceFailure) {
+            showMessage('warning', errorMessage);
+            dispatch(resetCreateStaffAttendance());
+        }
+    }, [createStaffAttendanceSuccess, createStaffAttendanceFailure]);
+
     const closeModel = () => {
         isEdit = false;
         onFormClear()
         setModal(false)
     }
 
-    console.log("state")
-    console.log(state)
-    
     const onFormClear = () => {
         setState({
             ...state,
@@ -209,15 +323,17 @@ function Index() {
     }
 
     const onFormSubmit = async () => {
+        console.log(state)
+        return;
         const submitRequest = {
             designationName: state?.designationName || "",
             departmentId: state?.departmentId || ""
         }
-        // if (isEdit) {
-        //     dispatch(updateDesignationRequest(submitRequest, selectedItem.designationId))
-        // } else {
-        //     dispatch(createDesignationRequest(submitRequest))
-        // }
+        if (isEdit) {
+            dispatch(updateStaffAttendanceRequest(submitRequest, selectedItem.designationId))
+        } else {
+            dispatch(createStaffAttendanceRequest(submitRequest))
+        }
     };
 
     const onDeleteForm = (data, index, activeChecker) => {
@@ -230,8 +346,16 @@ function Index() {
 
     const onDateClick = (arg) => {
         setModal(true);
-        // console.log('arg')
-        // console.log(arg?.dateStr)
+        setState({
+            ...state,
+            attendanceDate: arg?.dateStr,
+            staffAttendance: parentList
+        })
+        const leaveStatusId = {
+            leaveStatusId: 29,
+            attendanceDate: arg?.dateStr || state.attendanceDate
+        }
+        dispatch(getStaffLeaveRequest(leaveStatusId));
     };
 
 
@@ -246,14 +370,18 @@ function Index() {
             <Card>
                 <Card.Body>
                     {/* fullcalendar control */}
-                    <Calendar
-                        onDateClick={onDateClick}
-                        onEventClick={onEventClick}
-                        // onDrop={onDrop}
-                        Title={"Staff Attendance"}
-                        events={events}
-                    // onEventDrop={onEventDrop}
-                    />
+                    <Row className='d-flex justify-content-center'>
+                        <Col lg={12}>
+                            <Calendar
+                                onDateClick={onDateClick}
+                                onEventClick={onEventClick}
+                                // onDrop={onDrop}
+                                Title={"Staff Attendance"}
+                                events={events}
+                            // onEventDrop={onEventDrop}
+                            />
+                        </Col>
+                    </Row>
                 </Card.Body>
             </Card>
 
@@ -286,6 +414,7 @@ function Index() {
                         data={parentList || []}
                         pageSize={5}
                         toggle={false}
+                        pagination={false}
                     />
                 }
             </ModelViewBox>

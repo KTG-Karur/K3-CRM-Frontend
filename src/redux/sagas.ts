@@ -28,6 +28,7 @@ import settingBenefitSaga from './setting-benefit/saga';
 import staffProofSaga from './staff-proof/saga';
 import staffQualificationSaga from './staff-qualification/saga';
 import staffLeaveSaga from './staff-leave/saga';
+import StaffAttendanceSaga from './staff-attendance/saga';
 
 export default function* rootSaga() {
     yield all([
@@ -59,5 +60,6 @@ export default function* rootSaga() {
         staffProofSaga(),
         staffQualificationSaga(),
         staffLeaveSaga(),
+        StaffAttendanceSaga(),
     ]);
 }

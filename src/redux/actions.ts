@@ -26,3 +26,4 @@ export * from './holiday/actions';
 export * from './staff-proof/actions';
 export * from './staff-qualification/actions';
 export * from './staff-leave/actions';
+export * from './staff-attendance/actions';
