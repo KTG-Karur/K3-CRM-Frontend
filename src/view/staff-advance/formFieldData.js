@@ -36,6 +36,31 @@ const staffAdvanceContainer = [
     },
 ]
 
+
+const staffAdvancePayContainer = [
+    {
+        formFields: [
+            
+            {
+                'label': "Payment Date",
+                'name': "paidDate",
+                'inputType': "date",
+                'require': true,
+                'classStyle' : 'col-6'
+            }, 
+            {
+                'label': "Amount",
+                'name': "paidAmount",
+                'inputType': "text",
+                'placeholder': "Enter Amount",
+                'require': true,
+                'classStyle' : 'col-6'
+            },
+           
+        ]
+    },
+]
+
 export {
-    staffAdvanceContainer
+    staffAdvanceContainer,staffAdvancePayContainer
 }

@@ -28,7 +28,11 @@ import settingBenefitSaga from './setting-benefit/saga';
 import staffProofSaga from './staff-proof/saga';
 import staffQualificationSaga from './staff-qualification/saga';
 import staffLeaveSaga from './staff-leave/saga';
+<<<<<<< Updated upstream
 import StaffAttendanceSaga from './staff-attendance/saga';
+=======
+import advancePaymentHistorySaga from './advance-payment-history/saga';
+>>>>>>> Stashed changes
 
 export default function* rootSaga() {
     yield all([
@@ -45,6 +49,7 @@ export default function* rootSaga() {
         uploadImagesSaga(),
         petrolAllowanceSaga(),
         transferStaffSaga(),
+        advancePaymentHistorySaga(),
         settingWorkingDaySaga(),
         settingLeaveDeductionSaga(),
         settingBenefitSaga(),

@@ -14,6 +14,7 @@ const apiContainer = {
   branch: "/branch",
   proofType: "/proof-type",
   transferStaff: "/transfer-staff",
+  advancePaymentHistory: "/advance-payment-history",
   settingWorkingDay: "/setting-working-day",  
   settingLeaveDeduction: "/setting-leave-deduction",
   settingBenefit: "/setting-benefit",

@@ -16,6 +16,7 @@ import claimReducer from './claim/reducers';
 import branchReducer from './branch/reducers';
 import proofTypeReducer from './proof-type/reducers';
 import transferStaffReducer from './transfer-staff/reducers';
+import advancePaymentHistoryReducer from './advance-payment-history/reducers';
 import deputationReducer from './deputation/reducers';
 import staffAdvanceReducer from './staff-advance/reducers';
 import holidayReducer from './holiday/reducers';
@@ -44,6 +45,7 @@ export default combineReducers({
     uploadImagesReducer,
     petrolAllowanceReducer,
     transferStaffReducer,
+    advancePaymentHistoryReducer,
     settingWorkingDayReducer,
     settingLeaveDeductionReducer,
     settingBenefitReducer,

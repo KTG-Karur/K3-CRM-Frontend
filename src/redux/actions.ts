@@ -16,6 +16,7 @@ export * from './setting-leave-deduction/actions';
 export * from './setting-benefit/actions';
 export * from './attendance-incharge/actions';
 export * from './staff-advance/actions';
+export * from './advance-payment-history/actions';
 export * from './deputation/actions';
 export * from './activity/actions';
 export * from './claim-type/actions';

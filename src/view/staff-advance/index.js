@@ -2,16 +2,16 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Badge, Spinner } from 'react-bootstrap';
 import ModelViewBox from '../../components/Atom/ModelViewBox';
 import FormLayout from '../../utils/formLayout';
-import { staffAdvanceContainer } from './formFieldData';
+import { staffAdvanceContainer, staffAdvancePayContainer } from './formFieldData';
 import Table from '../../components/Table';
 import { dateConversion, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
-import { createStaffAdvanceRequest, getActivityRequest, getStaffAdvanceRequest, resetCreateStaffAdvance, resetGetActivity, resetGetStaffAdvance, resetUpdateStaffAdvance, updateStaffAdvanceRequest } from '../../redux/actions';
+import { createAdvancePaymentHistoryRequest, createStaffAdvanceRequest, getActivityRequest, getAdvancePaymentHistoryRequest, getStaffAdvanceRequest, resetCreateStaffAdvance, resetGetActivity, resetGetAdvancePaymentHistory, resetGetStaffAdvance, resetUpdateStaffAdvance, updateAdvancePaymentHistoryRequest, updateStaffAdvanceRequest } from '../../redux/actions';
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 import _ from 'lodash';
 
-let isEdit = false; 
-
+let isEdit = false;
+let isEditorpayment = 'forEdit';
 function Index() {
 
     const { dispatch, appSelector } = useRedux();
@@ -20,7 +20,7 @@ function Index() {
         getActivitySuccess, getActivityList, getActivityFailure,
         createStaffAdvanceSuccess, createStaffAdvanceData, createStaffAdvanceFailure,
         updateStaffAdvanceSuccess, updateStaffAdvanceData, updateStaffAdvanceFailure,
-        errorMessage,
+        errorMessage, getAdvancePaymentHistorySuccess, getAdvancePaymentHistoryFailure, getAdvancePaymentHistoryList
 
     } = appSelector((state) => ({
         getStaffAdvanceSuccess: state.staffAdvanceReducer.getStaffAdvanceSuccess,
@@ -30,6 +30,13 @@ function Index() {
         getActivitySuccess: state.activityReducer.getActivitySuccess,
         getActivityList: state.activityReducer.getActivityList,
         getActivityFailure: state.activityReducer.getActivityFailure,
+
+
+
+
+        getAdvancePaymentHistorySuccess: state.advancePaymentHistoryReducer.getAdvancePaymentHistorySuccess,
+        getAdvancePaymentHistoryList: state.advancePaymentHistoryReducer.getAdvancePaymentHistoryList,
+        getAdvancePaymentHistoryFailure: state.advancePaymentHistoryReducer.getAdvancePaymentHistoryFailure,
 
         createStaffAdvanceSuccess: state.staffAdvanceReducer.createStaffAdvanceSuccess,
         createStaffAdvanceData: state.staffAdvanceReducer.createStaffAdvanceData,
@@ -54,7 +61,7 @@ function Index() {
             Cell: ({ row }) => {
                 return (
                     <div>
-                       {dateConversion(row.original.applyDate, "DD-MM-YYYY") }
+                        {dateConversion(row.original.applyDate, "DD-MM-YYYY")}
                     </div>
                 )
             },
@@ -64,7 +71,17 @@ function Index() {
             accessor: 'staffName',
             sort: true,
         },
-       
+        {
+            Header: 'Amount',
+            accessor: 'amount',
+            sort: true,
+        },
+        {
+            Header: 'Balance Amount',
+            Cell: ({ row }) => <div> {(row.original.amount) - (row.original.paidAmount)} </div>,
+            sort: true,
+        },
+
         {
             Header: 'Actions',
             accessor: 'actions',
@@ -74,25 +91,85 @@ function Index() {
                 const deleteMessage = activeChecker ? "You want to In-Active...?" : "You want to retrive this Data...?";
                 return (
                     <div>
-                        <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index)}>
+                        <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index, "forEdit")}>
                             <i className={'fe-edit-1'}></i>
                         </span>
-                        
+
+                        <span className="text-primary  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index, "forPayment")}>
+                            <i className={'fe-info'}></i>
+                        </span>
+
                     </div>
                 )
             },
         },
     ];
 
+    const columnsPayment = [
+        {
+            Header: 'S.No',
+            accessor: 'id',
+            Cell: (row) => <div>{row?.row?.index + 1}</div>,
+        },
+        {
+            Header: 'Date',
+            accessor: 'paidDate',
+            Cell: ({ row }) => {
+                return (
+                    <div>
+                        {dateConversion(row.original.paidDate, "DD-MM-YYYY")}
+                    </div>
+                )
+            },
+        },
+        {
+            Header: 'Amount',
+            accessor: 'paidAmount',
+            Cell: ({ row }) => <div> {(row.original.paidAmount)} </div>,
+
+            Footer: ({ rows }) => {
+                const total = rows.reduce((sum, row) => parseInt(sum) + (parseInt(row.original.paidAmount) || 0), 0);
+                console.log(total);
+                return (<span>data
+                  </span>);
+            },
+
+        },
+
+        {
+            Header: 'Actions',
+            accessor: 'actions',
+            Cell: ({ row }) => {
+                const activeChecker = row.original.isActive
+                const iconColor = activeChecker ? "text-danger" : "text-warning";
+                const deleteMessage = activeChecker ? "You want to In-Active...?" : "You want to retrive this Data...?";
+                return (
+                    <div>
+                        <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index, "forEdit")}>
+                            <i className={'fe-edit-1'}></i>
+                        </span>
+
+
+
+                    </div>
+                )
+            },
+        },
+    ];
+
+  
+
+
     const [state, setState] = useState({});
     const [parentList, setParentList] = useState([]);
+    const [parentPaymentList, setParentPaymentList] = useState([]);
     const [optionListState, setOptionListState] = useState({
         staffList: [
             { staffId: 1, staffName: 'Suki' },
             { staffId: 2, staffName: 'Ragul' },
             { staffId: 3, staffName: 'Mohan' },
         ],
-    })
+    });
     const [selectedItem, setSelectedItem] = useState({});
     const [selectedIndex, setSelectedIndex] = useState(false);
     const [modal, setModal] = useState(false);
@@ -102,8 +179,8 @@ function Index() {
     const errorHandle = useRef();
 
     useEffect(() => {
-        setIsLoading(true)        
-        dispatch(getStaffAdvanceRequest());        
+        setIsLoading(true)
+        dispatch(getStaffAdvanceRequest());
     }, []);
 
     useEffect(() => {
@@ -145,9 +222,25 @@ function Index() {
         }
     }, [updateStaffAdvanceSuccess, updateStaffAdvanceFailure]);
 
+
+    useEffect(() => {
+
+        if (getAdvancePaymentHistorySuccess) {
+            setIsLoading(false)
+            // console.log("getAdvancePaymentHistoryList");
+            // console.log(getAdvancePaymentHistoryList);
+            setParentPaymentList(getAdvancePaymentHistoryList);
+            dispatch(resetGetAdvancePaymentHistory())
+        } else if (getAdvancePaymentHistoryFailure) {
+            setIsLoading(false)
+            dispatch(resetGetAdvancePaymentHistory())
+        }
+    }, [getAdvancePaymentHistorySuccess, getAdvancePaymentHistoryFailure]);
+
     const closeModel = () => {
         isEdit = false;
         onFormClear()
+        onPaymentFormClear()
         setModal(false)
     }
 
@@ -161,24 +254,50 @@ function Index() {
         });
     };
 
-    const createModel = () => {
-        onFormClear()
-        isEdit = false;
-        setModal(true)
-    };
-
-    const onEditForm = (data, index) => {
+    const onPaymentFormClear = () => {
         setState({
             ...state,
-            staffId: data?.staffId || "",
-            amount: data?.amount || "",
-            reason: data?.reason || "",
-            applyDate: data.applyDate ? dateConversion(data.applyDate, "YYYY-MM-DD") : ""
+            paidDate: '',
+            paidAmount: '',
+            reason: '',
         });
+    };
+
+    const createModel = () => {
+        onFormClear()
+        onPaymentFormClear()
+        isEdit = false;
+        setModal(true);
+        isEditorpayment = 'forEdit'
+    };
+
+
+
+    const onEditForm = (data, index, name) => {
+        if (name == "forEdit") {
+            setState({
+                ...state,
+                staffId: data?.staffId || "",
+                amount: data?.amount || "",
+                reason: data?.reason || "",
+                applyDate: data.applyDate ? dateConversion(data.applyDate, "YYYY-MM-DD") : ""
+            });
+        } else if (name == "forPayment") {
+            setState({
+                ...state,
+                staffAdvanceId: data?.staffAdvanceId || "",
+            });
+        }
         isEdit = true;
         setSelectedItem(data)
         setSelectedIndex(index)
         setModal(true)
+        isEditorpayment = name;
+        const reqData = {
+            staffAdvanceId: data?.staffAdvanceId
+        }
+        dispatch(getAdvancePaymentHistoryRequest(reqData));
+
     };
 
     const handleValidation = () => {
@@ -201,33 +320,50 @@ function Index() {
         }
     };
 
-    
+
+    const onPaymentFormSubmit = () => {
+        console.log("state")
+        console.log(state)
+        console.log(errors)
+        const submitRequest = {
+            staffAdvanceId: state?.staffAdvanceId || "",
+            paidAmount: state?.paidAmount || "",
+            paidDate: state.paidDate ? dateConversion(state.paidDate, "YYYY-MM-DD") : "",
+        }
+        console.log(submitRequest)
+        dispatch(createAdvancePaymentHistoryRequest(submitRequest))
+
+    }
+
+
     return (
         <React.Fragment>
             <NotificationContainer />
-           { isLoading ? <div className='bg-light opacity-0.25'>
-            <div className="d-flex justify-content-center m-5">
-                <Spinner className='mt-5 mb-5' animation="border" />
-            </div>
+            {isLoading ? <div className='bg-light opacity-0.25'>
+                <div className="d-flex justify-content-center m-5">
+                    <Spinner className='mt-5 mb-5' animation="border" />
+                </div>
             </div> :
-            <Table
-                columns={columns}
-                Title={'Staff Advance List'}
-                data={parentList || []}
-                pageSize={25}
-                toggle={createModel}
-            />}
+                <Table
+                    columns={columns}
+                    Title={'Staff Advance List'}
+                    data={parentList || []}
+                    pageSize={25}
+                    toggle={createModel}
+                />}
 
             <ModelViewBox
                 modal={modal}
                 setModel={setModal}
-                modelHeader={'Staff Advance'}
-                modelSize={'md'}
-                isEdit={isEdit}
-                handleSubmit={handleValidation}>
+                modelHeader={isEditorpayment === "forEdit" ? 'Staff Advance' : "Payment"}
+                modelSize={isEditorpayment === "forEdit" ? 'md' : 'lg'}
+                isEdit={isEditorpayment === "forEdit" ? isEdit : false}
+                handleSubmit={handleValidation}
+            >
+
                 <FormLayout
-                    dynamicForm={staffAdvanceContainer}
-                    handleSubmit={onFormSubmit}
+                    dynamicForm={isEditorpayment === "forEdit" ? staffAdvanceContainer : staffAdvancePayContainer}
+                    handleSubmit={isEditorpayment === "forEdit" ? onFormSubmit : onPaymentFormSubmit}
                     optionListState={optionListState}
                     setState={setState}
                     state={state}
@@ -236,6 +372,17 @@ function Index() {
                     errors={errors}
                     setErrors={setErrors}
                 />
+
+                {
+                    isEditorpayment === "forPayment" &&
+                    <Table
+                        columns={columnsPayment}
+                        Title={'Payment List'}
+                        data={parentPaymentList || []}
+                        footerTable={false}
+                        
+                    />
+                }
             </ModelViewBox>
         </React.Fragment>
     );

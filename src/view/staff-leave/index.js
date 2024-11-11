@@ -102,14 +102,14 @@ function Index() {
                         row.original.leaveStatusId === 30
                             ? 'danger'
                             : row.original.leaveStatusId === 28
-                            ? 'primary'
-                            : 'success'
+                                ? 'primary'
+                                : 'success'
                     }>
                     {row.original.leaveStatusId === 30
                         ? 'Cancelled'
                         : row.original.leaveStatusId === 28
-                        ? 'Request'
-                        : 'Approved'}
+                            ? 'Request'
+                            : 'Approved'}
                 </Badge>
             ),
         },
@@ -119,20 +119,22 @@ function Index() {
             Cell: ({ row }) => {
                 return (
                     <div>
-                        <span
-                            className="text-primary  me-2 cursor-pointer"
-                            onClick={() => onEditForm(row.original, row.index)}>
-                            <i className={'fe-edit-1'}></i>
-                        </span>
-
                         {row.original.leaveStatusId === 28 && (
                             <span>
+                                <span
+                                    className="text-primary  me-2 cursor-pointer"
+                                    onClick={() => onEditForm(row.original, row.index)}>
+                                    <i className={'fe-edit-1'}></i>
+                                </span>
+
+
+
                                 <span
                                     className={`text-success me-2 cursor-pointer`}
                                     onClick={() =>
                                         showConfirmationDialog(
                                             'You want to Approved?',
-                                            () => onDeleteForm(row.original, row.index, 29),
+                                            () => onStatusForm(row.original, row.index, 29),
                                             'Yes'
                                         )
                                     }>
@@ -143,7 +145,7 @@ function Index() {
                                     onClick={() =>
                                         showConfirmationDialog(
                                             'You want to Cancelled?',
-                                            () => onDeleteForm(row.original, row.index, 30),
+                                            () => onStatusForm(row.original, row.index, 30),
                                             'Yes'
                                         )
                                     }>
@@ -198,6 +200,9 @@ function Index() {
         }
     }, [getStaffSuccess, getStaffFailure]);
 
+    console.log("optionListState")
+    console.log(optionListState)
+
     useEffect(() => {
         if (getStaffLeaveSuccess) {
             setIsLoading(false);
@@ -227,8 +232,8 @@ function Index() {
         if (updateStaffLeaveSuccess) {
             const temp_state = [...parentList];
             temp_state[selectedIndex] = updateStaffLeaveData[0];
-            console.log('temp_state');
-            console.log(temp_state);
+            // console.log('temp_state');
+            // console.log(temp_state);
             // setParentList(temp_state);
             isEdit && showMessage('success', 'Updated Successfully');
             closeModel();
@@ -284,7 +289,7 @@ function Index() {
     // console.log("state")
     // console.log(state)
     const onFormSubmit = async () => {
-        const submitRequest = {
+        let submitRequest = {
             staffId: state?.staffId || '',
             leaveTypeId: state?.leaveTypeId || '',
             fromDate: state?.fromDate || '',
@@ -292,13 +297,14 @@ function Index() {
             reason: state?.reason || '',
         };
         if (isEdit) {
+            submitRequest.leaveStatusId = selectedItem?.leaveStatusId;
             dispatch(updateStaffLeaveRequest(submitRequest, selectedItem.staffLeaveId));
         } else {
             dispatch(createStaffLeaveRequest(submitRequest));
         }
     };
 
-    const onDeleteForm = (data, index, activeChecker) => {
+    const onStatusForm = (data, index, activeChecker) => {
         const submitRequest = {
             leaveStatusId: activeChecker,
         };

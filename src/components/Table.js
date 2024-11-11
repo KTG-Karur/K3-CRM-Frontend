@@ -71,7 +71,7 @@ const Table = (props) => {
     const sizePerPageListData = sizePerPageList
     const columnData = props['columns']
     const columnLength = columnData.length || 4
-    const { toggle = null, addBtn = true, onClickCallBack={}, defaultState = [], tableIcon = false, footerTable = false, btnName = false, Title, filterFormContainer, optionListState, filterSubmitFunction, onChangeCallBack, state, setState, filterColNo } = props;
+    const { toggle = null, addBtn = true, onClickCallBack={}, defaultState = [], tableIcon = false, footerTable = false, btnName = false, Title, filterFormContainer, optionListState, filterSubmitFunction, onChangeCallBack, state, setState, filterColNo, footerLabel } = props;
 
     let otherProps = {};
 
@@ -90,6 +90,8 @@ const Table = (props) => {
     if (isSelectable) {
         otherProps['useRowSelect'] = useRowSelect;
     }
+
+    
 
     const dataTable = useTable(
         {
@@ -261,26 +263,23 @@ const Table = (props) => {
                                                 (
                                                     <>
                                                         <tr>
-                                                            <td colSpan={columnLength -3}></td>
-                                                            <td><b>Total Amount</b></td>
-                                                            <td><b>RS. {defaultState?.totalCreditAmount || 0}</b></td>
-                                                            <td><b>Rs. {defaultState?.totalDebitAmount || 0}</b></td>
+                                                            {/* Dynamically calculate colSpan based on the number of columns */}
+                                                            <td colSpan={columnLength - 3}></td>
+
+                                                            {/* Dynamically render the label and currency */}
+                                                            <td><b>{footerLabel || 'Total Amount'}</b></td>
+
+                                                            {/* Dynamically render the amount with optional currency */}
+                                                            <td>
+                                                                <b>
+                                                                
+                                                                {defaultState?.totalAmount?.toLocaleString() || "0"}
+                                                                </b>
+                                                            </td>
+
+                                                            <td></td>
                                                         </tr>
-                                                        <tr>
-                                                            <td colSpan={columnLength-3}></td>
-                                                            <td colSpan={2}><b>Today's Closing</b></td>
-                                                            <td><b>RS. {defaultState?.closingAmount || 0}</b></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td colSpan={columnLength-3}></td>
-                                                            <td colSpan={2}><b>Opening Amount</b></td>
-                                                            <td><b>RS. {defaultState?.openingAmount || 0}</b></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td colSpan={columnLength-3}></td>
-                                                            <td colSpan={2}><b>Total Closing</b></td>
-                                                            <td><b>RS. {defaultState?.totalClosingAmount || 0}</b></td>
-                                                        </tr>
+                                                        
                                                     </>
                                                 )
                                                 : ""
