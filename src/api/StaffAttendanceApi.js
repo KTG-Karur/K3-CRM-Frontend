@@ -30,9 +30,9 @@ export async function createStaffAttendance(request) {
   }
 }
 //UPDATE---->
-export async function updateStaffAttendance(request, StaffAttendanceId) {
+export async function updateStaffAttendance(request) {
   try {
-    const response = await apiReturnCallBack("PUT", StaffAttendance+`/${StaffAttendanceId}`, request);
+    const response = await apiReturnCallBack("PUT", StaffAttendance, request);
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.message || JSON.stringify(data));

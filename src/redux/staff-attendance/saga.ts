@@ -43,7 +43,7 @@ function* createStaffAttendanceSaga(action: any): Generator<any, any, any> {
 // // Saga to handle updating a StaffAttendance
 function* updateStaffAttendanceSaga(action: any): Generator<any, any, any> {
   try {
-    const data = yield call(updateStaffAttendance, action.payload.data, action.payload.id);
+    const data = yield call(updateStaffAttendance, action.payload.data);
     yield put(updateStaffAttendanceSuccess(data));
   } catch (error: any) {
     const errorMessage = error.response && error.response.data && error.response.data.message
