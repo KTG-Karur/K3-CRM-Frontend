@@ -5,7 +5,7 @@ import FormLayout from '../../utils/formLayout';
 import { approvedFormContainer, employeeFormContainer } from './formFieldData';
 import Table from '../../components/Table';
 import { dateConversion, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
-import { createClaimRequest, getBranchRequest, getClaimRequest, getClaimTypeRequest, resetCreateClaim, resetGetBranch, resetGetClaim, resetGetClaimType, resetUpdateClaim, updateClaimRequest } from '../../redux/actions';
+import { createClaimRequest, getBranchRequest,getStaffRequest, getClaimRequest, getClaimTypeRequest, resetCreateClaim, resetGetBranch, resetGetClaim,resetGetStaff, resetGetClaimType, resetUpdateClaim, updateClaimRequest } from '../../redux/actions';
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 import moment from 'moment';
@@ -22,9 +22,15 @@ function Index() {
         getBranchSuccess, getBranchList, getBranchFailure,
         getClaimTypeSuccess, getClaimTypeList, getClaimTypeFailure,
         createClaimSuccess, createClaimData, createClaimFailure,
-        updateClaimSuccess, updateClaimData, updateClaimFailure,errorMessage
+        updateClaimSuccess, updateClaimData, updateClaimFailure,errorMessage,getStaffSuccess,
+        getStaffList,
+        getStaffFailure,
 
     } = appSelector((state) => ({
+        getStaffSuccess: state.staffReducer.getStaffSuccess,
+        getStaffList: state.staffReducer.getStaffList,
+        getStaffFailure: state.staffReducer.getStaffFailure,
+
         getClaimSuccess: state.claimReducer.getClaimSuccess,
         getClaimList: state.claimReducer.getClaimList,
         getClaimFailure: state.claimReducer.getClaimFailure,
@@ -106,11 +112,7 @@ function Index() {
 
     const [state, setState] = useState({});
     const [optionListState, setOptionListState] = useState({
-        staffList: [
-            { staffId: 1, staffName: 'Suki' },
-            { staffId: 2, staffName: 'Ragul' },
-            { staffId: 3, staffName: 'Mohan' },
-        ],
+        staffList: [],
         paymentModeList:[
           {  
             paymentModeId : 5,
@@ -135,12 +137,31 @@ function Index() {
     useEffect(() => {
         setIsLoading(true)
         dispatch(getClaimRequest());
+        dispatch(getStaffRequest());
         const req={
             isActive : 1
         }
         dispatch(getBranchRequest(req));
         dispatch(getClaimTypeRequest(req));
     }, []);
+
+    useEffect(() => {
+        if (getStaffSuccess) {
+            setIsLoading(false);
+            setOptionListState({
+                ...optionListState,
+                staffList: getStaffList,
+            });
+            dispatch(resetGetStaff());
+        } else if (getStaffFailure) {
+            setIsLoading(false);
+            setOptionListState({
+                ...optionListState,
+                staffList: [],
+            });
+            dispatch(resetGetStaff());
+        }
+    }, [getStaffSuccess, getStaffFailure]);
 
     useEffect(() => {
         if (getClaimSuccess) {

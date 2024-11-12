@@ -5,7 +5,7 @@ import FormLayout from '../../utils/formLayout';
 import { permissionContainer } from './formFieldData';
 import Table from '../../components/Table';
 import { dateConversion, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
-import { createPermissionRequest, getPermissionRequest, resetCreatePermission, resetGetPermission, resetUpdatePermission, updatePermissionRequest } from '../../redux/actions';
+import { createPermissionRequest, getStaffRequest, getPermissionRequest, resetCreatePermission, resetGetPermission, resetUpdatePermission, resetGetStaff, updatePermissionRequest } from '../../redux/actions';
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 import _ from 'lodash';
@@ -19,9 +19,15 @@ function Index() {
     const { getPermissionSuccess, getPermissionList, getPermissionFailure,
         createPermissionSuccess, createPermissionData, createPermissionFailure,
         updatePermissionSuccess, updatePermissionData, updatePermissionFailure,
-        errorMessage,
+        errorMessage,  getStaffSuccess,
+        getStaffList,
+        getStaffFailure,
 
     } = appSelector((state) => ({
+        getStaffSuccess: state.staffReducer.getStaffSuccess,
+        getStaffList: state.staffReducer.getStaffList,
+        getStaffFailure: state.staffReducer.getStaffFailure,
+
         getPermissionSuccess: state.permissionReducer.getPermissionSuccess,
         getPermissionList: state.permissionReducer.getPermissionList,
         getPermissionFailure: state.permissionReducer.getPermissionFailure,
@@ -90,11 +96,7 @@ function Index() {
     const [state, setState] = useState({});
     const [parentList, setParentList] = useState([]);
     const [optionListState, setOptionListState] = useState({
-        staffList: [
-            { staffId: 1, staffName: 'Suki' },
-            { staffId: 2, staffName: 'Ragul' },
-            { staffId: 3, staffName: 'Mohan' },
-        ],
+        staffList: [],
         permissionTypeList: [
             { permissionTypeId: 37, permissionTypeName: '1hr' },
             { permissionTypeId: 38, permissionTypeName: '2hr' },
@@ -111,8 +113,27 @@ function Index() {
 
     useEffect(() => {
         setIsLoading(true)        
-        dispatch(getPermissionRequest());        
+        dispatch(getPermissionRequest()); 
+        dispatch(getStaffRequest());       
     }, []);
+
+    useEffect(() => {
+        if (getStaffSuccess) {
+            setIsLoading(false);
+            setOptionListState({
+                ...optionListState,
+                staffList: getStaffList,
+            });
+            dispatch(resetGetStaff());
+        } else if (getStaffFailure) {
+            setIsLoading(false);
+            setOptionListState({
+                ...optionListState,
+                staffList: [],
+            });
+            dispatch(resetGetStaff());
+        }
+    }, [getStaffSuccess, getStaffFailure]);
 
     useEffect(() => {
         if (getPermissionSuccess) {

@@ -5,7 +5,7 @@ import FormLayout from '../../utils/formLayout';
 import { staffAdvanceContainer, staffAdvancePayContainer } from './formFieldData';
 import Table from '../../components/Table';
 import { dateConversion, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
-import { createAdvancePaymentHistoryRequest, createStaffAdvanceRequest, getActivityRequest, getAdvancePaymentHistoryRequest, getStaffAdvanceRequest, resetCreateStaffAdvance, resetGetActivity, resetGetAdvancePaymentHistory, resetGetStaffAdvance, resetUpdateStaffAdvance, updateAdvancePaymentHistoryRequest, updateStaffAdvanceRequest } from '../../redux/actions';
+import { createAdvancePaymentHistoryRequest, createStaffAdvanceRequest, getActivityRequest, getAdvancePaymentHistoryRequest, getStaffAdvanceRequest, getStaffRequest, resetCreateStaffAdvance, resetGetActivity, resetGetAdvancePaymentHistory, resetGetStaffAdvance, resetGetStaff, resetUpdateStaffAdvance, updateAdvancePaymentHistoryRequest, updateStaffAdvanceRequest } from '../../redux/actions';
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 import _ from 'lodash';
@@ -20,9 +20,15 @@ function Index() {
         getActivitySuccess, getActivityList, getActivityFailure,
         createStaffAdvanceSuccess, createStaffAdvanceData, createStaffAdvanceFailure,
         updateStaffAdvanceSuccess, updateStaffAdvanceData, updateStaffAdvanceFailure,
-        errorMessage, getAdvancePaymentHistorySuccess, getAdvancePaymentHistoryFailure, getAdvancePaymentHistoryList
+        errorMessage, getAdvancePaymentHistorySuccess, getAdvancePaymentHistoryFailure, getAdvancePaymentHistoryList, getStaffSuccess,
+        getStaffList,
+        getStaffFailure,
 
     } = appSelector((state) => ({
+        getStaffSuccess: state.staffReducer.getStaffSuccess,
+        getStaffList: state.staffReducer.getStaffList,
+        getStaffFailure: state.staffReducer.getStaffFailure,
+
         getStaffAdvanceSuccess: state.staffAdvanceReducer.getStaffAdvanceSuccess,
         getStaffAdvanceList: state.staffAdvanceReducer.getStaffAdvanceList,
         getStaffAdvanceFailure: state.staffAdvanceReducer.getStaffAdvanceFailure,
@@ -164,11 +170,7 @@ function Index() {
     const [parentList, setParentList] = useState([]);
     const [parentPaymentList, setParentPaymentList] = useState([]);
     const [optionListState, setOptionListState] = useState({
-        staffList: [
-            { staffId: 1, staffName: 'Suki' },
-            { staffId: 2, staffName: 'Ragul' },
-            { staffId: 3, staffName: 'Mohan' },
-        ],
+        staffList: [],
     });
     const [selectedItem, setSelectedItem] = useState({});
     const [selectedIndex, setSelectedIndex] = useState(false);
@@ -181,7 +183,26 @@ function Index() {
     useEffect(() => {
         setIsLoading(true)
         dispatch(getStaffAdvanceRequest());
+        dispatch(getStaffRequest());
     }, []);
+
+    useEffect(() => {
+        if (getStaffSuccess) {
+            setIsLoading(false);
+            setOptionListState({
+                ...optionListState,
+                staffList: getStaffList,
+            });
+            dispatch(resetGetStaff());
+        } else if (getStaffFailure) {
+            setIsLoading(false);
+            setOptionListState({
+                ...optionListState,
+                staffList: [],
+            });
+            dispatch(resetGetStaff());
+        }
+    }, [getStaffSuccess, getStaffFailure]);
 
     useEffect(() => {
         if (getStaffAdvanceSuccess) {

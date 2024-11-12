@@ -5,7 +5,7 @@ import FormLayout from '../../utils/formLayout';
 import { transferStaffContainer } from './formFieldData';
 import Table from '../../components/Table';
 import { dateConversion, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
-import { createTransferStaffRequest, getActivityRequest, getBranchRequest, getTransferStaffRequest, resetCreateTransferStaff, resetGetActivity, resetGetBranch, resetGetTransferStaff, resetUpdateTransferStaff, updateTransferStaffRequest } from '../../redux/actions';
+import { createTransferStaffRequest, getActivityRequest, getStaffRequest, getBranchRequest, getTransferStaffRequest, resetCreateTransferStaff, resetGetActivity, resetGetBranch, resetGetStaff,resetGetTransferStaff, resetUpdateTransferStaff, updateTransferStaffRequest } from '../../redux/actions';
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 import _ from 'lodash';
@@ -20,9 +20,15 @@ function Index() {
         getActivitySuccess, getActivityList, getActivityFailure,
         createTransferStaffSuccess, createTransferStaffData, createTransferStaffFailure,
         updateTransferStaffSuccess, updateTransferStaffData, updateTransferStaffFailure,
-        errorMessage, getBranchFailure, getBranchList, getBranchSuccess
+        errorMessage, getBranchFailure, getBranchList, getBranchSuccess, getStaffSuccess,
+        getStaffList,
+        getStaffFailure,
 
     } = appSelector((state) => ({
+        getStaffSuccess: state.staffReducer.getStaffSuccess,
+        getStaffList: state.staffReducer.getStaffList,
+        getStaffFailure: state.staffReducer.getStaffFailure,
+
         getTransferStaffSuccess: state.transferStaffReducer.getTransferStaffSuccess,
         getTransferStaffList: state.transferStaffReducer.getTransferStaffList,
         getTransferStaffFailure: state.transferStaffReducer.getTransferStaffFailure,
@@ -101,11 +107,7 @@ function Index() {
     const [state, setState] = useState({});
     const [parentList, setParentList] = useState([]);
     const [optionListState, setOptionListState] = useState({
-        staffList: [
-            { staffId: 1, staffName: 'Suki' },
-            { staffId: 2, staffName: 'Ragul' },
-            { staffId: 3, staffName: 'Mohan' },
-        ],
+        staffList: [],
         branchList: [],
     })
     const [selectedItem, setSelectedItem] = useState({});
@@ -118,9 +120,28 @@ function Index() {
 
     useEffect(() => {
         setIsLoading(true)
+        dispatch(getStaffRequest());
         dispatch(getTransferStaffRequest());
         dispatch(getBranchRequest());
     }, []);
+
+    useEffect(() => {
+        if (getStaffSuccess) {
+            setIsLoading(false);
+            setOptionListState({
+                ...optionListState,
+                staffList: getStaffList,
+            });
+            dispatch(resetGetStaff());
+        } else if (getStaffFailure) {
+            setIsLoading(false);
+            setOptionListState({
+                ...optionListState,
+                staffList: [],
+            });
+            dispatch(resetGetStaff());
+        }
+    }, [getStaffSuccess, getStaffFailure]);
 
     useEffect(() => {
         if (getTransferStaffSuccess) {

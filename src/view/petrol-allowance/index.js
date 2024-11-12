@@ -5,7 +5,7 @@ import FormLayout from '../../utils/formLayout';
 import { filterFormContainer, petrolAllowanceContainer } from './formFieldData';
 import Table from '../../components/Table';
 import { dateConversion, removeNullKeyFromObj, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
-import { createPetrolAllowanceRequest, getPetrolAllowanceRequest, resetCreatePetrolAllowance, resetGetPetrolAllowance, resetUpdatePetrolAllowance, updatePetrolAllowanceRequest } from '../../redux/actions';
+import { createPetrolAllowanceRequest, getPetrolAllowanceRequest, getStaffRequest, resetCreatePetrolAllowance, resetGetPetrolAllowance, resetUpdatePetrolAllowance, resetGetStaff, updatePetrolAllowanceRequest } from '../../redux/actions';
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 import _ from 'lodash';
@@ -19,9 +19,15 @@ function Index() {
     const { getPetrolAllowanceSuccess, getPetrolAllowanceList, getPetrolAllowanceFailure,
         createPetrolAllowanceSuccess, createPetrolAllowanceData, createPetrolAllowanceFailure,
         updatePetrolAllowanceSuccess, updatePetrolAllowanceData, updatePetrolAllowanceFailure,
-        errorMessage,
+        errorMessage, getStaffSuccess,
+        getStaffList,
+        getStaffFailure,
 
     } = appSelector((state) => ({
+        getStaffSuccess: state.staffReducer.getStaffSuccess,
+        getStaffList: state.staffReducer.getStaffList,
+        getStaffFailure: state.staffReducer.getStaffFailure,
+
         getPetrolAllowanceSuccess: state.petrolAllowanceReducer.getPetrolAllowanceSuccess,
         getPetrolAllowanceList: state.petrolAllowanceReducer.getPetrolAllowanceList,
         getPetrolAllowanceFailure: state.petrolAllowanceReducer.getPetrolAllowanceFailure,
@@ -121,11 +127,7 @@ function Index() {
     });
     const [parentList, setParentList] = useState([]);
     const [optionListState, setOptionListState] = useState({
-        staffList: [
-            { staffId: 1, staffName: 'Suki' },
-            { staffId: 2, staffName: 'Ragul' },
-            { staffId: 3, staffName: 'Mohan' },
-        ]
+        staffList: [],
     })
     const [selectedItem, setSelectedItem] = useState({});
     const [selectedIndex, setSelectedIndex] = useState(false);
@@ -137,11 +139,30 @@ function Index() {
 
     useEffect(() => {
         setIsLoading(true)
+        dispatch(getStaffRequest());
         const getReq = {
             isActive: 1
         }
         dispatch(getPetrolAllowanceRequest(getReq));
     }, []);
+
+    useEffect(() => {
+        if (getStaffSuccess) {
+            setIsLoading(false);
+            setOptionListState({
+                ...optionListState,
+                staffList: getStaffList,
+            });
+            dispatch(resetGetStaff());
+        } else if (getStaffFailure) {
+            setIsLoading(false);
+            setOptionListState({
+                ...optionListState,
+                staffList: [],
+            });
+            dispatch(resetGetStaff());
+        }
+    }, [getStaffSuccess, getStaffFailure]);
 
     useEffect(() => {
         if (getPetrolAllowanceSuccess) {
