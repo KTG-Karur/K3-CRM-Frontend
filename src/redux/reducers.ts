@@ -29,7 +29,7 @@ import settingBenefitReducer from './setting-benefit/reducers';
 import staffProofReducer from './staff-proof/reducers';
 import staffQualificationReducer from './staff-qualification/reducers';
 import staffLeaveReducer from './staff-leave/reducers';
-import StaffAttendanceReducer from './staff-attendance/reducers';
+import staffAttendanceReducer from './staff-attendance/reducers';
 
 export default combineReducers({
     Auth,
@@ -61,5 +61,5 @@ export default combineReducers({
     staffProofReducer,
     staffQualificationReducer,
     staffLeaveReducer,
-    StaffAttendanceReducer,
+    staffAttendanceReducer,
 });

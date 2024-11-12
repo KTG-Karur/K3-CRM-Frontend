@@ -13,24 +13,24 @@ export type NavigateTypes = {
 };
 
 const Navigate: NavigateTypes[] = [
-    { label: 'Dashboard', isTitle: true },
-    {
-        label: 'Dashboard',
-        isTitle: false,
-        icon: 'mdi mdi-chart-bar',
-        children: [
-            {
-                label: 'Loan Report',
-                url: '/loan-report',
-                parentKey: 'Dashboard',
-            },
-            {
-                label: 'Analaysis',
-                url: '/dashboard',
-                parentKey: 'Dashboard',
-            },
-        ]
-    },
+    // { label: 'Dashboard', isTitle: true },
+    // {
+    //     label: 'Dashboard',
+    //     isTitle: false,
+    //     icon: 'mdi mdi-chart-bar',
+    //     children: [
+    //         {
+    //             label: 'Loan Report',
+    //             url: '/loan-report',
+    //             parentKey: 'Dashboard',
+    //         },
+    //         {
+    //             label: 'Analaysis',
+    //             url: '/dashboard',
+    //             parentKey: 'Dashboard',
+    //         },
+    //     ]
+    // },
     { label: 'Claim', isTitle: true },
     {
         label: 'Claim',
@@ -64,19 +64,19 @@ const Navigate: NavigateTypes[] = [
         icon: 'mdi mdi-account-check',
         url: '/allowance/petrol-allowance',
     },
-    { label: 'Invesment', isTitle: true },
-    {
-        label: 'Customer',
-        isTitle: false,
-        icon: 'mdi mdi-account-check',
-        url: '/view/applicant',
-    },
-    {
-        label: 'Collection Report',
-        isTitle: false,
-        icon: 'mdi mdi-account-cash',
-        url: '/view/monthly-reciept',
-    },
+    { label: 'Master', isTitle: true },
+    // {
+    //     label: 'Customer',
+    //     isTitle: false,
+    //     icon: 'mdi mdi-account-check',
+    //     url: '/view/applicant',
+    // },
+    // {
+    //     label: 'Collection Report',
+    //     isTitle: false,
+    //     icon: 'mdi mdi-account-cash',
+    //     url: '/view/monthly-reciept',
+    // },
     {
         label: 'Holiday',
         isTitle: false,
@@ -180,228 +180,228 @@ const Navigate: NavigateTypes[] = [
         ],
     },
 
-    { label: 'Apps', isTitle: true },
-    {
-        label: 'Calendar',
-        isTitle: false,
-        icon: 'mdi mdi-calendar-blank-outline',
-        url: '/apps/calendar',
-    },
-    {
-        label: 'Chat',
-        isTitle: false,
-        icon: 'mdi mdi-forum-outline',
-        url: '/apps/chat',
-    },
-    {
-        label: 'Email',
-        isTitle: false,
-        icon: 'mdi mdi-email-outline',
-        children: [
-            {
-                label: 'Inbox',
-                url: '/apps/email/inbox',
-                parentKey: 'Email',
-            },
-        ],
-    },
-    {
-        label: 'Tasks',
-        isTitle: false,
-        icon: 'mdi mdi-clipboard-outline',
-        children: [
-            {
-                label: 'Kanban Board',
-                url: '/apps/tasks/kanban',
-                parentKey: 'Tasks',
-            },
-            {
-                label: 'Details',
-                url: '/apps/tasks/details',
-                parentKey: 'Tasks',
-            },
-        ],
-    },
-    {
-        label: 'Projects',
-        isTitle: false,
-        icon: 'mdi mdi-briefcase-variant-outline',
-        url: '/apps/projects',
-    },
-    {
-        label: 'Contacts',
-        isTitle: false,
-        icon: 'mdi mdi-book-open-page-variant-outline',
-        children: [
-            {
-                label: 'Members List',
-                url: '/apps/contacts/list',
-                parentKey: 'Contacts',
-            },
-            {
-                label: 'Profile',
-                url: '/apps/contacts/profile',
-                parentKey: 'Contacts',
-            },
-        ],
-    },
-    { label: 'Custom', isTitle: true },
-    {
-        label: 'Extra Pages',
-        isTitle: false,
-        icon: 'mdi mdi-file-multiple-outline',
-        children: [
-            {
-                label: 'Starter',
-                url: '/pages/starter',
-                parentKey: 'Extra Pages',
-            },
-            {
-                label: 'Pricing',
-                url: '/pages/pricing',
-                parentKey: 'Extra Pages',
-            },
-            {
-                label: 'Timeline',
-                url: '/pages/timeline',
-                parentKey: 'Extra Pages',
-            },
-            {
-                label: 'Invoice',
-                url: '/pages/invoice',
-                parentKey: 'Extra Pages',
-            },
-            {
-                label: 'FAQs',
-                url: '/pages/faq',
-                parentKey: 'Extra Pages',
-            },
-            {
-                label: 'Gallery',
-                url: '/pages/gallery',
-                parentKey: 'Extra Pages',
-            },
+    // { label: 'Apps', isTitle: true },
+    // {
+    //     label: 'Calendar',
+    //     isTitle: false,
+    //     icon: 'mdi mdi-calendar-blank-outline',
+    //     url: '/apps/calendar',
+    // },
+    // {
+    //     label: 'Chat',
+    //     isTitle: false,
+    //     icon: 'mdi mdi-forum-outline',
+    //     url: '/apps/chat',
+    // },
+    // {
+    //     label: 'Email',
+    //     isTitle: false,
+    //     icon: 'mdi mdi-email-outline',
+    //     children: [
+    //         {
+    //             label: 'Inbox',
+    //             url: '/apps/email/inbox',
+    //             parentKey: 'Email',
+    //         },
+    //     ],
+    // },
+    // {
+    //     label: 'Tasks',
+    //     isTitle: false,
+    //     icon: 'mdi mdi-clipboard-outline',
+    //     children: [
+    //         {
+    //             label: 'Kanban Board',
+    //             url: '/apps/tasks/kanban',
+    //             parentKey: 'Tasks',
+    //         },
+    //         {
+    //             label: 'Details',
+    //             url: '/apps/tasks/details',
+    //             parentKey: 'Tasks',
+    //         },
+    //     ],
+    // },
+    // {
+    //     label: 'Projects',
+    //     isTitle: false,
+    //     icon: 'mdi mdi-briefcase-variant-outline',
+    //     url: '/apps/projects',
+    // },
+    // {
+    //     label: 'Contacts',
+    //     isTitle: false,
+    //     icon: 'mdi mdi-book-open-page-variant-outline',
+    //     children: [
+    //         {
+    //             label: 'Members List',
+    //             url: '/apps/contacts/list',
+    //             parentKey: 'Contacts',
+    //         },
+    //         {
+    //             label: 'Profile',
+    //             url: '/apps/contacts/profile',
+    //             parentKey: 'Contacts',
+    //         },
+    //     ],
+    // },
+    // { label: 'Custom', isTitle: true },
+    // {
+    //     label: 'Extra Pages',
+    //     isTitle: false,
+    //     icon: 'mdi mdi-file-multiple-outline',
+    //     children: [
+    //         {
+    //             label: 'Starter',
+    //             url: '/pages/starter',
+    //             parentKey: 'Extra Pages',
+    //         },
+    //         {
+    //             label: 'Pricing',
+    //             url: '/pages/pricing',
+    //             parentKey: 'Extra Pages',
+    //         },
+    //         {
+    //             label: 'Timeline',
+    //             url: '/pages/timeline',
+    //             parentKey: 'Extra Pages',
+    //         },
+    //         {
+    //             label: 'Invoice',
+    //             url: '/pages/invoice',
+    //             parentKey: 'Extra Pages',
+    //         },
+    //         {
+    //             label: 'FAQs',
+    //             url: '/pages/faq',
+    //             parentKey: 'Extra Pages',
+    //         },
+    //         {
+    //             label: 'Gallery',
+    //             url: '/pages/gallery',
+    //             parentKey: 'Extra Pages',
+    //         },
 
-            {
-                label: 'Error - 404',
-                url: '/error-404',
-                parentKey: 'Extra Pages',
-            },
-            {
-                label: 'Error - 500',
-                url: '/error-500',
-                parentKey: 'Extra Pages',
-            },
-            {
-                label: 'Maintenance',
-                url: '/maintenance',
-                parentKey: 'Extra Pages',
-            },
-            {
-                label: 'Coming Soon',
-                url: '/coming-soon',
-                parentKey: 'Extra Pages',
-            },
-        ],
-    },
-    { label: 'Components', isTitle: true },
-    {
-        label: 'Base UI',
-        isTitle: false,
-        icon: 'mdi mdi-briefcase-outline',
-        children: [
-            {
-                label: 'Buttons',
-                url: '/base-ui/buttons',
-                parentKey: 'Base UI',
-            },
-            {
-                label: 'Cards',
-                url: '/base-ui/cards',
-                parentKey: 'Base UI',
-            },
-            {
-                label: 'Avatars',
-                url: '/base-ui/avatars',
-                parentKey: 'Base UI',
-            },
-            {
-                label: 'Tabs & Accordions',
-                url: '/base-ui/tabs-accordions',
-                parentKey: 'Base UI',
-            },
-            {
-                label: 'Modals',
-                url: '/base-ui/modals',
-                parentKey: 'Base UI',
-            },
-            {
-                label: 'Progress',
-                url: '/base-ui/progress',
-                parentKey: 'Base UI',
-            },
-            {
-                label: 'Notifications',
-                url: '/base-ui/notifications',
-                parentKey: 'Base UI',
-            },
-            {
-                label: 'Offcanvas',
-                url: '/base-ui/offcanvas',
-                parentKey: 'Base UI',
-            },
-            {
-                label: 'Placeholders',
-                url: '/base-ui/placeholders',
-                parentKey: 'Base UI',
-            },
-            {
-                label: 'Spinners',
-                url: '/base-ui/spinners',
-                parentKey: 'Base UI',
-            },
-            {
-                label: 'Images',
-                url: '/base-ui/images',
-                parentKey: 'Base UI',
-            },
-            {
-                label: 'Carousel',
-                url: '/base-ui/carousel',
-                parentKey: 'Base UI',
-            },
-            {
-                label: 'Embed Video',
-                url: '/base-ui/embedvideo',
-                parentKey: 'Base UI',
-            },
-            {
-                label: 'Dropdowns',
-                url: '/base-ui/dropdowns',
-                parentKey: 'Base UI',
-            },
-            {
-                label: 'Tooltips & Popovers',
-                url: '/base-ui/popovers-tooltips',
-                parentKey: 'Base UI',
-            },
-            {
-                label: 'General UI',
-                url: '/base-ui/general',
-                parentKey: 'Base UI',
-            },
-            {
-                label: 'Typography',
-                url: '/base-ui/typography',
-                parentKey: 'Base UI',
-            },
-            {
-                label: 'Grid',
-                url: '/base-ui/grid',
-                parentKey: 'Base UI',
-            },
-        ],
-    },
+    //         {
+    //             label: 'Error - 404',
+    //             url: '/error-404',
+    //             parentKey: 'Extra Pages',
+    //         },
+    //         {
+    //             label: 'Error - 500',
+    //             url: '/error-500',
+    //             parentKey: 'Extra Pages',
+    //         },
+    //         {
+    //             label: 'Maintenance',
+    //             url: '/maintenance',
+    //             parentKey: 'Extra Pages',
+    //         },
+    //         {
+    //             label: 'Coming Soon',
+    //             url: '/coming-soon',
+    //             parentKey: 'Extra Pages',
+    //         },
+    //     ],
+    // },
+    // { label: 'Components', isTitle: true },
+    // {
+    //     label: 'Base UI',
+    //     isTitle: false,
+    //     icon: 'mdi mdi-briefcase-outline',
+    //     children: [
+    //         {
+    //             label: 'Buttons',
+    //             url: '/base-ui/buttons',
+    //             parentKey: 'Base UI',
+    //         },
+    //         {
+    //             label: 'Cards',
+    //             url: '/base-ui/cards',
+    //             parentKey: 'Base UI',
+    //         },
+    //         {
+    //             label: 'Avatars',
+    //             url: '/base-ui/avatars',
+    //             parentKey: 'Base UI',
+    //         },
+    //         {
+    //             label: 'Tabs & Accordions',
+    //             url: '/base-ui/tabs-accordions',
+    //             parentKey: 'Base UI',
+    //         },
+    //         {
+    //             label: 'Modals',
+    //             url: '/base-ui/modals',
+    //             parentKey: 'Base UI',
+    //         },
+    //         {
+    //             label: 'Progress',
+    //             url: '/base-ui/progress',
+    //             parentKey: 'Base UI',
+    //         },
+    //         {
+    //             label: 'Notifications',
+    //             url: '/base-ui/notifications',
+    //             parentKey: 'Base UI',
+    //         },
+    //         {
+    //             label: 'Offcanvas',
+    //             url: '/base-ui/offcanvas',
+    //             parentKey: 'Base UI',
+    //         },
+    //         {
+    //             label: 'Placeholders',
+    //             url: '/base-ui/placeholders',
+    //             parentKey: 'Base UI',
+    //         },
+    //         {
+    //             label: 'Spinners',
+    //             url: '/base-ui/spinners',
+    //             parentKey: 'Base UI',
+    //         },
+    //         {
+    //             label: 'Images',
+    //             url: '/base-ui/images',
+    //             parentKey: 'Base UI',
+    //         },
+    //         {
+    //             label: 'Carousel',
+    //             url: '/base-ui/carousel',
+    //             parentKey: 'Base UI',
+    //         },
+    //         {
+    //             label: 'Embed Video',
+    //             url: '/base-ui/embedvideo',
+    //             parentKey: 'Base UI',
+    //         },
+    //         {
+    //             label: 'Dropdowns',
+    //             url: '/base-ui/dropdowns',
+    //             parentKey: 'Base UI',
+    //         },
+    //         {
+    //             label: 'Tooltips & Popovers',
+    //             url: '/base-ui/popovers-tooltips',
+    //             parentKey: 'Base UI',
+    //         },
+    //         {
+    //             label: 'General UI',
+    //             url: '/base-ui/general',
+    //             parentKey: 'Base UI',
+    //         },
+    //         {
+    //             label: 'Typography',
+    //             url: '/base-ui/typography',
+    //             parentKey: 'Base UI',
+    //         },
+    //         {
+    //             label: 'Grid',
+    //             url: '/base-ui/grid',
+    //             parentKey: 'Base UI',
+    //         },
+    //     ],
+    // },
     // {
     //     label: 'Widgets',
     //     isTitle: false,

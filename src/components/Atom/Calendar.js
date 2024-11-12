@@ -19,10 +19,6 @@ const Calendar = ({ onDateClick, onEventClick, onDrop, onEventDrop, events, Titl
         onDateClick(arg);
     };
 
-    const handleEventClick = (arg) => {
-        onEventClick(arg);
-    };
-
     return (
         <>
             {/* full calendar control */}
@@ -58,7 +54,6 @@ const Calendar = ({ onDateClick, onEventClick, onDrop, onEventDrop, events, Titl
                     droppable={false}
                     events={events}
                     dateClick={handleDateClick}
-                    eventClick={handleEventClick}
                     displayEventTime={false}
                 // drop={handleDrop}
                 // eventDrop={handleEventDrop}

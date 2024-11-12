@@ -9,10 +9,6 @@ export async function getStaffLeave(request) {
         if (!response.ok) {
             throw new Error(data.message || JSON.stringify(data));
         }
-        console.log("data")
-        console.log(data)
-        console.log("response")
-        console.log(response)
         return data;
     } catch (error) {
         console.error(error);

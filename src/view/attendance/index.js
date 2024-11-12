@@ -5,30 +5,54 @@ import FormLayout from '../../utils/formLayout';
 import { attendanceContainer, attendancePresentAbsent } from './formFieldData';
 import Table from '../../components/Table';
 import { formatDate, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
-import { resetGetHoliday, getHolidayRequest, getDepartmentRequest, resetGetDepartment, resetGetBranch, getBranchRequest, resetGetStaff, getStaffRequest, resetGetStaffLeave, getStaffLeaveRequest } from '../../redux/actions';
-import { useRedux } from '../../hooks'
+import {
+    resetGetHoliday,
+    getHolidayRequest,
+    getDepartmentRequest,
+    resetGetDepartment,
+    resetGetBranch,
+    getBranchRequest,
+    resetGetStaff,
+    getStaffRequest,
+    resetGetStaffLeave,
+    getStaffLeaveRequest,
+} from '../../redux/actions';
+import { useRedux } from '../../hooks';
 import { NotificationContainer } from 'react-notifications';
 import Calendar from '../../components/Atom/Calendar';
-import _ from "lodash"
-import { createStaffAttendanceRequest, resetCreateStaffAttendance, updateStaffAttendanceRequest } from '../../redux/staff-attendance/actions';
+import _ from 'lodash';
+import {
+    createStaffAttendanceRequest,
+    resetCreateStaffAttendance,
+    updateStaffAttendanceRequest,
+} from '../../redux/staff-attendance/actions';
 
 let isEdit = false;
 let parentList = [];
 function Index() {
-
     const { dispatch, appSelector } = useRedux();
 
     const {
-        getStaffSuccess, getStaffList, getStaffFailure,
-        getHolidaySuccess, getHolidayList, getHolidayFailure, errorMessage,
-        getDepartmentSuccess, getDepartmentList, getDepartmentFailure,
-        getBranchSuccess, getBranchList, getBranchFailure,
-        createStaffAttendanceSuccess, createStaffAttendanceFailure, createStaffAttendanceData,
+        getStaffSuccess,
+        getStaffList,
+        getStaffFailure,
+        getHolidaySuccess,
+        getHolidayList,
+        getHolidayFailure,
+        errorMessage,
+        getDepartmentSuccess,
+        getDepartmentList,
+        getDepartmentFailure,
+        getBranchSuccess,
+        getBranchList,
+        getBranchFailure,
+        createStaffAttendanceSuccess,
+        createStaffAttendanceFailure,
+        createStaffAttendanceData,
         getStaffLeaveSuccess,
         getStaffLeaveList,
         getStaffLeaveFailure,
     } = appSelector((state) => ({
-
         getStaffLeaveSuccess: state.staffLeaveReducer.getStaffLeaveSuccess,
         getStaffLeaveList: state.staffLeaveReducer.getStaffLeaveList,
         getStaffLeaveFailure: state.staffLeaveReducer.getStaffLeaveFailure,
@@ -37,9 +61,9 @@ function Index() {
         getHolidayList: state.holidayReducer.getHolidayList,
         getHolidayFailure: state.holidayReducer.getHolidayFailure,
 
-        createStaffAttendanceSuccess: state.holidayReducer.createStaffAttendanceSuccess,
-        createStaffAttendanceData: state.holidayReducer.createStaffAttendanceData,
-        createStaffAttendanceFailure: state.holidayReducer.createStaffAttendanceFailure,
+        createStaffAttendanceSuccess: state.staffAttendanceReducer.createStaffAttendanceSuccess,
+        createStaffAttendanceData: state.staffAttendanceReducer.createStaffAttendanceData,
+        createStaffAttendanceFailure: state.staffAttendanceReducer.createStaffAttendanceFailure,
 
         getDepartmentSuccess: state.departmentReducer.getDepartmentSuccess,
         getDepartmentList: state.departmentReducer.getDepartmentList,
@@ -52,7 +76,6 @@ function Index() {
         getStaffSuccess: state.staffReducer.getStaffSuccess,
         getStaffList: state.staffReducer.getStaffList,
         getStaffFailure: state.staffReducer.getStaffFailure,
-
     }));
 
     const columns = [
@@ -85,13 +108,13 @@ function Index() {
                         <Row>
                             <Col lg={6}>
                                 <Form.Check
-                                    label={"Present" || ''}
+                                    label={'Present' || ''}
                                     type="radio"
                                     id={`basic-radio-present-${row.index}`}
-                                    name={`attendanceStatus-${row.index}`}
+                                    name={`attendanceStatusId-${row.index}`}
                                     className={'mb-2 form-check-Primary mx-2'}
-                                    checked={state.staffAttendance[row.index]?.["attendanceStatus"] === 1 || false}
-                                    value={state.staffAttendance[row.index]?.["attendanceStatus"] || ""}
+                                    checked={state.staffAttendance[row.index]?.['attendanceStatusId'] === 1 || false}
+                                    value={state.staffAttendance[row.index]?.['attendanceStatusId'] || ''}
                                     onChange={(e) => {
                                         handleChange(row.original, 1, row.index);
                                     }}
@@ -102,45 +125,45 @@ function Index() {
                                     label="Absent"
                                     type="radio"
                                     id={`basic-radio-absent-${row.index}`}
-                                    name={`attendanceStatus-${row.index}`}
+                                    name={`attendanceStatusId-${row.index}`}
                                     className="mb-2 form-check-Primary mx-2"
-                                    checked={state.staffAttendance[row.index]?.["attendanceStatus"] === 0 || false}
-                                    value={state.staffAttendance[row.index]?.["attendanceStatus"] || ""}
+                                    checked={state.staffAttendance[row.index]?.['attendanceStatusId'] === 0 || false}
+                                    value={state.staffAttendance[row.index]?.['attendanceStatusId'] || ''}
                                     onChange={(e) => handleChange(row.original, 0, row.index)}
                                 />
                             </Col>
                         </Row>
                     </div>
-                )
-            }
-        }
+                );
+            },
+        },
     ];
 
     const handleChange = (staffDetail, isPresentorAbsent, index) => {
-        setState(prev => {
-            const updatedStaffAttendance = [...prev.staffAttendance]
+        setState((prev) => {
+            const updatedStaffAttendance = [...prev.staffAttendance];
 
             updatedStaffAttendance[index] = {
                 ...updatedStaffAttendance[index],
-                "staffId": staffDetail.staffId,
-                "attendanceStatus": isPresentorAbsent,
+                staffId: staffDetail.staffId,
+                attendanceStatusId: isPresentorAbsent,
             };
 
             return {
-                staffAttendance: updatedStaffAttendance
-            }
-
+                ...prev,
+                staffAttendance: updatedStaffAttendance,
+            };
         });
-    }
-
-
+    };
 
     const [state, setState] = useState({
         attendanceDate: formatDate(new Date()),
-        staffAttendance: [{
-            staffId: '',
-            attendanceStatus: '',
-        }]
+        staffAttendance: [
+            {
+                staffId: '',
+                attendanceStatusId: '',
+            },
+        ],
     });
     const [selectedItem, setSelectedItem] = useState({});
     const [selectedIndex, setSelectedIndex] = useState(false);
@@ -150,14 +173,14 @@ function Index() {
     const [optionListState, setOptionListState] = useState({
         departmentList: [],
         branchList: [],
-    })
+    });
     // event data
     const [events, setEvents] = useState([]);
 
     const errorHandle = useRef();
 
     useEffect(() => {
-        setIsLoading(true)
+        setIsLoading(true);
         dispatch(getHolidayRequest());
         dispatch(getBranchRequest());
         dispatch(getStaffRequest());
@@ -169,21 +192,22 @@ function Index() {
             setIsLoading(false);
             setState((prev) => {
                 const updateStaffData = [...prev.staffAttendance];
-                getStaffLeaveList.map(attendanceData => {
-                    const idx = updateStaffData.findIndex(staffData => staffData.staffId == attendanceData.staffId);
+                getStaffLeaveList.map((attendanceData) => {
+                    const idx = updateStaffData.findIndex((staffData) => staffData.staffId == attendanceData.staffId);
                     updateStaffData[idx] = {
                         ...updateStaffData[idx],
-                        attendanceStatus: attendanceData.leaveStatusId === 29 ? 0 : 1
-                    }
-                })
+                        attendanceStatusId: attendanceData.leaveStatusId === 29 ? 0 : 1,
+                    };
+                });
                 return {
-                    staffAttendance: updateStaffData
-                }
+                    ...prev,
+                    staffAttendance: updateStaffData,
+                };
             });
             dispatch(resetGetStaffLeave());
         } else if (getStaffLeaveFailure) {
             setIsLoading(false);
-            parentList = []
+            parentList = [];
             dispatch(resetGetStaffLeave());
         }
     }, [getStaffLeaveSuccess, getStaffLeaveFailure]);
@@ -193,9 +217,9 @@ function Index() {
 
     useEffect(() => {
         if (getStaffSuccess) {
-            setIsLoading(false)
+            setIsLoading(false);
 
-            const staffList = getStaffList.map(staffData => {
+            const staffList = getStaffList.map((staffData) => {
                 return {
                     staffId: staffData.staffId,
                     staffName: staffData.staffName,
@@ -203,79 +227,80 @@ function Index() {
                     branchId: staffData.branchId,
                     departmentName: staffData.departmentName,
                     staffCode: staffData.staffCode,
-                    attendanceStatus: staffData.leaveStatusId == 29 ? 0 : 1
-                }
-            })
+                    attendanceStatusId: staffData.leaveStatusId == 29 ? 0 : 1,
+                };
+            });
 
-            parentList = staffList
+            parentList = staffList;
             setState((prev) => ({
                 ...prev,
-                staffAttendance: staffList
-            }))
+                staffAttendance: staffList,
+            }));
 
-            dispatch(resetGetStaff())
+            dispatch(resetGetStaff());
         } else if (getStaffFailure) {
-            setIsLoading(false)
-            parentList = []
-            dispatch(resetGetStaff())
+            setIsLoading(false);
+            parentList = [];
+            dispatch(resetGetStaff());
         }
     }, [getStaffSuccess, getStaffFailure]);
 
     useEffect(() => {
         if (getHolidaySuccess) {
-            setIsLoading(false)
+            setIsLoading(false);
             const eventList = _.map(getHolidayList, (event) => ({
                 id: event.holidayId,
                 title: event.reason,
                 start: new Date(event.holidayDate),
-                className: 'bg-danger'
+                className: 'bg-danger',
             }));
-            setEvents(eventList)
-            dispatch(resetGetHoliday())
+            setEvents(eventList);
+            dispatch(resetGetHoliday());
         } else if (getHolidayFailure) {
-            setIsLoading(false)
+            setIsLoading(false);
             setEvents([]);
-            dispatch(resetGetHoliday())
+            dispatch(resetGetHoliday());
         }
     }, [getHolidaySuccess, getHolidayFailure]);
 
     useEffect(() => {
         if (getDepartmentSuccess) {
-            setIsLoading(false)
+            setIsLoading(false);
             setOptionListState({
                 ...optionListState,
-                departmentList: getDepartmentList
-            })
-            dispatch(resetGetDepartment())
+                departmentList: getDepartmentList,
+            });
+            dispatch(resetGetDepartment());
         } else if (getDepartmentFailure) {
-            setIsLoading(false)
+            setIsLoading(false);
             setOptionListState({
                 ...optionListState,
-                departmentList: []
-            })
-            dispatch(resetGetDepartment())
+                departmentList: [],
+            });
+            dispatch(resetGetDepartment());
         }
     }, [getDepartmentSuccess, getDepartmentFailure]);
 
     useEffect(() => {
         if (getBranchSuccess) {
-            setIsLoading(false)
+            setIsLoading(false);
             setOptionListState({
                 ...optionListState,
-                branchList: getBranchList
-            })
-            dispatch(resetGetBranch())
+                branchList: getBranchList,
+            });
+            dispatch(resetGetBranch());
         } else if (getBranchFailure) {
-            setIsLoading(false)
+            setIsLoading(false);
             setOptionListState({
                 ...optionListState,
-                branchList: []
-            })
-            dispatch(resetGetBranch())
+                branchList: [],
+            });
+            dispatch(resetGetBranch());
         }
     }, [getBranchSuccess, getBranchFailure]);
 
     useEffect(() => {
+        console.log("called")
         if (createStaffAttendanceSuccess) {
             showMessage('success', 'Created Successfully');
             closeModel();
@@ -288,79 +313,75 @@ function Index() {
 
     const closeModel = () => {
         isEdit = false;
-        onFormClear()
-        setModal(false)
-    }
+        onFormClear();
+        setModal(false);
+    };
 
     const onFormClear = () => {
         setState({
-            ...state,
-            designationName: '',
-            departmentId: '',
+            attendanceDate: formatDate(new Date()),
+            staffAttendance: [
+                {
+                    staffId: '',
+                    attendanceStatusId: '',
+                },
+            ],
         });
     };
 
     const createModel = () => {
-        onFormClear()
+        onFormClear();
         isEdit = false;
-        setModal(true)
+        setModal(true);
     };
 
     const onEditForm = (data, index) => {
         setState({
             ...state,
-            designationName: data?.designationName || "",
-            departmentId: data?.departmentId || "",
+            attendanceDate: state?.attendanceDate || '',
+            staffAttendance: state?.staffAttendance || '',
         });
         isEdit = true;
-        setSelectedItem(data)
-        setSelectedIndex(index)
-        setModal(true)
+        setSelectedItem(data);
+        setSelectedIndex(index);
+        setModal(true);
     };
 
     const handleValidation = () => {
         errorHandle.current.validateFormFields();
-    }
-
-    const onFormSubmit = async () => {
-        console.log(state)
-        return;
-        const submitRequest = {
-            designationName: state?.designationName || "",
-            departmentId: state?.departmentId || ""
-        }
-        if (isEdit) {
-            dispatch(updateStaffAttendanceRequest(submitRequest, selectedItem.designationId))
-        } else {
-            dispatch(createStaffAttendanceRequest(submitRequest))
-        }
     };
 
-    const onDeleteForm = (data, index, activeChecker) => {
+    const onFormSubmit = async () => {
         const submitRequest = {
-            isActive: activeChecker == 0 ? 1 : 0
+            staffAttendance: state?.staffAttendance || '',
+        };
+        if (isEdit) {
+            dispatch(updateStaffAttendanceRequest(submitRequest, selectedItem.attendanceId));
+        } else {
+            dispatch(createStaffAttendanceRequest(submitRequest));
         }
-        setSelectedIndex(index)
-        // dispatch(updateDesignationRequest(submitRequest, data.designationId))
     };
 
     const onDateClick = (arg) => {
-        setModal(true);
+        createModel();
+        const updateDate = parentList.map((data) => {
+            return {
+                ...data,
+                attendanceDate: arg?.dateStr,
+                attendanceInchargeId: 1,
+            };
+        });
+        parentList = updateDate;
         setState({
             ...state,
             attendanceDate: arg?.dateStr,
-            staffAttendance: parentList
-        })
+            staffAttendance: parentList,
+        });
         const leaveStatusId = {
             leaveStatusId: 29,
-            attendanceDate: arg?.dateStr || state.attendanceDate
-        }
+            attendanceDate: arg?.dateStr || state.attendanceDate,
+        };
         dispatch(getStaffLeaveRequest(leaveStatusId));
-    };
-
-
-    const onEventClick = (arg) => {
-        // console.log(arg.event.title)
     };
 
     return (
@@ -370,15 +391,15 @@ function Index() {
             <Card>
                 <Card.Body>
                     {/* fullcalendar control */}
-                    <Row className='d-flex justify-content-center'>
+                    <Row className="d-flex justify-content-center">
                         <Col lg={12}>
                             <Calendar
                                 onDateClick={onDateClick}
-                                onEventClick={onEventClick}
+                                // onEventClick={onEventClick}
                                 // onDrop={onDrop}
-                                Title={"Staff Attendance"}
+                                Title={'Staff Attendance'}
                                 events={events}
-                            // onEventDrop={onEventDrop}
+                                // onEventDrop={onEventDrop}
                             />
                         </Col>
                     </Row>
@@ -403,11 +424,13 @@ function Index() {
                     errors={errors}
                     setErrors={setErrors}
                 />
-                {isLoading ? <div className='bg-light opacity-0.25'>
-                    <div className="d-flex justify-content-center m-5">
-                        <Spinner className='mt-5 mb-5' animation="border" />
+                {isLoading ? (
+                    <div className="bg-light opacity-0.25">
+                        <div className="d-flex justify-content-center m-5">
+                            <Spinner className="mt-5 mb-5" animation="border" />
+                        </div>
                     </div>
-                </div> :
+                ) : (
                     <Table
                         columns={columns}
                         Title={'Employee List'}
@@ -416,7 +439,7 @@ function Index() {
                         toggle={false}
                         pagination={false}
                     />
-                }
+                )}
             </ModelViewBox>
         </React.Fragment>
     );

@@ -17,8 +17,6 @@ export async function getStaffAttendance(request) {
 }
 //CREATE---->
 export async function createStaffAttendance(request) {
-
-  console.log(request);
   try {
     const response = await apiReturnCallBack("POST", StaffAttendance, request);
     const data = await response.json();
