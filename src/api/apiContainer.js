@@ -4,7 +4,7 @@ const apiContainer = {
   setting: "/setting",
   designation: "/designation",
   bankAccount: "/bank-account",
-  employeeLogin: "/organization-login",
+  employeeLogin: "/user-login",
   role: "/role",
   uploadImages: "/upload-proof",
   petrolAllowance: "/petrol-allowance",

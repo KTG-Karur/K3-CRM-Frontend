@@ -1,3 +1,4 @@
+import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 
 // helpers
@@ -8,40 +9,33 @@ import { useUser } from '../hooks';
 
 type PrivateRouteProps = {
     component: React.ComponentType;
-    roles?: string;
+    roles?: string[];
 };
 
 /**
- * Private Route forces the authorization before the route can be accessed
- * @param {*} param0
- * @returns
+ * PrivateRoute component to guard routes based on authentication and roles
  */
-const PrivateRoute = ({ component: RouteComponent, roles, ...rest }: PrivateRouteProps) => {
-    let location = useLocation();
-    const [loggedInUser] = useUser();
+const PrivateRoute: React.FC<PrivateRouteProps> = ({ component: RouteComponent, roles = [], ...rest }) => {
+    const location = useLocation();
 
-    const api = new APICore();
+    const loginData = sessionStorage.getItem('loginInfo') || '{}';
+    const userData = JSON.parse(loginData);
+    const loginStatus = loginData?.length > 0 ? true : false
+    const userRights = userData?.userDetails?.userRights || {};
+    const userRole = userData?.userDetails?.role_name || '';
 
-    /**
-     * not logged in so redirect to login page with the return url
-     */
-    // if (api.isUserAuthenticated() === false) {
-    //     return <Navigate to={'/auth/login'} state={{ from: location }} replace />;
-    // }
-
-    const loginData = sessionStorage.getItem('loginInfo') || []
-    const loginStatus = loginData.length > 0 ? true : false
+    // Redirect to login if not authenticated
     if (!loginStatus) {
         return <Navigate to={'/auth/login'} state={{ from: location }} replace />;
     }
 
-    // check if route is restricted by role
-    // if (roles && roles.indexOf(loggedInUser.role) === -1) {
-    //     // role not authorised so redirect to home page
-    //     return <Navigate to={{ pathname: '/' }} />;
-    // }
+    // Redirect to access-denied if the role is not authorized
+    if (roles.length && !roles.includes(userRole)) {
+        return <Navigate to={'/access-denied'} replace />;
+    }
 
-    return <RouteComponent />;
+    // Render the component if authorized
+    return <RouteComponent {...rest} {...userRights} {...userRole} />;
 };
 
 export default PrivateRoute;

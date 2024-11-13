@@ -11,7 +11,7 @@ import { APICore } from '../../helpers/api/apiCore';
 import { useRedux } from '../../hooks';
 
 // actions
-import { resetAuth, loginUser, getEmployeeLoginRequest, resetGetEmployeeLogin } from '../../redux/actions';
+// import { resetAuth, loginUser, getEmployeeLoginRequest, resetGetEmployeeLogin } from '../../redux/actions';
 
 // components
 import { VerticalForm, FormInput } from '../../components/form';
@@ -77,19 +77,19 @@ const Login = () => {
     }));
 
     useEffect(() => {
-        localStorage.clear();
-        dispatch(resetGetEmployeeLogin())
+        // localStorage.clear();
+        // dispatch(resetGetEmployeeLogin())
     }, [dispatch]);
 
-    useEffect(() => {
-        if (getEmployeeLoginSuccess) {
-            setUserLoggedIn(true)
-            setLoading(false)
-            sessionStorage.setItem("loginInfo", JSON.stringify(getEmployeeLoginList));
-        } else if (getEmployeeLoginFailure) {
-            dispatch(resetGetEmployeeLogin())
-        }
-    }, [getEmployeeLoginSuccess, getEmployeeLoginFailure]);
+    // useEffect(() => {
+    //     if (getEmployeeLoginSuccess) {
+    //         setUserLoggedIn(true)
+    //         setLoading(false)
+    //         sessionStorage.setItem("loginInfo", JSON.stringify(getEmployeeLoginList));
+    //     } else if (getEmployeeLoginFailure) {
+    //         dispatch(resetGetEmployeeLogin())
+    //     }
+    // }, [getEmployeeLoginSuccess, getEmployeeLoginFailure]);
 
     /*
     form validation schema
@@ -109,16 +109,16 @@ const Login = () => {
             userName : formData['email'],
             password : formData['password']
         }
-        setLoading(true)
-        dispatch(getEmployeeLoginRequest(sumbitReq))
+        // setLoading(true)
+        // dispatch(getEmployeeLoginRequest(sumbitReq))
 
-        // setUserLoggedIn(true)
-        // const getEmployeeLoginList = [
-        //     {
-        //         userId : 1
-        //     }
-        // ]
-        // sessionStorage.setItem("loginInfo", JSON.stringify(getEmployeeLoginList));
+        setUserLoggedIn(true)
+        const getEmployeeLoginList = [
+            {
+                userId : 1
+            }
+        ]
+        sessionStorage.setItem("loginInfo", JSON.stringify(getEmployeeLoginList));
     };
 
     const location = useLocation();
@@ -153,7 +153,7 @@ const Login = () => {
                 <VerticalForm<UserData>
                     onSubmit={onSubmit}
                     resolver={schemaResolver}
-                    defaultValues={{ email: 'admin@ktgt.in', password: '12345678' }}
+                    defaultValues={{ email: 'suki@harshinifincop.com', password: '123456' }}
                 >
                     <FormInput
                         type="email"
