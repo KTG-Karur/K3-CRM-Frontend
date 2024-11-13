@@ -8,6 +8,7 @@ const attendanceContainer = [
                 optionList: 'branchList',
                 displayKey: 'branchName',
                 uniqueKey: 'branchId',
+                onChange: 'handleBranch',
                 classStyle: 'col-6'
             },
             {
@@ -16,6 +17,7 @@ const attendanceContainer = [
                 inputType: 'select',
                 optionList: 'departmentList',
                 displayKey: 'departmentName',
+                onChange: 'handleDepartment',
                 uniqueKey: 'departmentId',
                 classStyle: 'col-6',
             },

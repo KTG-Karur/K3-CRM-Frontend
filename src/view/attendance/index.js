@@ -168,8 +168,16 @@ function Index() {
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState([]);
     const [optionListState, setOptionListState] = useState({
-        departmentList: [],
-        branchList: [],
+        departmentList: [
+            {
+                "departmentId": '',
+                "departmentName": "All",
+            },
+        ],
+        branchList: [{
+            "branchId": '',
+            "branchName": "All",
+        }],
     });
     // event data
     const [events, setEvents] = useState([]);
@@ -261,7 +269,7 @@ function Index() {
             setIsLoading(false);
             setOptionListState({
                 ...optionListState,
-                departmentList: getDepartmentList,
+                departmentList: [...optionListState.departmentList, ...getDepartmentList],
             });
             dispatch(resetGetDepartment());
         } else if (getDepartmentFailure) {
@@ -279,7 +287,7 @@ function Index() {
             setIsLoading(false);
             setOptionListState({
                 ...optionListState,
-                branchList: getBranchList,
+                branchList: [...optionListState.branchList, ...getBranchList],
             });
             dispatch(resetGetBranch());
         } else if (getBranchFailure) {
@@ -430,7 +438,7 @@ function Index() {
             dispatch(getStaffAttendanceRequest(attendanceDate));
             isShowBtn = false;
         }
-        
+
         // add date and inchargeId into the staff attendance array
         const updateDate = parentList.map((data) => {
             return {
@@ -463,6 +471,30 @@ function Index() {
             };
         });
     };
+
+    const handleDepartment = (option, formName, uniqueKey, displayKey) => {
+        const filterDepartment = {
+            departmentId: option[uniqueKey],
+            branchId: state?.branchId || ''
+        }
+        dispatch(getStaffRequest(filterDepartment));
+        setState({
+            ...state,
+            [formName]: option[uniqueKey],
+        })
+    }
+
+    const handleBranch = (option, formName, uniqueKey, displayKey) => {
+        const filterBranch = {
+            branchId: option[uniqueKey],
+            departmentId: state?.departmentId || ''
+        }
+        dispatch(getStaffRequest(filterBranch));
+        setState({
+            ...state,
+            [formName]: option[uniqueKey],
+        })
+    }
 
 
     return (
@@ -503,6 +535,7 @@ function Index() {
                     optionListState={optionListState}
                     setState={setState}
                     state={state}
+                    onChangeCallBack={{ "handleDepartment": handleDepartment, "handleBranch": handleBranch }}
                     ref={errorHandle}
                     noOfColumns={1}
                     errors={errors}
