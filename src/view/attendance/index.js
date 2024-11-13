@@ -200,12 +200,16 @@ function Index() {
         if (getStaffLeaveSuccess) {
             setIsLoading(false);
             setState((prev) => {
-                const updateStaffData = [...prev.staffAttendance];
-                getStaffLeaveList.map((attendanceData) => {
-                    const idx = updateStaffData.findIndex((staffData) => staffData.staffId == attendanceData.staffId);
-                    updateStaffData[idx] = {
-                        ...updateStaffData[idx],
-                        attendanceStatusId: attendanceData.leaveStatusId === 29 ? 0 : 1,
+                const updateStaffData = prev.staffAttendance.map((staffData) => {
+                    const attendanceData = getStaffLeaveList.find(
+                        (data) => data.staffId === staffData.staffId
+                    );
+                    return {
+                        ...staffData,
+                        attendanceStatusId: attendanceData
+                            ? (attendanceData.leaveStatusId === 29 ? 0 : 1)
+                            : staffData.attendanceStatusId,
+                        attendanceDate: state.attendanceDate,
                     };
                 });
                 return {
@@ -213,6 +217,7 @@ function Index() {
                     staffAttendance: updateStaffData,
                 };
             });
+
             dispatch(resetGetStaffLeave());
         } else if (getStaffLeaveFailure) {
             setIsLoading(false);
