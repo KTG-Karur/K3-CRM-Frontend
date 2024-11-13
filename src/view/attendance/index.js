@@ -34,6 +34,7 @@ let isEdit = false;
 let parentList = [];
 let staffPermanetList = [];
 let isShowBtn = true;
+let modelHead = false;
 function Index() {
     const { dispatch, appSelector } = useRedux();
 
@@ -161,6 +162,8 @@ function Index() {
     const [state, setState] = useState({
         attendanceDate: formatDate(new Date()),
         staffAttendance: [{}],
+        branchId: 0,
+        departmentId: 0,
     });
     const [selectedItem, setSelectedItem] = useState({});
     const [selectedIndex, setSelectedIndex] = useState(false);
@@ -170,12 +173,12 @@ function Index() {
     const [optionListState, setOptionListState] = useState({
         departmentList: [
             {
-                "departmentId": '',
+                "departmentId": 0,
                 "departmentName": "All",
             },
         ],
         branchList: [{
-            "branchId": '',
+            "branchId": 0,
             "branchName": "All",
         }],
     });
@@ -185,6 +188,7 @@ function Index() {
     const errorHandle = useRef();
 
     useEffect(() => {
+        //delete from staff_attendances where attendance_date = "2024-11-13"
         setIsLoading(true);
         dispatch(getHolidayRequest());
         dispatch(getBranchRequest());
@@ -218,7 +222,6 @@ function Index() {
 
     useEffect(() => {
         if (getStaffSuccess) {
-            setIsLoading(false);
             const staffList = getStaffList.map((staffData) => {
                 return {
                     staffId: staffData.staffId,
@@ -230,13 +233,37 @@ function Index() {
                     attendanceStatusId: staffData.leaveStatusId == 29 ? 0 : 1,
                 };
             });
-
             parentList = staffList;
             staffPermanetList = staffList;
             setState((prev) => ({
                 ...prev,
                 staffAttendance: staffList,
             }));
+
+            if (isEdit || state.attendanceDate < formatDate(new Date())) {
+                if (staffList.length > 0) {
+                    const attendanceDate = {
+                        attendanceDate: state.attendanceDate || formatDate(new Date()),
+                        departmentId: state.departmentId || '',
+                        branchId: state.branchId || '',
+                    };
+                    dispatch(getStaffAttendanceRequest(attendanceDate));
+                } else {
+                    setIsLoading(false);
+                }
+            } else {
+                if (staffList.length > 0) {
+                    const leaveStatusId = {
+                        leaveStatusId: 29,
+                        attendanceDate: state.attendanceDate || formatDate(new Date()),
+                        departmentId: state.departmentId || '',
+                        branchId: state.branchId || '',
+                    };
+                    dispatch(getStaffLeaveRequest(leaveStatusId));
+                } else {
+                    setIsLoading(false);
+                }
+            }
 
             dispatch(resetGetStaff());
         } else if (getStaffFailure) {
@@ -315,7 +342,11 @@ function Index() {
         if (getStaffAttendanceSuccess) {
             setIsLoading(false);
             if (getStaffAttendanceList.length > 0) {
-                isEdit = true;
+                if (state.attendanceDate === formatDate(new Date())) {
+                    isEdit = true;
+                } else {
+                    isEdit = false;
+                }
                 parentList = getStaffAttendanceList;
                 setState({
                     ...state,
@@ -323,7 +354,7 @@ function Index() {
                 });
             } else {
                 if (state.attendanceDate === formatDate(new Date())) {
-                    isEdit = false;
+                    // isEdit = false;
 
                     const updateDate = parentList.map((data) => {
                         return {
@@ -388,6 +419,8 @@ function Index() {
         setState({
             attendanceDate: formatDate(new Date()),
             staffAttendance: [{}],
+            branchId: 0,
+            departmentId: 0,
         });
     };
 
@@ -418,25 +451,27 @@ function Index() {
         if (arg?.dateStr >= formatDate(new Date())) {
             if (arg?.dateStr == formatDate(new Date())) {
                 isShowBtn = true;
+                modelHead = false;
                 const attendanceDate = {
                     attendanceDate: arg?.dateStr || formatDate(new Date()),
                 };
                 dispatch(getStaffAttendanceRequest(attendanceDate));
             } else {
                 isShowBtn = false;
+                modelHead = true;
                 const leaveStatusId = {
                     leaveStatusId: 29,
                     attendanceDate: arg?.dateStr || state.attendanceDate,
                 };
                 dispatch(getStaffLeaveRequest(leaveStatusId));
             }
-
         } else {
             const attendanceDate = {
                 attendanceDate: arg?.dateStr || state.attendanceDate,
             };
             dispatch(getStaffAttendanceRequest(attendanceDate));
             isShowBtn = false;
+            modelHead = true;
         }
 
         // add date and inchargeId into the staff attendance array
@@ -474,10 +509,11 @@ function Index() {
 
     const handleDepartment = (option, formName, uniqueKey, displayKey) => {
         const filterDepartment = {
-            departmentId: option[uniqueKey],
+            departmentId: option[uniqueKey] || '',
             branchId: state?.branchId || ''
         }
         dispatch(getStaffRequest(filterDepartment));
+        setIsLoading(true);
         setState({
             ...state,
             [formName]: option[uniqueKey],
@@ -486,10 +522,11 @@ function Index() {
 
     const handleBranch = (option, formName, uniqueKey, displayKey) => {
         const filterBranch = {
-            branchId: option[uniqueKey],
+            branchId: option[uniqueKey] || '',
             departmentId: state?.departmentId || ''
         }
         dispatch(getStaffRequest(filterBranch));
+        setIsLoading(true);
         setState({
             ...state,
             [formName]: option[uniqueKey],
@@ -524,6 +561,7 @@ function Index() {
                 setModel={setModal}
                 modelHeader={'Attendance'}
                 modelSize={'lg'}
+                modelHead={modelHead}
                 isEdit={isEdit}
                 handleSubmit={handleValidation}
                 saveBtn={isShowBtn}
