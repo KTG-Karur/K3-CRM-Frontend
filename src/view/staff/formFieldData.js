@@ -155,7 +155,7 @@ const staffTabs = [
                     },
                     {
                         label: 'User Credential',
-                        name: 'userId',
+                        name: 'userCreditial',
                         inputType: 'checkbox',
                         onChange: "onHandleUserCreditial",
                         'classStyle': 'col-3'

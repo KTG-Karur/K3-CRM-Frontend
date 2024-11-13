@@ -8,12 +8,30 @@ const getBaseUrl = (url) => {
   return `${baseURL}${url}`;
 };
 
+const loginData = sessionStorage.getItem('loginInfo');
+let tokenData = null;
+
+if (loginData) {
+  try {
+    tokenData = JSON.parse(loginData);
+  } catch (error) {
+    console.error("Error parsing login data:", error);
+  }
+}
+
+const getAuthHeader = () => {
+  if (tokenData && tokenData.token) {
+    return { 'Authorization': `Bearer ${tokenData.token}` };
+  }
+  return {}; // Return an empty object if no token is available
+};
+
 export function apiReturnCallBack(method, url, object = null, config = null) {
   const headers = {
     'Content-Type': 'application/json',
     'Cache-Control': 'no-cache',
     'If-Modified-Since': 0,
-    'auth': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZlbnNyaW5pMDQxNEBnbWFpbC5jb20iLCJpYXQiOjE3MjU0MjkzMzB9.eSEH9zugtZvJ5dmrcjOmfDX23wvuS7sriabNXuaSF6Y'
+    ...getAuthHeader(),
   };
 
   const fetchConfig = {
