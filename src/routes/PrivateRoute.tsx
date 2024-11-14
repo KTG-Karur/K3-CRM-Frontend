@@ -23,7 +23,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ component: RouteComponent, 
     const loginStatus = loginData?.length > 0 ? true : false
     const userRights = userData?.userDetails?.userRights || {};
     const userRole = userData?.userDetails?.role_name || '';
-
+    console.log('userData', userData);
     // Redirect to login if not authenticated
     if (!loginStatus) {
         return <Navigate to={'/auth/login'} state={{ from: location }} replace />;
@@ -31,7 +31,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ component: RouteComponent, 
 
     // Redirect to access-denied if the role is not authorized
     if (roles.length && !roles.includes(userRole)) {
-        return <Navigate to={'/access-denied'} replace />;
+        return <Navigate to={'/auth/login'} state={{ from: location }} replace />;
     }
 
     // Render the component if authorized

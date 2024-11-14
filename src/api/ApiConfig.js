@@ -18,7 +18,7 @@ if (loginData) {
     console.error("Error parsing login data:", error);
   }
 }
-
+console.log('loginData', loginData);
 const getAuthHeader = () => {
   if (tokenData && tokenData.token) {
     return { 'Authorization': `Bearer ${tokenData.token}` };
