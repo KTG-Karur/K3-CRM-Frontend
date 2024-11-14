@@ -360,7 +360,6 @@ function Index() {
             } else {
                 if (state.attendanceDate === formatDate(new Date())) {
                     // isEdit = false;
-
                     const updateDate = parentList.map((data) => {
                         return {
                             ...data,
