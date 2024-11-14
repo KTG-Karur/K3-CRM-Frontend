@@ -20,6 +20,7 @@ export const ProofType = React.lazy(() => import('../view/proof-type'));
 export const Holiday = React.lazy(() => import('../view/holiday'));
 export const StaffLeave = React.lazy(() => import('../view/staff-leave'));
 export const Attendance = React.lazy(() => import('../view/attendance'));
+export const Salary = React.lazy(() => import('../view/salary'));
 
 // master
 export const Department = React.lazy(() => import('../view/department'));

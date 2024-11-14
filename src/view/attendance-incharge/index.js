@@ -5,7 +5,7 @@ import FormLayout from '../../utils/formLayout';
 import { attendanceInchargeContainer } from './formFieldData';
 import Table from '../../components/Table';
 import { dateConversion, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
-import { createAttendanceInchargeRequest, getBranchRequest,getDepartmentRequest, getAttendanceInchargeRequest, resetCreateAttendanceIncharge, resetGetBranch, resetGetDepartment, resetGetAttendanceIncharge, resetUpdateAttendanceIncharge, updateAttendanceInchargeRequest } from '../../redux/actions';
+import { createAttendanceInchargeRequest, getBranchRequest,  getStaffRequest,getDepartmentRequest, getAttendanceInchargeRequest, resetCreateAttendanceIncharge, resetGetBranch,  resetGetStaff, resetGetDepartment, resetGetAttendanceIncharge, resetUpdateAttendanceIncharge, updateAttendanceInchargeRequest } from '../../redux/actions';
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 import _ from 'lodash';
@@ -21,9 +21,15 @@ function Index() {
         getDepartmentSuccess, getDepartmentList, getDepartmentFailure,
         createAttendanceInchargeSuccess, createAttendanceInchargeData, createAttendanceInchargeFailure,
         updateAttendanceInchargeSuccess, updateAttendanceInchargeData, updateAttendanceInchargeFailure,
-        errorMessage,
+        errorMessage,getStaffSuccess,
+        getStaffList,
+        getStaffFailure,
 
     } = appSelector((state) => ({
+        getStaffSuccess: state.staffReducer.getStaffSuccess,
+        getStaffList: state.staffReducer.getStaffList,
+        getStaffFailure: state.staffReducer.getStaffFailure,
+
         getAttendanceInchargeSuccess: state.attendanceInchargeReducer.getAttendanceInchargeSuccess,
         getAttendanceInchargeList: state.attendanceInchargeReducer.getAttendanceInchargeList,
         getAttendanceInchargeFailure: state.attendanceInchargeReducer.getAttendanceInchargeFailure,
@@ -90,11 +96,7 @@ function Index() {
     const [state, setState] = useState({});
     const [parentList, setParentList] = useState([]);
     const [optionListState, setOptionListState] = useState({
-        staffList: [
-            { staffId: 1, staffName: 'Suki' },
-            { staffId: 2, staffName: 'Ragul' },
-            { staffId: 3, staffName: 'Mohan' },
-        ],
+        staffList: [],
         branchList: [],
         departmentList: [],
     })
@@ -109,12 +111,31 @@ function Index() {
     useEffect(() => {
         setIsLoading(true)        
         dispatch(getAttendanceInchargeRequest());
+        dispatch(getStaffRequest());
         const req = {
             isActive: 1
         }
         dispatch(getBranchRequest());  
         dispatch(getDepartmentRequest());        
     }, []);
+
+    useEffect(() => {
+        if (getStaffSuccess) {
+            setIsLoading(false);
+            setOptionListState({
+                ...optionListState,
+                staffList: getStaffList,
+            });
+            dispatch(resetGetStaff());
+        } else if (getStaffFailure) {
+            setIsLoading(false);
+            setOptionListState({
+                ...optionListState,
+                staffList: [],
+            });
+            dispatch(resetGetStaff());
+        }
+    }, [getStaffSuccess, getStaffFailure]);
 
     useEffect(() => {
         if (getAttendanceInchargeSuccess) {

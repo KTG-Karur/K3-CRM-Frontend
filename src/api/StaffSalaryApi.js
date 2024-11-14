@@ -1,14 +1,14 @@
 import { apiReturnCallBack } from './ApiConfig';
 import apiContainer from './apiContainer';
-const StaffAttendance = apiContainer.StaffAttendance
+const staffsalary = apiContainer.StaffSalary
 //GET--->
-export async function getStaffAttendance(request) {
+export async function getStaffSalary(request) {
   try {
-    const response = await apiReturnCallBack("GET", StaffAttendance, request);
+    const response = await apiReturnCallBack("GET", staffsalary, request);
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.message || JSON.stringify(data));
-    }
+    }    
     return data;
   } catch (error) {
     console.error(error);
@@ -16,9 +16,9 @@ export async function getStaffAttendance(request) {
   }
 }
 //CREATE---->
-export async function createStaffAttendance(request) {
+export async function createStaffSalary(request) {
   try {
-    const response = await apiReturnCallBack("POST", StaffAttendance, request);
+    const response = await apiReturnCallBack("POST", staffsalary, request);
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.message || JSON.stringify(data));
@@ -30,9 +30,9 @@ export async function createStaffAttendance(request) {
   }
 }
 //UPDATE---->
-export async function updateStaffAttendance(request) {
+export async function updateStaffSalary(request, staffsalaryId) {
   try {
-    const response = await apiReturnCallBack("PUT", StaffAttendance, request);
+    const response = await apiReturnCallBack("PUT", staffsalary+`/${staffsalaryId}`, request);
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.message || JSON.stringify(data));
@@ -44,11 +44,11 @@ export async function updateStaffAttendance(request) {
   }
 }
 //DELETE---->
-// export async function deleteStaffAttendance(StaffAttendanceId) {
+// export async function deleteStaffSalary(staffsalaryId) {
 //   try {
-//     const response = await apiReturnCallBack("DELETE", StaffAttendance+`/${StaffAttendanceId}`);
+//     const response = await apiReturnCallBack("DELETE", staffsalary+`/${staffsalaryId}`);
 //     if (!response.ok) {
-//       throw new Error(`HTTP error! Status: ${response.status}`);
+//       throw new Error(data.message || JSON.stringify(data));
 //     }
 //     const data = await response.json();
 //     return data;

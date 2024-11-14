@@ -5,17 +5,17 @@ import FormLayout from '../../utils/formLayout';
 import { designationContainer } from './formFieldData';
 import Table from '../../components/Table';
 import { showConfirmationDialog, showMessage } from '../../utils/AllFunction';
-import { createDesignationRequest, getDesignationRequest, resetGetDepartment, getDepartmentRequest, resetCreateDesignation, resetGetDesignation, resetUpdateDesignation, updateDesignationRequest } from '../../redux/actions';
+import { createDesignationRequest, getDesignationRequest,resetGetDepartment, getDepartmentRequest, resetCreateDesignation, resetGetDesignation, resetUpdateDesignation, updateDesignationRequest } from '../../redux/actions';
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 
-let isEdit = false;
+let isEdit = false; 
 
-function Index({ userRole, userRights }) {
+function Index() {
 
     const { dispatch, appSelector } = useRedux();
 
-    const { getDepartmentSuccess, getDepartmentList, getDepartmentFailure, getDesignationSuccess, getDesignationList, getDesignationFailure, createDesignationSuccess, createDesignationData, createDesignationFailure, updateDesignationSuccess, updateDesignationData, updateDesignationFailure,
+    const { getDepartmentSuccess, getDepartmentList, getDepartmentFailure,getDesignationSuccess, getDesignationList, getDesignationFailure, createDesignationSuccess, createDesignationData, createDesignationFailure, updateDesignationSuccess, updateDesignationData, updateDesignationFailure,
         errorMessage,
 
     } = appSelector((state) => ({
@@ -25,7 +25,7 @@ function Index({ userRole, userRights }) {
 
         getDepartmentSuccess: state.departmentReducer.getDepartmentSuccess,
         getDepartmentList: state.departmentReducer.getDepartmentList,
-        getDepartmentFailure: state.departmentReducer.getDepartmentFailure,
+        getDepartmentFailure: state.departmentReducer.getDepartmentFailure,        
 
         createDesignationSuccess: state.designationReducer.createDesignationSuccess,
         createDesignationData: state.designationReducer.createDesignationData,
@@ -37,10 +37,6 @@ function Index({ userRole, userRights }) {
 
         errorMessage: state.designationReducer.errorMessage,
     }));
-
-    const isUserCanCreate = userRole != 'Admin' && userRights.master_ins;
-    const isUserCanUpdate = userRole != 'Admin' && userRights.master_upd;
-    const isUserCanDelete = userRole != 'Admin' && userRights.master_del;
 
     const columns = [
         {
@@ -58,7 +54,7 @@ function Index({ userRole, userRights }) {
             accessor: 'designationName',
             sort: true,
         },
-
+        
         {
             Header: 'Status',
             accessor: 'isActive',
@@ -81,26 +77,22 @@ function Index({ userRole, userRights }) {
                 const deleteMessage = activeChecker ? "You want to In-Active...?" : "You want to retrive this Data...?";
                 return (
                     <div>
-                        {(isUserCanUpdate || userRole === 'Admin') && (
-                            <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index)}>
-                                <i className={'fe-edit-1'}></i>
-                            </span>
-                        )}
-                        {(isUserCanDelete || userRole === 'Admin') && (
-                            <span
-                                className={`${iconColor} cursor-pointer`}
-                                onClick={() =>
-                                    showConfirmationDialog(
-                                        deleteMessage,
-                                        () => onDeleteForm(row.original, row.index, activeChecker),
-                                        'Yes'
-                                    )
-                                }>
-                                {
-                                    row?.original?.isActive ? <i className={'fe-trash-2'}></i> : <i className={'fas fa-recycle'}></i>
-                                }
-                            </span>
-                        )}
+                        <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index)}>
+                            <i className={'fe-edit-1'}></i>
+                        </span>
+                        <span
+                            className={`${iconColor} cursor-pointer`}
+                            onClick={() =>
+                                showConfirmationDialog(
+                                    deleteMessage,
+                                    () => onDeleteForm(row.original, row.index, activeChecker),
+                                    'Yes'
+                                )
+                            }>
+                            {
+                                row?.original?.isActive ? <i className={'fe-trash-2'}></i> : <i className={'fas fa-recycle'}></i>
+                            }
+                        </span>
                     </div>
                 )
             },
@@ -115,7 +107,7 @@ function Index({ userRole, userRights }) {
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState([]);
     const [optionListState, setOptionListState] = useState({
-
+        
         departmentList: [],
     })
 
@@ -244,18 +236,18 @@ function Index({ userRole, userRights }) {
     return (
         <React.Fragment>
             <NotificationContainer />
-            {isLoading ? <div className='bg-light opacity-0.25'>
-                <div className="d-flex justify-content-center m-5">
-                    <Spinner className='mt-5 mb-5' animation="border" />
-                </div>
+           { isLoading ? <div className='bg-light opacity-0.25'>
+            <div className="d-flex justify-content-center m-5">
+                <Spinner className='mt-5 mb-5' animation="border" />
+            </div>
             </div> :
-                <Table
-                    columns={columns}
-                    Title={'Designation List'}
-                    data={parentList || []}
-                    pageSize={5}
-                    toggle={isUserCanCreate || userRole === 'Admin' ? createModel : null}
-                />}
+            <Table
+                columns={columns}
+                Title={'Designation List'}
+                data={parentList || []}
+                pageSize={5}
+                toggle={createModel}
+            />}
 
             <ModelViewBox
                 modal={modal}

@@ -65,13 +65,13 @@ const Table = (props) => {
     const isSearchable = props['isSearchable'] || true;
     const filterTbl = props['filterTbl'] || false;
     const isSortable = props['isSortable'] || true;
-    const pagination = props['pagination'] || true;
+    const pagination = props['pagination'] === undefined ? true : false;
     const isSelectable = props['isSelectable'] || false;
     const isExpandable = props['isExpandable'] || false;
     const sizePerPageListData = sizePerPageList
     const columnData = props['columns']
     const columnLength = columnData.length || 4
-    const { toggle = null, addBtn = true, onClickCallBack={}, defaultState = [], tableIcon = false, footerTable = false, btnName = false, Title, filterFormContainer, optionListState, filterSubmitFunction, onChangeCallBack, state, setState, filterColNo, footerLabel } = props;
+    const { toggle = null, addBtn = true, onClickCallBack = {}, defaultState = [], tableIcon = false, footerTable = false, btnName = false, Title, filterFormContainer, optionListState, filterSubmitFunction, onChangeCallBack, state, setState, filterColNo, footerLabel } = props;
 
     let otherProps = {};
 
@@ -91,7 +91,7 @@ const Table = (props) => {
         otherProps['useRowSelect'] = useRowSelect;
     }
 
-    
+
 
     const dataTable = useTable(
         {
@@ -258,33 +258,16 @@ const Table = (props) => {
                                                     </tr>
                                                 );
                                             })}
-                                        {
-                                            footerTable ?
-                                                (
-                                                    <>
-                                                        <tr>
-                                                            {/* Dynamically calculate colSpan based on the number of columns */}
-                                                            <td colSpan={columnLength - 3}></td>
-
-                                                            {/* Dynamically render the label and currency */}
-                                                            <td><b>{footerLabel || 'Total Amount'}</b></td>
-
-                                                            {/* Dynamically render the amount with optional currency */}
-                                                            <td>
-                                                                <b>
-                                                                
-                                                                {defaultState?.totalAmount?.toLocaleString() || "0"}
-                                                                </b>
-                                                            </td>
-
-                                                            <td></td>
-                                                        </tr>
-                                                        
-                                                    </>
-                                                )
-                                                : ""
-                                        }
                                     </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            {dataTable.footerGroups[0].headers.map((column) => (
+                                                <td {...column.getFooterProps()}>
+                                                    {column.render('Footer')}
+                                                </td>
+                                            ))}
+                                        </tr>
+                                    </tfoot>
                                 </table>
                             </div>
 

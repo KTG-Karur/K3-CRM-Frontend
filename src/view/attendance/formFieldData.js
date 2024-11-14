@@ -2,22 +2,24 @@ const attendanceContainer = [
     {
         formFields: [
             {
-                label: 'Department',
-                name: 'departmentId',
-                inputType: 'select',
-                optionList: 'departmentList',
-                displayKey: 'departmentName',
-                uniqueKey: 'departmentId',
-                classStyle: 'col-6',
-            },
-            {
                 'label': "Branch",
                 'name': "branchId",
                 'inputType': "select",
                 optionList: 'branchList',
                 displayKey: 'branchName',
                 uniqueKey: 'branchId',
+                onChange: 'handleBranch',
                 classStyle: 'col-6'
+            },
+            {
+                label: 'Department',
+                name: 'departmentId',
+                inputType: 'select',
+                optionList: 'departmentList',
+                displayKey: 'departmentName',
+                onChange: 'handleDepartment',
+                uniqueKey: 'departmentId',
+                classStyle: 'col-6',
             },
         ]
     },

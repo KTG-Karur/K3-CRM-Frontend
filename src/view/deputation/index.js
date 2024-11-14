@@ -5,7 +5,7 @@ import FormLayout from '../../utils/formLayout';
 import { deputationContainer } from './formFieldData';
 import Table from '../../components/Table';
 import { dateConversion, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
-import { createDeputationRequest, getDeputationRequest, resetCreateDeputation, resetGetDeputation, resetUpdateDeputation, resetGetBranch, updateDeputationRequest, getBranchRequest } from '../../redux/actions';
+import { createDeputationRequest, getDeputationRequest, getStaffRequest, resetCreateDeputation, resetGetDeputation, resetUpdateDeputation, resetGetBranch, resetGetStaff, updateDeputationRequest, getBranchRequest } from '../../redux/actions';
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 import _ from 'lodash';
@@ -19,9 +19,15 @@ function Index() {
     const { getDeputationSuccess, getDeputationList, getDeputationFailure,
         createDeputationSuccess, createDeputationData, createDeputationFailure,
         updateDeputationSuccess, updateDeputationData, updateDeputationFailure,
-        errorMessage, getBranchFailure, getBranchList, getBranchSuccess
+        errorMessage, getBranchFailure, getBranchList, getBranchSuccess, getStaffSuccess,
+        getStaffList,
+        getStaffFailure,
 
     } = appSelector((state) => ({
+        getStaffSuccess: state.staffReducer.getStaffSuccess,
+        getStaffList: state.staffReducer.getStaffList,
+        getStaffFailure: state.staffReducer.getStaffFailure,
+
         getDeputationSuccess: state.deputationReducer.getDeputationSuccess,
         getDeputationList: state.deputationReducer.getDeputationList,
         getDeputationFailure: state.deputationReducer.getDeputationFailure,
@@ -96,11 +102,7 @@ function Index() {
     const [state, setState] = useState({});
     const [parentList, setParentList] = useState([]);
     const [optionListState, setOptionListState] = useState({
-        staffList: [
-            { staffId: 1, staffName: 'Suki' },
-            { staffId: 2, staffName: 'Ragul' },
-            { staffId: 3, staffName: 'Mohan' },
-        ],
+        staffList: [],
         branchList: [],
     })
     const [selectedItem, setSelectedItem] = useState({});
@@ -112,10 +114,29 @@ function Index() {
     const errorHandle = useRef();
 
     useEffect(() => {
-        setIsLoading(true)        
+        setIsLoading(true)  
+        dispatch(getStaffRequest());      
         dispatch(getDeputationRequest());  
         dispatch(getBranchRequest());      
     }, []);
+
+    useEffect(() => {
+        if (getStaffSuccess) {
+            setIsLoading(false);
+            setOptionListState({
+                ...optionListState,
+                staffList: getStaffList,
+            });
+            dispatch(resetGetStaff());
+        } else if (getStaffFailure) {
+            setIsLoading(false);
+            setOptionListState({
+                ...optionListState,
+                staffList: [],
+            });
+            dispatch(resetGetStaff());
+        }
+    }, [getStaffSuccess, getStaffFailure]);
 
     useEffect(() => {
         if (getDeputationSuccess) {

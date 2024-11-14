@@ -49,7 +49,8 @@ import {
     SettingWorkingDay,
     SettingBenefit,
     StaffLeave,
-    Attendance
+    Attendance,
+    Salary
 } from './Route_Menu';
 
 
@@ -157,6 +158,10 @@ const AllRoutes = () => {
                 {
                     path: 'staff-leave',
                     element: <LoadComponent component={StaffLeave} permission={['staff_leave_ins', 'staff_leave_upd', 'staff_leave_del']} />,
+                },
+                {
+                    path: 'staff-salary',
+                    element: <LoadComponent component={Salary} permission={['staff_salary_ins', 'staff_salary_upd']} />,
                 },
                 {
                     path: 'view',
