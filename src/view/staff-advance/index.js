@@ -5,7 +5,7 @@ import FormLayout from '../../utils/formLayout';
 import { staffAdvanceContainer, staffAdvancePayContainer } from './formFieldData';
 import Table from '../../components/Table';
 import { dateConversion, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
-import { createAdvancePaymentHistoryRequest, createStaffAdvanceRequest, getActivityRequest, getAdvancePaymentHistoryRequest, getStaffAdvanceRequest, getStaffRequest, resetCreateStaffAdvance, resetGetActivity, resetGetAdvancePaymentHistory, resetGetStaffAdvance, resetGetStaff, resetUpdateStaffAdvance, updateAdvancePaymentHistoryRequest, updateStaffAdvanceRequest } from '../../redux/actions';
+import { createAdvancePaymentHistoryRequest, createStaffAdvanceRequest, getActivityRequest, getAdvancePaymentHistoryRequest, getStaffAdvanceRequest, getStaffRequest, resetCreateStaffAdvance, resetGetActivity, resetGetAdvancePaymentHistory, resetGetStaffAdvance, resetGetStaff, resetUpdateStaffAdvance, updateAdvancePaymentHistoryRequest, updateStaffAdvanceRequest, getBranchRequest, resetGetBranch } from '../../redux/actions';
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 import _ from 'lodash';
@@ -17,6 +17,7 @@ function Index() {
     const { dispatch, appSelector } = useRedux();
 
     const { getStaffAdvanceSuccess, getStaffAdvanceList, getStaffAdvanceFailure,
+        getBranchSuccess, getBranchList, getBranchFailure,
         getActivitySuccess, getActivityList, getActivityFailure,
         createStaffAdvanceSuccess, createStaffAdvanceData, createStaffAdvanceFailure,
         updateStaffAdvanceSuccess, updateStaffAdvanceData, updateStaffAdvanceFailure,
@@ -25,6 +26,11 @@ function Index() {
         getStaffFailure,
 
     } = appSelector((state) => ({
+
+        getBranchSuccess: state.branchReducer.getBranchSuccess,
+        getBranchList: state.branchReducer.getBranchList,
+        getBranchFailure: state.branchReducer.getBranchFailure,
+
         getStaffSuccess: state.staffReducer.getStaffSuccess,
         getStaffList: state.staffReducer.getStaffList,
         getStaffFailure: state.staffReducer.getStaffFailure,
@@ -137,7 +143,7 @@ function Index() {
                 const total = rows.reduce((sum, row) => parseInt(sum) + (parseInt(row.original.paidAmount) || 0), 0);
                 console.log(total);
                 return (<span>data
-                  </span>);
+                </span>);
             },
 
         },
@@ -163,7 +169,7 @@ function Index() {
         },
     ];
 
-  
+
 
 
     const [state, setState] = useState({});
@@ -171,6 +177,7 @@ function Index() {
     const [parentPaymentList, setParentPaymentList] = useState([]);
     const [optionListState, setOptionListState] = useState({
         staffList: [],
+        branchList: [],
     });
     const [selectedItem, setSelectedItem] = useState({});
     const [selectedIndex, setSelectedIndex] = useState(false);
@@ -184,7 +191,27 @@ function Index() {
         setIsLoading(true)
         dispatch(getStaffAdvanceRequest());
         dispatch(getStaffRequest());
+        dispatch(getBranchRequest());
     }, []);
+
+    useEffect(() => {
+        if (getBranchSuccess) {
+            setIsLoading(false)
+            setOptionListState({
+                ...optionListState,
+                branchList: getBranchList,
+            });
+            dispatch(resetGetBranch())
+        } else if (getBranchFailure) {
+            setIsLoading(false)
+            setOptionListState({
+                ...optionListState,
+                branchList: [],
+            });
+            dispatch(resetGetBranch())
+        }
+    }, [getBranchSuccess, getBranchFailure]);
+
 
     useEffect(() => {
         if (getStaffSuccess) {
@@ -356,6 +383,16 @@ function Index() {
 
     }
 
+    const handleBranchId = (option, formName, formUniqueKey, formDisplayKey) => {
+        const branchFilter = {
+            branchId: option[formUniqueKey]
+        }
+        setState({
+            ...state,
+            [formName]: option[formUniqueKey]
+        })
+        dispatch(getStaffRequest(branchFilter));
+    }
 
     return (
         <React.Fragment>
@@ -388,6 +425,7 @@ function Index() {
                     optionListState={optionListState}
                     setState={setState}
                     state={state}
+                    onChangeCallBack={{ "handleBranchId": handleBranchId }}
                     ref={errorHandle}
                     noOfColumns={1}
                     errors={errors}
@@ -401,7 +439,7 @@ function Index() {
                         Title={'Payment List'}
                         data={parentPaymentList || []}
                         footerTable={false}
-                        
+
                     />
                 }
             </ModelViewBox>

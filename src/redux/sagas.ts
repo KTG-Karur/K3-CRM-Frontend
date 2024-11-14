@@ -30,6 +30,7 @@ import staffQualificationSaga from './staff-qualification/saga';
 import staffLeaveSaga from './staff-leave/saga';
 import StaffAttendanceSaga from './staff-attendance/saga';
 import advancePaymentHistorySaga from './advance-payment-history/saga';
+import staffsalarySaga from './staff-salary/saga';
 
 export default function* rootSaga() {
     yield all([
@@ -63,5 +64,6 @@ export default function* rootSaga() {
         staffQualificationSaga(),
         staffLeaveSaga(),
         StaffAttendanceSaga(),
+        staffsalarySaga(),
     ]);
 }

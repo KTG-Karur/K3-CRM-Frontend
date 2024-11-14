@@ -1,38 +1,49 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Badge, Spinner } from 'react-bootstrap';
+import { Badge, Button, Form, Spinner } from 'react-bootstrap';
 import ModelViewBox from '../../components/Atom/ModelViewBox';
 import FormLayout from '../../utils/formLayout';
-import { employeeFormContainer } from './formFieldData';
+import { employeeFormContainer, staffSalaryBtn } from './formFieldData';
 import Table from '../../components/Table';
 import { showConfirmationDialog, showMessage } from '../../utils/AllFunction';
-import { createDepartmentRequest, getDepartmentRequest, resetCreateDepartment, resetGetDepartment, resetUpdateDepartment, updateDepartmentRequest } from '../../redux/actions';
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
+import { createStaffSalaryRequest, getStaffSalaryRequest, resetCreateStaffSalary, resetGetStaffSalary, resetUpdateStaffSalary, updateStaffSalaryRequest } from '../../redux/staff-salary/actions';
+import { getSettingBenefitRequest, resetGetSettingBenefit } from '../../redux/actions';
 
 let isEdit = false;
 
-function Index() { 
+function Index() {
 
     const { dispatch, appSelector } = useRedux();
 
-    const { getDepartmentSuccess, getDepartmentList, getDepartmentFailure,
-        createDepartmentSuccess, createDepartmentData, createDepartmentFailure,
-        updateDepartmentSuccess, updateDepartmentData, updateDepartmentFailure,errorMessage
+    const incentiveAmountRefs = useRef([]);
+
+    const {
+        getSettingBenefitSuccess, getSettingBenefitList, getSettingBenefitFailure,
+        getStaffSalarySuccess, getStaffSalaryList, getStaffSalaryFailure,
+        updateStaffSalarySuccess, updateStaffSalaryData, updateStaffSalaryFailure,
+        createStaffSalarySuccess, createStaffSalaryFailure, createStaffSalaryData,
+        errorMessage,
 
     } = appSelector((state) => ({
-        getDepartmentSuccess: state.departmentReducer.getDepartmentSuccess,
-        getDepartmentList: state.departmentReducer.getDepartmentList,
-        getDepartmentFailure: state.departmentReducer.getDepartmentFailure,
 
-        createDepartmentSuccess: state.departmentReducer.createDepartmentSuccess,
-        createDepartmentData: state.departmentReducer.createDepartmentData,
-        createDepartmentFailure: state.departmentReducer.createDepartmentFailure,
+        getSettingBenefitSuccess: state.settingBenefitReducer.getSettingBenefitSuccess,
+        getSettingBenefitList: state.settingBenefitReducer.getSettingBenefitList,
+        getSettingBenefitFailure: state.settingBenefitReducer.getSettingBenefitFailure,
 
-        updateDepartmentSuccess: state.departmentReducer.updateDepartmentSuccess,
-        updateDepartmentData: state.departmentReducer.updateDepartmentData,
-        updateDepartmentFailure: state.departmentReducer.updateDepartmentFailure,
+        getStaffSalarySuccess: state.staffsalaryReducer.getStaffSalarySuccess,
+        getStaffSalaryList: state.staffsalaryReducer.getStaffSalaryList,
+        getStaffSalaryFailure: state.staffsalaryReducer.getStaffSalaryFailure,
 
-        errorMessage: state.departmentReducer.errorMessage,
+        createStaffSalarySuccess: state.staffsalaryReducer.createStaffSalarySuccess,
+        createStaffSalaryData: state.staffsalaryReducer.createStaffSalaryData,
+        createStaffSalaryFailure: state.staffsalaryReducer.createStaffSalaryFailure,
+
+        updateStaffSalarySuccess: state.staffsalaryReducer.updateStaffSalarySuccess,
+        updateStaffSalaryData: state.staffsalaryReducer.updateStaffSalaryData,
+        updateStaffSalaryFailure: state.staffsalaryReducer.updateStaffSalaryFailure,
+
+        errorMessage: state.staffsalaryReducer.errorMessage,
     }));
 
     const columns = [
@@ -42,55 +53,94 @@ function Index() {
             Cell: (row) => <div>{row?.row?.index + 1}</div>,
         },
         {
-            Header: 'Department Name',
-            accessor: 'departmentName',
+            Header: 'Name',
+            accessor: 'staffName',
             sort: true,
         },
         {
-            Header: 'Status',
-            accessor: 'isActive',
-            Cell: ({ row }) => (
-                <div>
-                    {row?.original?.isActive ? (
-                        <Badge bg={'success'}>Active</Badge>
-                    ) : (
-                        <Badge bg={'danger'}>In active</Badge>
-                    )}
-                </div>
-            ),
+            Header: 'Tol Salary',
+            accessor: 'salaryMonth',
+            sort: true,
         },
         {
-            Header: 'Actions',
-            accessor: 'actions',
+            Header: 'No.of leave days',
+            accessor: 'leaveCount',
+            sort: true,
+        },
+        {
+            Header: 'Leave sal',
+            accessor: 'Leave salary',
+            sort: true,
+        },
+        {
+            Header: 'Sal after Leave amt',
+            accessor: 'Salary after Leave amount',
+            sort: true,
+        },
+        {
+            Header: 'ESI 1.75%',
+            accessor: 'ESI',
+            sort: true,
+        },
+        {
+            Header: 'PF 12%',
+            accessor: 'PF',
+            sort: true,
+        },
+        {
+            Header: 'Adv amt',
+            accessor: 'Advance amt Pending',
+            sort: true,
+        },
+        {
+            Header: 'Ded Amt',
+            accessor: 'Deducted Amt this Month',
+            sort: true,
+        },
+        {
+            Header: 'Sal on Hand',
+            accessor: 'Sal on Hand',
+            sort: true,
+        },
+        {
+            Header: 'Incentive',
+            accessor: 'incentiveAmount',
             Cell: ({ row }) => {
-                const activeChecker = row.original.isActive
-                const iconColor = activeChecker ? "text-danger" : "text-warning";
-                const deleteMessage = activeChecker ? "You want to In-Active...?" : "You want to retrive this Data...?";
                 return (
                     <div>
-                        <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index)}>
-                            <i className={'fe-edit-1'}></i>
-                        </span>
-                        <span
-                            className={`${iconColor} cursor-pointer`}
-                            onClick={() =>
-                                showConfirmationDialog(
-                                    deleteMessage,
-                                    () => onDeleteForm(row.original, row.index, activeChecker),
-                                    'Yes'
-                                )
-                            }>
-                            {
-                                row?.original?.isActive ? <i className={'fe-trash-2'}></i> : <i className={'fas fa-recycle'}></i>
-                            }
-                        </span>
+                        <Form.Control
+                            type="number"
+                            name={"incentiveAmount"}
+                            className="mb-1"
+                            placeholder={"0.00"}
+                            value={state.staffSalary[row.index]?.incentiveAmount || ""}
+                            onWheel={(e) => e.target.blur()}
+                            ref={(el) => (incentiveAmountRefs.current[row.index] = el)}
+                            onChange={(e) => {
+                                handleChange(row.original, e.target.value, row.index)
+                            }}
+                        />
                     </div>
                 )
             },
-        },
+            Footer: () => {
+                return (
+
+                    <Button
+                        variant="success"
+                        onClick={onFormSubmit}
+                        style={{ width: "100%", padding: '10px' }}
+                    >
+                        {isEdit ? 'Update' : 'Submit'}
+                    </Button>
+                )
+            }
+        }
     ];
 
-    const [state, setState] = useState({});
+    const [state, setState] = useState({
+        staffSalary: [{}]
+    });
     const [parentList, setParentList] = useState([]);
     const [selectedItem, setSelectedItem] = useState({});
     const [selectedIndex, setSelectedIndex] = useState(false);
@@ -98,51 +148,83 @@ function Index() {
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState([]);
 
-    const errorHandle = useRef();
-
     useEffect(() => {
         setIsLoading(true)
-        dispatch(getDepartmentRequest());
+        dispatch(getSettingBenefitRequest());
+        dispatch(getStaffSalaryRequest());
     }, []);
 
     useEffect(() => {
-        if (getDepartmentSuccess) {
+        if (getSettingBenefitSuccess) {
             setIsLoading(false)
-            setParentList(getDepartmentList)
-            dispatch(resetGetDepartment())
-        } else if (getDepartmentFailure) {
+            // setParentList(getSettingBenefitList)
+            console.log("getSettingBenefitList")
+            console.log(getSettingBenefitList)
+            setState({
+                ...state,
+                benefitList: getSettingBenefitList
+            });
+            dispatch(resetGetSettingBenefit())
+        } else if (getSettingBenefitFailure) {
             setIsLoading(false)
             setParentList([])
-            dispatch(resetGetDepartment())
+            dispatch(resetGetSettingBenefit())
         }
-    }, [getDepartmentSuccess, getDepartmentFailure]);
+    }, [getSettingBenefitSuccess, getSettingBenefitFailure]);
+
 
     useEffect(() => {
-        if (createDepartmentSuccess) {
-            const temp_state = [createDepartmentData[0], ...parentList];
-            setParentList(temp_state)
+        if (getStaffSalarySuccess) {
+            setIsLoading(false)
+            setParentList(getStaffSalaryList)
+            const staffSalaryList = getStaffSalaryList.map(item => {
+                return {
+                    staffId: item.staffId,
+                    staffName: item?.staffName || '',
+                    incentiveAmount: item?.incentiveAmount || 0,
+                }
+            })
+            setState({
+                ...state,
+                staffSalary: staffSalaryList
+            })
+            dispatch(resetGetStaffSalary())
+        } else if (getStaffSalaryFailure) {
+            setIsLoading(false)
+            dispatch(resetGetStaffSalary())
+        }
+    }, [getStaffSalarySuccess, getStaffSalaryFailure]);
+
+    useEffect(() => {
+        if (createStaffSalarySuccess) {
+            const temp_state = [createStaffSalaryData[0], ...parentList];
+            console.log("createStaffSalarySuccess temp_state")
+            console.log(temp_state)
+            // setParentList(temp_state)
             showMessage('success', 'Created Successfully');
             closeModel()
-            dispatch(resetCreateDepartment())
-        } else if (createDepartmentFailure) {
+            dispatch(resetCreateStaffSalary())
+        } else if (createStaffSalaryFailure) {
             showMessage('warning', errorMessage);
-            dispatch(resetCreateDepartment())
+            dispatch(resetCreateStaffSalary())
         }
-    }, [createDepartmentSuccess, createDepartmentFailure]);
+    }, [createStaffSalarySuccess, createStaffSalaryFailure]);
 
     useEffect(() => {
-        if (updateDepartmentSuccess) {
+        if (updateStaffSalarySuccess) {
             const temp_state = [...parentList];
-            temp_state[selectedIndex] = updateDepartmentData[0];
-            setParentList(temp_state)
+            temp_state[selectedIndex] = updateStaffSalaryData[0];
+            console.log("updateStaffSalarySuccess temp_state")
+            console.log(temp_state)
+            // setParentList(temp_state)
             isEdit && showMessage('success', 'Updated Successfully');
             closeModel()
-            dispatch(resetUpdateDepartment())
-        } else if (updateDepartmentFailure) {
+            dispatch(resetUpdateStaffSalary())
+        } else if (updateStaffSalaryFailure) {
             showMessage('warning', errorMessage);
-            dispatch(resetUpdateDepartment())
+            dispatch(resetUpdateStaffSalary())
         }
-    }, [updateDepartmentSuccess, updateDepartmentFailure]);
+    }, [updateStaffSalarySuccess, updateStaffSalaryFailure]);
 
     const closeModel = () => {
         isEdit = false;
@@ -174,58 +256,72 @@ function Index() {
         setModal(true)
     };
 
-    const handleValidation = () => {
-        errorHandle.current.validateFormFields();
-    }
 
     const onFormSubmit = async () => {
         const submitRequest = {
-            departmentName: state?.departmentName || ""
+            staffSalary: state?.staffSalary || ""
         }
+        console.log("submitRequest");
+        console.log(submitRequest);
+        return;
         if (isEdit) {
-            dispatch(updateDepartmentRequest(submitRequest, selectedItem.departmentId))
+            dispatch(updateStaffSalaryRequest(submitRequest, selectedItem.departmentId))
         } else {
-            dispatch(createDepartmentRequest(submitRequest))
+            dispatch(createStaffSalaryRequest(submitRequest))
         }
     };
 
-    const onDeleteForm = (data, index, activeChecker) => {
-        const submitRequest = {
-            isActive: activeChecker == 0 ? 1 : 0
-        }
-        setSelectedIndex(index)
-        dispatch(updateDepartmentRequest(submitRequest, data.departmentId))
+    const handleChange = (staffDetail, incentiveAmount, index) => {
+        setState((prev) => {
+            const updatedStaffSalary = [...prev.staffSalary];
+
+            updatedStaffSalary[index] = {
+                ...updatedStaffSalary[index],
+                incentiveAmount: incentiveAmount,
+            };
+
+            return {
+                ...prev,
+                staffSalary: updatedStaffSalary,
+            };
+        });
+
+        requestAnimationFrame(() => {
+            incentiveAmountRefs.current[index]?.focus();
+        });
     };
+
+    console.log("state.staffSalary")
+    console.log(state.staffSalary)
 
     return (
         <React.Fragment>
-        <NotificationContainer />
-           { isLoading ? <div className='bg-light opacity-0.25'>
-            <div className="d-flex justify-content-center m-5">
-                <Spinner className='mt-5 mb-5' animation="border" />
-            </div>
+            <NotificationContainer />
+            {isLoading ? <div className='bg-light opacity-0.25'>
+                <div className="d-flex justify-content-center m-5">
+                    <Spinner className='mt-5 mb-5' animation="border" />
+                </div>
             </div> :
-            <Table
-                columns={columns}
-                Title={'Department List'}
-                data={parentList || []}
-                pageSize={5}
-                toggle={createModel}
-            />}
+                <Table
+                    columns={columns}
+                    Title={'Salary List'}
+                    data={parentList || []}
+                    pageSize={5}
+                    toggle={false}
+                    pagination={false}
+                />}
 
             <ModelViewBox
                 modal={modal}
                 setModel={setModal}
                 modelHeader={'Department'}
                 modelSize={'md'}
-                isEdit={isEdit}
-                handleSubmit={handleValidation}>
+                isEdit={isEdit}>
                 <FormLayout
                     dynamicForm={employeeFormContainer}
                     handleSubmit={onFormSubmit}
                     setState={setState}
                     state={state}
-                    ref={errorHandle}
                     noOfColumns={1}
                     errors={errors}
                     setErrors={setErrors}

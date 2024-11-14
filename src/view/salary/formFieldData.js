@@ -13,6 +13,21 @@ const employeeFormContainer = [
     },
 ]
 
+const staffSalaryBtn = [
+    {
+        formFields: [
+            {
+                'label': "Submit",
+                'name': "departmentName",
+                'inputType': "button",
+                'onClick': "onFormSubmit",
+                 'classStyle':'col-12',
+            },
+        ]
+    },
+]
+
 export {
-    employeeFormContainer
+    employeeFormContainer,
+    staffSalaryBtn
 }
