@@ -11,7 +11,7 @@ import { APICore } from '../../helpers/api/apiCore';
 import { useRedux } from '../../hooks/';
 
 // actions
-// import { resetAuth, loginUser, getEmployeeLoginRequest, resetGetEmployeeLogin } from '../../redux/actions';
+import { resetAuth, loginUser } from '../../redux/actions';
 
 // components
 import { VerticalForm, FormInput } from '../../components/form/';
@@ -24,7 +24,7 @@ type LocationState = {
 };
 
 type UserData = {
-    email: string;
+    username: string;
     password: string;
 };
 
@@ -35,12 +35,12 @@ const BottomLink = () => {
     return (
         <Row className="mt-3">
             <Col xs={12} className="text-center">
-                <p className="text-muted text-light">
+                {/* <p className="text-muted text-light">
                     <Link to="/auth/forget-password" className="text-muted ms-1">
                         <i className="fa fa-lock me-1"></i>
                         {t('Forgot your password?')}
                     </Link>
-                </p>
+                </p> */}
                 {/* <p className="text-muted">
                     {t("Don't have an account?")}{' '}
                     <Link to={'/auth/register'} className="text-dark ms-1">
@@ -55,48 +55,23 @@ const BottomLink = () => {
 const Login = () => {
     const { t } = useTranslation();
     const { dispatch, appSelector } = useRedux();
-    const [loading, setLoading] = useState(false);
-    const [userLoggedIn, setUserLoggedIn] = useState(false);
-
-    // const { user, userLoggedIn, loading, error } = appSelector((state) => ({
-    //     user: state.Auth.user,
-    //     loading: state.Auth.loading,
-    //     error: state.Auth.error,
-    //     userLoggedIn: state.Auth.userLoggedIn,
-    // }));
-
-    const {
-        getEmployeeLoginSuccess, getEmployeeLoginList, getEmployeeLoginFailure, error
-
-    } = appSelector((state) => ({
-        getEmployeeLoginSuccess: state.loginReducer.getEmployeeLoginSuccess,
-        getEmployeeLoginList: state.loginReducer.getEmployeeLoginList,
-        getEmployeeLoginFailure: state.loginReducer.getEmployeeLoginFailure,
-
-        error: state.loginReducer.errorMessage,
+    const { user, userLoggedIn, loading, error } = appSelector((state) => ({
+        user: state.Auth.user,
+        loading: state.Auth.loading,
+        error: state.Auth.error,
+        userLoggedIn: state.Auth.userLoggedIn,
     }));
 
     useEffect(() => {
-        // localStorage.clear();
-        // dispatch(resetGetEmployeeLogin())
+        dispatch(resetAuth());
     }, [dispatch]);
-
-    // useEffect(() => {
-    //     if (getEmployeeLoginSuccess) {
-    //         setUserLoggedIn(true)
-    //         setLoading(false)
-    //         sessionStorage.setItem("loginInfo", JSON.stringify(getEmployeeLoginList));
-    //     } else if (getEmployeeLoginFailure) {
-    //         dispatch(resetGetEmployeeLogin())
-    //     }
-    // }, [getEmployeeLoginSuccess, getEmployeeLoginFailure]);
 
     /*
     form validation schema
     */
     const schemaResolver = yupResolver(
         yup.object().shape({
-            email: yup.string().required(t('Please enter Email')).email(t('Please enter valid Email')),
+            username: yup.string().required(t('Please enter Username')),
             password: yup.string().required(t('Please enter Password')),
         })
     );
@@ -105,20 +80,7 @@ const Login = () => {
     handle form submission
     */
     const onSubmit = (formData: UserData) => {
-        const sumbitReq={
-            userName : formData['email'],
-            password : formData['password']
-        }
-        // setLoading(true)
-        // dispatch(getEmployeeLoginRequest(sumbitReq))
-
-        setUserLoggedIn(true)
-        const getEmployeeLoginList = [
-            {
-                userId : 1
-            }
-        ]
-        sessionStorage.setItem("loginInfo", JSON.stringify(getEmployeeLoginList));
+        dispatch(loginUser(formData['username'], formData['password']));
     };
 
     const location = useLocation();
@@ -126,9 +88,9 @@ const Login = () => {
 
     if (location.state) {
         const { from } = location.state as LocationState;
-        redirectUrl = from ? from.pathname : '/dashboard';
+        redirectUrl = from ? from.pathname : '/';
     }
-
+    
     return (
         <>
             {userLoggedIn && <Navigate to={redirectUrl} replace />}
@@ -153,13 +115,13 @@ const Login = () => {
                 <VerticalForm<UserData>
                     onSubmit={onSubmit}
                     resolver={schemaResolver}
-                    defaultValues={{ email: 'suki@harshinifincop.com', password: '123456' }}
+                    defaultValues={{ username: 'admin@ktgt.in', password: '12345678' }}
                 >
-                    <FormInput
-                        type="email"
-                        name="email"
-                        label={t('User Name')}
-                        placeholder={t('hello@coderthemes.com')}
+                     <FormInput
+                        type="text"
+                        name="username"
+                        label={t('Username')}
+                        placeholder={t('Enter your username')}
                         containerClass={'mb-3'}
                     />
                     <FormInput
@@ -170,13 +132,13 @@ const Login = () => {
                         containerClass={'mb-3'}
                     ></FormInput>
 
-                    <FormInput
+                    {/* <FormInput
                         type="checkbox"
                         name="checkbox"
                         label={t('Remember me')}
                         containerClass={'mb-3'}
                         defaultChecked
-                    />
+                    /> */}
 
                     <div className="text-center d-grid mb-3">
                         <Button variant="primary" type="submit" disabled={loading}>

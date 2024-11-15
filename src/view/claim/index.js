@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom';
 
 let isEdit = false;
 
-function Index() { 
+function Index({ userRole, userRights }) { 
 
     const { dispatch, appSelector } = useRedux();
     const navigate = useNavigate();
@@ -47,7 +47,9 @@ function Index() {
 
         errorMessage: state.claimReducer.errorMessage,
     }));
-
+    const isUserCanCreate = userRole === 'Staff' && userRights.claim_ins;
+    const isUserCanUpdate = userRole === 'Staff' && userRights.claim_upd;
+    const isUserCanDelete = userRole === 'Staff' && userRights.claim_del;
     const columns = [
         {
             Header: 'S.No',
@@ -91,12 +93,16 @@ function Index() {
             Cell: ({ row }) => {
                 return (
                     <div>
+                        {(isUserCanUpdate || userRole === 'Admin') && (
                         <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index)}>
                             <i className={'fe-edit-1'}></i>
                         </span>
+                        )}
+                        {(isUserCanDelete || userRole === 'Admin') && (
                         <span className="text-success  me-2 cursor-pointer" onClick={() => onApprovedClaim(row.original, row.index)}>
                             <i className={'fe-check-circle'}></i>
                         </span>
+                        )}
                     </div>
                     
                 )
@@ -326,7 +332,7 @@ function Index() {
                 Title={'Claim List'}
                 data={parentList || []}
                 pageSize={25}
-                toggle={createModel}
+                toggle={isUserCanCreate || userRole === 'Admin' ? createModel : null}
             />}
 
             <ModelViewBox

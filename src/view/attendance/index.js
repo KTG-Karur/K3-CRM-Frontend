@@ -29,7 +29,7 @@ import {
 
 let isEdit = false;
 let parentList = [];
-function Index() {
+function Index({ userRole, userRights }) {
     const { dispatch, appSelector } = useRedux();
 
     const {
@@ -77,7 +77,9 @@ function Index() {
         getStaffList: state.staffReducer.getStaffList,
         getStaffFailure: state.staffReducer.getStaffFailure,
     }));
-
+    const isUserCanCreate = userRole === 'Staff' && userRights.staff_attendance_ins;
+    const isUserCanUpdate = userRole === 'Staff' && userRights.staff_attendance_upd;
+    const isUserCanDelete = userRole === 'Staff' && userRights.staff_attendance_del;
     const columns = [
         {
             Header: 'S.No',
@@ -106,32 +108,36 @@ function Index() {
                 return (
                     <div>
                         <Row>
-                            <Col lg={6}>
-                                <Form.Check
-                                    label={'Present' || ''}
-                                    type="radio"
-                                    id={`basic-radio-present-${row.index}`}
-                                    name={`attendanceStatusId-${row.index}`}
-                                    className={'mb-2 form-check-Primary mx-2'}
-                                    checked={state.staffAttendance[row.index]?.['attendanceStatusId'] === 1 || false}
-                                    value={state.staffAttendance[row.index]?.['attendanceStatusId'] || ''}
-                                    onChange={(e) => {
-                                        handleChange(row.original, 1, row.index);
-                                    }}
-                                />
-                            </Col>
-                            <Col lg={6}>
-                                <Form.Check
-                                    label="Absent"
-                                    type="radio"
-                                    id={`basic-radio-absent-${row.index}`}
-                                    name={`attendanceStatusId-${row.index}`}
-                                    className="mb-2 form-check-Primary mx-2"
-                                    checked={state.staffAttendance[row.index]?.['attendanceStatusId'] === 0 || false}
-                                    value={state.staffAttendance[row.index]?.['attendanceStatusId'] || ''}
-                                    onChange={(e) => handleChange(row.original, 0, row.index)}
-                                />
-                            </Col>
+                            {(isUserCanUpdate || userRole === 'Admin') && (
+                                <>
+                                    <Col lg={6}>
+                                        <Form.Check
+                                            label={'Present' || ''}
+                                            type="radio"
+                                            id={`basic-radio-present-${row.index}`}
+                                            name={`attendanceStatusId-${row.index}`}
+                                            className={'mb-2 form-check-Primary mx-2'}
+                                            checked={state.staffAttendance[row.index]?.['attendanceStatusId'] === 1 || false}
+                                            value={state.staffAttendance[row.index]?.['attendanceStatusId'] || ''}
+                                            onChange={(e) => {
+                                                handleChange(row.original, 1, row.index);
+                                            }}
+                                        />
+                                    </Col>
+                                    <Col lg={6}>
+                                        <Form.Check
+                                            label="Absent"
+                                            type="radio"
+                                            id={`basic-radio-absent-${row.index}`}
+                                            name={`attendanceStatusId-${row.index}`}
+                                            className="mb-2 form-check-Primary mx-2"
+                                            checked={state.staffAttendance[row.index]?.['attendanceStatusId'] === 0 || false}
+                                            value={state.staffAttendance[row.index]?.['attendanceStatusId'] || ''}
+                                            onChange={(e) => handleChange(row.original, 0, row.index)}
+                                        />
+                                    </Col>
+                                </>
+                            )}
                         </Row>
                     </div>
                 );
@@ -399,7 +405,7 @@ function Index() {
                                 // onDrop={onDrop}
                                 Title={'Staff Attendance'}
                                 events={events}
-                                // onEventDrop={onEventDrop}
+                            // onEventDrop={onEventDrop}
                             />
                         </Col>
                     </Row>

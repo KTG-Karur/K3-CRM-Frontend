@@ -34,14 +34,19 @@ const api = new APICore();
  * Login the user
  * @param {*} payload - username and password
  */
-function* login({ payload: { email, password }, type }: UserData): SagaIterator {
+function* login({ payload: { username, password }, type }: UserData): SagaIterator {
     try {
-        const response = yield call(loginApi, { email, password });
+        const response = yield call(loginApi, { username, password });
         const user = response.data;
+        if(user.error){
+            yield put(authApiResponseError(AuthActionTypes.LOGIN_USER, user.message));
+            api.setLoggedInUser(null);
+            setAuthorization(null);
+        }
         // NOTE - You can change this according to response format from your api
-        api.setLoggedInUser(user);
+        api.setLoggedInUser(user.data);
         setAuthorization(user['token']);
-        yield put(authApiResponseSuccess(AuthActionTypes.LOGIN_USER, user));
+        yield put(authApiResponseSuccess(AuthActionTypes.LOGIN_USER, user.data));
     } catch (error: any) {
         yield put(authApiResponseError(AuthActionTypes.LOGIN_USER, error));
         api.setLoggedInUser(null);

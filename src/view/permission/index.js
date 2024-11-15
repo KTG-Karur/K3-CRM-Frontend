@@ -10,9 +10,9 @@ import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 import _ from 'lodash';
 
-let isEdit = false; 
+let isEdit = false;
 
-function Index() {
+function Index({ userRole, userRights }) {
 
     const { dispatch, appSelector } = useRedux();
 
@@ -40,7 +40,9 @@ function Index() {
 
         errorMessage: state.permissionReducer.errorMessage,
     }));
-
+    const isUserCanCreate = userRole === 'Staff' && userRights.master_ins;
+    const isUserCanUpdate = userRole === 'Staff' && userRights.master_upd;
+    const isUserCanDelete = userRole === 'Staff' && userRights.master_del;
     const columns = [
         {
             Header: 'S.No',
@@ -53,7 +55,7 @@ function Index() {
             Cell: ({ row }) => {
                 return (
                     <div>
-                       {dateConversion(row.original.permissionDate, "DD-MM-YYYY") }
+                        {dateConversion(row.original.permissionDate, "DD-MM-YYYY")}
                     </div>
                 )
             },
@@ -62,12 +64,12 @@ function Index() {
             Header: 'Staff Name',
             accessor: 'staffName',
             sort: true,
-        }, 
+        },
         {
             Header: 'Permission Type',
             accessor: 'permissionTypeName',
             sort: true,
-        },       
+        },
         {
             Header: 'Actions',
             accessor: 'actions',
@@ -77,10 +79,11 @@ function Index() {
                 const deleteMessage = activeChecker ? "You want to In-Active...?" : "You want to retrive this Data...?";
                 return (
                     <div>
-                        <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index)}>
-                            <i className={'fe-edit-1'}></i>
-                        </span>
-                        
+                        {(isUserCanUpdate || userRole === 'Admin') && (
+                            <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index)}>
+                                <i className={'fe-edit-1'}></i>
+                            </span>
+                        )}
                     </div>
                 )
             },
@@ -110,8 +113,8 @@ function Index() {
     const errorHandle = useRef();
 
     useEffect(() => {
-        setIsLoading(true)        
-        dispatch(getPermissionRequest());        
+        setIsLoading(true)
+        dispatch(getPermissionRequest());
     }, []);
 
     useEffect(() => {
@@ -209,22 +212,22 @@ function Index() {
         }
     };
 
-    
+
     return (
         <React.Fragment>
             <NotificationContainer />
-           { isLoading ? <div className='bg-light opacity-0.25'>
-            <div className="d-flex justify-content-center m-5">
-                <Spinner className='mt-5 mb-5' animation="border" />
-            </div>
+            {isLoading ? <div className='bg-light opacity-0.25'>
+                <div className="d-flex justify-content-center m-5">
+                    <Spinner className='mt-5 mb-5' animation="border" />
+                </div>
             </div> :
-            <Table
-                columns={columns}
-                Title={'Permission List'}
-                data={parentList || []}
-                pageSize={25}
-                toggle={createModel}
-            />}
+                <Table
+                    columns={columns}
+                    Title={'Permission List'}
+                    data={parentList || []}
+                    pageSize={25}
+                    toggle={isUserCanCreate || userRole === 'Admin' ? createModel : null}
+                />}
 
             <ModelViewBox
                 modal={modal}

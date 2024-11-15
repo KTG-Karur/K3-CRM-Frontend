@@ -12,7 +12,7 @@ import Scrollbar from '../components/Scrollbar';
 import AppMenu from './Menu';
 
 // images
-import profileImg from '../assets/images/users/user-1.jpg';
+// import profileImg from '../assets/images/users/user-1.jpg';
 
 /* user box */
 const UserBox = () => {
@@ -44,14 +44,14 @@ const UserBox = () => {
 
     /*
      * toggle dropdown
-    */
+     */
     const toggleDropdown = () => {
         setDropdownOpen(!dropdownOpen);
     };
 
     return (
         <div className="user-box text-center">
-            <img src={profileImg} alt="" title="Mat Helme" className="rounded-circle img-thumbnail avatar-md" />
+            {/* <img src={profileImg} alt="" title="Mat Helme" className="rounded-circle img-thumbnail avatar-md" /> */}
             <Dropdown show={dropdownOpen} onToggle={toggleDropdown}>
                 <Dropdown.Toggle
                     id="dropdown-notification"
@@ -97,13 +97,13 @@ const UserBox = () => {
 };
 
 /* sidebar content */
-const SideBarContent = () => {
+const SideBarContent = ({ closeSidebar }: { closeSidebar: () => void }) => {
     return (
         <>
             {/* <UserBox /> */}
 
             <div id="sidebar-menu">
-                <AppMenu menuItems={getMenuItems()} />
+                <AppMenu menuItems={getMenuItems()} onMenuItemClick={closeSidebar} />
             </div>
 
             <div className="clearfix" />
@@ -116,24 +116,23 @@ type LeftSidebarProps = {
 };
 
 const LeftSidebar = ({ isCondensed }: LeftSidebarProps) => {
-    const menuNodeRef: any = useRef(null);
+    const menuNodeRef = useRef<HTMLDivElement | null>(null);
 
-    /**
-     * Handle the click anywhere in doc
-     */
-    const handleOtherClick = (e: any) => {
-        if (menuNodeRef && menuNodeRef.current && menuNodeRef.current.contains(e.target)) return;
-        // else hide the menubar
-        if (document.body) {
-            document.body.classList.remove('sidebar-enable');
+    const closeSidebar = () => {
+        document.body.classList.remove('sidebar-enable');
+    };
+
+    const handleOtherClick = (e: MouseEvent) => {
+        if (menuNodeRef.current && !menuNodeRef.current.contains(e.target as Node)) {
+            closeSidebar();
         }
     };
 
     useEffect(() => {
-        document.addEventListener('mousedown', handleOtherClick, false);
+        document.addEventListener('mousedown', handleOtherClick);
 
         return () => {
-            document.removeEventListener('mousedown', handleOtherClick, false);
+            document.removeEventListener('mousedown', handleOtherClick);
         };
     }, []);
 
@@ -141,10 +140,10 @@ const LeftSidebar = ({ isCondensed }: LeftSidebarProps) => {
         <div className="left-side-menu" ref={menuNodeRef}>
             {!isCondensed && (
                 <Scrollbar style={{ maxHeight: '100%' }}>
-                    <SideBarContent />
+                    <SideBarContent closeSidebar={closeSidebar} />
                 </Scrollbar>
             )}
-            {isCondensed && <SideBarContent />}
+            {isCondensed && <SideBarContent closeSidebar={closeSidebar} />}
         </div>
     );
 };

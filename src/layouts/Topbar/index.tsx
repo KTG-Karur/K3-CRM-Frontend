@@ -9,7 +9,7 @@ import { showRightSidebar } from '../../redux/actions';
 import { LayoutTypes } from '../../constants';
 
 // hooks
-import { useRedux } from '../../hooks';
+import { useRedux, useUser } from '../../hooks';
 
 // components
 import SearchDropdown from '../../components/topbar/SearchDropdown';
@@ -56,6 +56,9 @@ const Topbar = ({ openLeftMenuCallBack, containerClass }: TopbarProps) => {
         dispatch(showRightSidebar());
     };
 
+    const [loggedInUser] = useUser();
+    const userName = loggedInUser?.userDetails?.first_name || '';
+
     return (
         <div className="navbar-custom">
             <div className={containerClass}>
@@ -72,7 +75,7 @@ const Topbar = ({ openLeftMenuCallBack, containerClass }: TopbarProps) => {
                     </li> */}
                     <li className="dropdown notification-list topbar-dropdown">
                         {/* User */}
-                        <ProfileDropdown userImage={avatar1} username={'Admin'} menuItems={profileMenus} />
+                        <ProfileDropdown userImage={avatar1} username={userName} menuItems={profileMenus} />
                     </li>
                     {/* <li className="dropdown notification-list">
                         <ThemeSetting handleRightSideBar={handleRightSideBar} />

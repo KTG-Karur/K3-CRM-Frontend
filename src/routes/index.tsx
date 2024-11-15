@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { useRoutes } from 'react-router-dom';
+import { Navigate, useRoutes } from 'react-router-dom';
 import 'react-notifications/lib/notifications.css';
 // layouts
 import DefaultLayout from '../layouts/Default';
@@ -14,7 +14,7 @@ import Root from './Root';
 import { LayoutTypes } from '../constants';
 
 // hooks
-import { useRedux } from '../hooks';
+import { useRedux, useUser } from '../hooks';
 
 import {
     Department,
@@ -112,18 +112,29 @@ import {
     Attendance
 } from './Route_Menu';
 
+type LoadComponentProps = {
+    component: React.ComponentType<any>; // Use `any` if the component's props are unknown
+    permission?: string[]; // Optional permission prop
+};
 
 const loading = () => <div className=""></div>;
 
-type LoadComponentProps = {
-    component: React.LazyExoticComponent<() => JSX.Element>;
+const LoadComponent: React.FC<LoadComponentProps> = ({ component: Component, permission = [] }) => {
+    const [loggedInUser] = useUser(); // Get the logged-in user data
+    const userRights = loggedInUser?.userDetails.userRights || '{}'; // Retrieve user rights
+    const userRole = loggedInUser?.userDetails?.role_name; // Retrieve user role
+    if (userRole === 'Staff' && permission.length > 0) {
+        const hasPermission = permission.some((perm) => userRights[perm]);
+        if (!hasPermission) {
+            return <Navigate to="/access-denied" />;
+        }
+    }
+    return (
+        <Suspense fallback={loading()}>
+            <Component permission={permission} userRole={userRole} userRights={userRights} />
+        </Suspense>
+    );
 };
-
-const LoadComponent = ({ component: Component }: LoadComponentProps) => (
-    <Suspense fallback={loading()}>
-        <Component />
-    </Suspense>
-);
 
 const AllRoutes = () => {
     const { appSelector } = useRedux();
@@ -150,7 +161,7 @@ const AllRoutes = () => {
     return useRoutes([
         { path: '/', element: <Root /> },
         {
-            // public routes
+            // Public routes
             path: '/',
             element: <DefaultLayout />,
             children: [
@@ -165,44 +176,22 @@ const AllRoutes = () => {
                         { path: 'logout', element: <LoadComponent component={Logout} /> },
                     ],
                 },
-                {
-                    path: 'error-404',
-                    element: <LoadComponent component={Error404} />,
-                },
-                {
-                    path: 'error-500',
-                    element: <LoadComponent component={Error500} />,
-                },
-                {
-                    path: 'maintenance',
-                    element: <LoadComponent component={Maintenance} />,
-                },
-                {
-                    path: 'coming-soon',
-                    element: <LoadComponent component={ComingSoon} />,
-                },
-                {
-                    path: 'landing',
-                    element: <LoadComponent component={Landing} />,
-                },
+                { path: 'error-404', element: <LoadComponent component={Error404} /> },
+                { path: 'error-500', element: <LoadComponent component={Error500} /> },
             ],
         },
         {
             // auth protected routes
             path: '/',
-            element: <PrivateRoute roles={'Admin'} component={Layout} />,
+            element: <PrivateRoute roles={['Admin', 'Staff']} component={Layout} />,
             children: [
                 {
                     path: 'dashboard',
                     element: <LoadComponent component={DashBoard1} />,
                 },
                 {
-                    path: 'loan-report',
-                    element: <LoadComponent component={LoanReportDashboard} />,
-                },
-                {
                     path: 'claim',
-                    element: <LoadComponent component={Claim} />,
+                    element: <LoadComponent component={Claim} permission={['claim_ins', 'claim_upd', 'claim_del']} />,
                 },
                 {
                     path: 'claim-approved',
@@ -210,83 +199,78 @@ const AllRoutes = () => {
                 },
                 {
                     path: 'staff-attendance',
-                    element: <LoadComponent component={Attendance} />,
+                    element: <LoadComponent component={Attendance} permission={['staff_attendance_ins', 'staff_attendance_upd', 'staff_attendance_del']} />,
                 },
                 {
                     path: 'staff-leave',
-                    element: <LoadComponent component={StaffLeave} />,
+                    element: <LoadComponent component={StaffLeave} permission={['staff_leave_ins', 'staff_leave_upd', 'staff_leave_del']} />,
                 },
                 {
                     path: 'view',
                     children: [
                         {
                             path: 'activity',
-                            element: <LoadComponent component={Activity} />,
+                            element: <LoadComponent component={Activity} permission={['master_ins', 'master_upd', 'master_del']} />,
                         },
                         {
                             path: 'holiday',
-                            element: <LoadComponent component={Holiday} />,
+                            element: <LoadComponent component={Holiday} permission={['holiday_ins', 'holiday_upd', 'holiday_del']} />,
                         },
                         {
                             path: 'branch',
-                            element: <LoadComponent component={Branch} />,
+                            element: <LoadComponent component={Branch} permission={['master_ins', 'master_upd', 'master_del']} />,
                         },
                         {
                             path: 'department',
-                            element: <LoadComponent component={Department} />,
+                            element: <LoadComponent component={Department} permission={['master_ins', 'master_upd', 'master_del']} />,
                         },
                         {
                             path: 'designation',
-                            element: <LoadComponent component={Designation} />,
+                            element: <LoadComponent component={Designation} permission={['master_ins', 'master_upd', 'master_del']} />,
                         },
                         {
                             path: 'staff',
-                            element: <LoadComponent component={Staff} />,
+                            element: <LoadComponent component={Staff} permission={['staff_ins', 'staff_upd', 'staff_del']} />,
                         },
                         {
                             path: 'claim-type',
-                            element: <LoadComponent component={ClaimType} />,
-                        },
-                        {
-                            path: 'bank-account',
-                            element: <LoadComponent component={BankAccount} />,
+                            element: <LoadComponent component={ClaimType} permission={['master_ins', 'master_upd', 'master_del']} />,
                         },
                         {
                             path: 'transfer-staff',
-                            element: <LoadComponent component={TransferStaff} />,
+                            element: <LoadComponent component={TransferStaff} permission={['master_ins', 'master_upd', 'master_del']} />,
                         },
                         {
                             path: 'setting-leave-deduction',
-                            element: <LoadComponent component={SettingLeaveDeduction} />,
+                            element: <LoadComponent component={SettingLeaveDeduction} permission={['setting_ins', 'setting_upd', 'setting_del']} />,
                         },
-                        
                         {
                             path: 'permission',
-                            element: <LoadComponent component={Permission} />,
+                            element: <LoadComponent component={Permission} permission={['master_ins', 'master_upd', 'master_del']} />,
                         },
                         {
                             path: 'setting',
-                            element: <LoadComponent component={Setting} />,
+                            element: <LoadComponent component={Setting} permission={['setting_ins', 'setting_upd', 'setting_del']} />,
                         },
                         {
                             path: 'setting-working-day',
-                            element: <LoadComponent component={SettingWorkingDay} />,
+                            element: <LoadComponent component={SettingWorkingDay} permission={['setting_ins', 'setting_upd', 'setting_del']} />,
                         },
                         {
                             path: 'setting-benefit',
-                            element: <LoadComponent component={SettingBenefit} />,
+                            element: <LoadComponent component={SettingBenefit} permission={['setting_ins', 'setting_upd', 'setting_del']} />,
                         },
                         {
                             path: 'attendance-incharge',
-                            element: <LoadComponent component={AttendanceIncharge} />,
+                            element: <LoadComponent component={AttendanceIncharge} permission={['master_ins', 'master_upd', 'master_del']}/>,
                         },
                         {
                             path: 'staff-advance',
-                            element: <LoadComponent component={StaffAdvance} />,
+                            element: <LoadComponent component={StaffAdvance} permission={['master_ins', 'master_upd', 'master_del']} />,
                         },
                         {
                             path: 'deputation',
-                            element: <LoadComponent component={Deputation} />,
+                            element: <LoadComponent component={Deputation} permission={['master_ins', 'master_upd', 'master_del']} />,
                         },
                         {
                             path: 'role',
@@ -303,278 +287,17 @@ const AllRoutes = () => {
                     children: [
                         {
                             path: 'visit-entry',
-                            element: <LoadComponent component={VisitEntry} />,
+                            element: <LoadComponent component={VisitEntry} permission={['visit_entry_ins', 'visit_entry_upd', 'visit_entry_del']} />,
                         },
                         {
                             path: 'petrol-allowance',
-                            element: <LoadComponent component={PetrolAllowance} />,
+                            element: <LoadComponent component={PetrolAllowance} permission={['petrol_allowance_ins', 'petrol_allowance_upd', 'petrol_allowance_del']} />,
                         },
                     ],
                 },
                 {
-                    path: 'apps',
-                    children: [                        
-                        {
-                            path: 'calendar',
-                            element: <LoadComponent component={CalendarApp} />,
-                        },
-                        {
-                            path: 'chat',
-                            element: <LoadComponent component={ChatApp} />,
-                        },
-                        {
-                            path: 'email/inbox',
-                            element: <LoadComponent component={Inbox} />,
-                        },
-                        {
-                            path: 'tasks/kanban',
-                            element: <LoadComponent component={Kanban} />,
-                        },
-                        {
-                            path: 'tasks/details',
-                            element: <LoadComponent component={TaskDetail} />,
-                        },
-                        {
-                            path: 'projects',
-                            element: <LoadComponent component={Projects} />,
-                        },
-                        {
-                            path: 'contacts/list',
-                            element: <LoadComponent component={List} />,
-                        },
-                        {
-                            path: 'contacts/profile',
-                            element: <LoadComponent component={Profile} />,
-                        },
-                    ],
-                },
-                {
-                    path: 'pages',
-                    children: [
-                        {
-                            path: 'starter',
-                            element: <LoadComponent component={Starter} />,
-                        },
-                        {
-                            path: 'pricing',
-                            element: <LoadComponent component={Pricing} />,
-                        },
-                        {
-                            path: 'timeline',
-                            element: <LoadComponent component={Timeline} />,
-                        },
-                        {
-                            path: 'invoice',
-                            element: <LoadComponent component={Invoice} />,
-                        },
-                        {
-                            path: 'faq',
-                            element: <LoadComponent component={FAQ} />,
-                        },
-                        {
-                            path: 'gallery',
-                            element: <LoadComponent component={Gallery} />,
-                        },
-                    ],
-                },
-                {
-                    path: 'base-ui',
-                    children: [
-                        {
-                            path: 'buttons',
-                            element: <LoadComponent component={Buttons} />,
-                        },
-                        {
-                            path: 'cards',
-                            element: <LoadComponent component={Cards} />,
-                        },
-                        {
-                            path: 'avatars',
-                            element: <LoadComponent component={Avatars} />,
-                        },
-                        {
-                            path: 'tabs-accordions',
-                            element: <LoadComponent component={TabsAccordions} />,
-                        },
-                        {
-                            path: 'notifications',
-                            element: <LoadComponent component={Notifications} />,
-                        },
-                        {
-                            path: 'modals',
-                            element: <LoadComponent component={Modals} />,
-                        },
-                        {
-                            path: 'progress',
-                            element: <LoadComponent component={Progress} />,
-                        },
-                        {
-                            path: 'offcanvas',
-                            element: <LoadComponent component={Offcanvases} />,
-                        },
-                        {
-                            path: 'placeholders',
-                            element: <LoadComponent component={Placeholders} />,
-                        },
-                        {
-                            path: 'spinners',
-                            element: <LoadComponent component={Spinners} />,
-                        },
-                        {
-                            path: 'images',
-                            element: <LoadComponent component={Images} />,
-                        },
-                        {
-                            path: 'carousel',
-                            element: <LoadComponent component={Carousel} />,
-                        },
-                        {
-                            path: 'embedvideo',
-                            element: <LoadComponent component={EmbedVedio} />,
-                        },
-                        {
-                            path: 'dropdowns',
-                            element: <LoadComponent component={Dropdowns} />,
-                        },
-                        {
-                            path: 'popovers-tooltips',
-                            element: <LoadComponent component={PopoversAndTooltips} />,
-                        },
-                        {
-                            path: 'general',
-                            element: <LoadComponent component={GeneralUI} />,
-                        },
-                        {
-                            path: 'typography',
-                            element: <LoadComponent component={Typography} />,
-                        },
-                        {
-                            path: 'grid',
-                            element: <LoadComponent component={Grid} />,
-                        },
-                    ],
-                },
-                {
-                    path: 'widgets',
-                    element: <LoadComponent component={Widgets} />,
-                },
-                {
-                    path: 'extended-ui',
-                    children: [
-                        {
-                            path: 'nestable',
-                            element: <LoadComponent component={NestableList} />,
-                        },
-                        {
-                            path: 'rangesliders',
-                            element: <LoadComponent component={RangeSliders} />,
-                        },
-                        {
-                            path: 'sweet-alert',
-                            element: <LoadComponent component={SweetAlerts} />,
-                        },
-                        {
-                            path: 'tour',
-                            element: <LoadComponent component={Tourpage} />,
-                        },
-                        {
-                            path: 'treeview',
-                            element: <LoadComponent component={TreeViewExample} />,
-                        },
-                    ],
-                },
-                {
-                    path: 'icons',
-                    children: [
-                        {
-                            path: 'feather',
-                            element: <LoadComponent component={FeatherIcons} />,
-                        },
-                        {
-                            path: 'mdi',
-                            element: <LoadComponent component={MDIIcons} />,
-                        },
-                        {
-                            path: 'dripicons',
-                            element: <LoadComponent component={Dripicons} />,
-                        },
-                        {
-                            path: 'font-awesome',
-                            element: <LoadComponent component={FontAwesomeIcons} />,
-                        },
-                        {
-                            path: 'themify',
-                            element: <LoadComponent component={ThemifyIcons} />,
-                        },
-                    ],
-                },
-                {
-                    path: 'forms',
-                    children: [
-                        {
-                            path: 'basic',
-                            element: <LoadComponent component={GeneralElements} />,
-                        },
-                        {
-                            path: 'advanced',
-                            element: <LoadComponent component={FormAdvanced} />,
-                        },
-                        {
-                            path: 'validation',
-                            element: <LoadComponent component={Validation} />,
-                        },
-                        {
-                            path: 'wizard',
-                            element: <LoadComponent component={FormWizard} />,
-                        },
-                        {
-                            path: 'upload',
-                            element: <LoadComponent component={FileUpload} />,
-                        },
-                        {
-                            path: 'editors',
-                            element: <LoadComponent component={Editors} />,
-                        },
-                    ],
-                },
-                {
-                    path: 'tables',
-                    children: [
-                        {
-                            path: 'basic',
-                            element: <LoadComponent component={BasicTable} />,
-                        },
-                        {
-                            path: 'advanced',
-                            element: <LoadComponent component={AdvancedTable} />,
-                        },
-                    ],
-                },
-                {
-                    path: 'charts',
-                    children: [
-                        {
-                            path: 'apex',
-                            element: <LoadComponent component={ApexChart} />,
-                        },
-                        {
-                            path: 'chartjs',
-                            element: <LoadComponent component={ChartJs} />,
-                        },
-                    ],
-                },
-                {
-                    path: 'maps',
-                    children: [
-                        {
-                            path: 'google',
-                            element: <LoadComponent component={GoogleMaps} />,
-                        },
-                        {
-                            path: 'vector',
-                            element: <LoadComponent component={VectorMaps} />,
-                        },
-                    ],
+                    path: 'access-denied',
+                    element: <LoadComponent component={Error500} />,
                 },
             ],
         },

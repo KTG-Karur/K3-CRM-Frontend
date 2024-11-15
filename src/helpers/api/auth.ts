@@ -3,9 +3,9 @@ import { APICore } from './apiCore';
 const api = new APICore();
 
 // account
-function login(params: { email: string; password: string }) {
-    const baseUrl = '/login/';
-    return api.create(`${baseUrl}`, params);
+function login(params: { username: string; password: string }) {
+    const baseUrl = '/user-login';
+    return api.get(`${baseUrl}`, params);
 }
 
 function logout() {
