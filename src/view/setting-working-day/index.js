@@ -13,7 +13,7 @@ import CardViewBox from '../../components/Atom/CardViewBox';
 
 let isEdit = false;
 
-function Index() {
+function Index({ userRole, userRights }) {
 
     const { dispatch, appSelector } = useRedux();
 
@@ -38,7 +38,9 @@ function Index() {
         errorMessage: state.settingWorkingDayReducer.errorMessage,
     }));
 
-
+    const isUserCanCreate = userRole === 'Staff' && userRights.setting_ins;
+    const isUserCanUpdate = userRole === 'Staff' && userRights.setting_upd;
+    const isUserCanDelete = userRole === 'Staff' && userRights.setting_del;
 
     const [state, setState] = useState({
         workDay: [],

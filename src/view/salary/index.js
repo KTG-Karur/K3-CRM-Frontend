@@ -12,7 +12,7 @@ import { getSettingBenefitRequest, resetGetSettingBenefit } from '../../redux/ac
 
 let isEdit = false;
 
-function Index() {
+function Index({ userRole, userRights }) {
 
     const { dispatch, appSelector } = useRedux();
 
@@ -45,7 +45,9 @@ function Index() {
 
         errorMessage: state.staffsalaryReducer.errorMessage,
     }));
-
+    const isUserCanCreate = userRole === 'Staff' && userRights.staff_salary_ins;
+    const isUserCanUpdate = userRole === 'Staff' && userRights.staff_salary_upd;
+    const isUserCanDelete = userRole === 'Staff' && userRights.staff_salary_del;
     const columns = [
         {
             Header: 'S.No',

@@ -5,14 +5,14 @@ import FormLayout from '../../utils/formLayout';
 import { transferStaffContainer } from './formFieldData';
 import Table from '../../components/Table';
 import { dateConversion, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
-import { createTransferStaffRequest, getActivityRequest, getStaffRequest, getBranchRequest, getTransferStaffRequest, resetCreateTransferStaff, resetGetActivity, resetGetBranch, resetGetStaff,resetGetTransferStaff, resetUpdateTransferStaff, updateTransferStaffRequest } from '../../redux/actions';
+import { createTransferStaffRequest, getActivityRequest, getStaffRequest, getBranchRequest, getTransferStaffRequest, resetCreateTransferStaff, resetGetActivity, resetGetBranch, resetGetStaff, resetGetTransferStaff, resetUpdateTransferStaff, updateTransferStaffRequest } from '../../redux/actions';
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 import _ from 'lodash';
 
 let isEdit = false;
 
-function Index() {
+function Index({ userRole, userRights }) {
 
     const { dispatch, appSelector } = useRedux();
 
@@ -51,7 +51,9 @@ function Index() {
 
         errorMessage: state.transferStaffReducer.errorMessage,
     }));
-
+    const isUserCanCreate = userRole === 'Staff' && userRights.master_ins;
+    const isUserCanUpdate = userRole === 'Staff' && userRights.master_upd;
+    const isUserCanDelete = userRole === 'Staff' && userRights.master_del;
     const columns = [
         {
             Header: 'S.No',
@@ -94,10 +96,11 @@ function Index() {
                 const deleteMessage = activeChecker ? "You want to In-Active...?" : "You want to retrive this Data...?";
                 return (
                     <div>
-                        <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index)}>
-                            <i className={'fe-edit-1'}></i>
-                        </span>
-
+                        {(isUserCanUpdate || userRole === 'Admin') && (
+                            <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index)}>
+                                <i className={'fe-edit-1'}></i>
+                            </span>
+                        )}
                     </div>
                 )
             },
@@ -223,7 +226,7 @@ function Index() {
         setModal(true)
     };
 
-    const onEditForm = (data, index) => {        
+    const onEditForm = (data, index) => {
         setState({
             ...state,
             staffId: data?.staffId || "",
@@ -270,7 +273,7 @@ function Index() {
                     Title={'Transfer Order List'}
                     data={parentList || []}
                     pageSize={25}
-                    toggle={createModel}
+                    toggle={isUserCanCreate || userRole === 'Admin' ? createModel : null}
                 />}
 
             <ModelViewBox

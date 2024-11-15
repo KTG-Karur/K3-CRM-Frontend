@@ -5,7 +5,7 @@ import FormLayout from '../../utils/formLayout';
 import { approvedFormContainer, employeeFormContainer } from './formFieldData';
 import Table from '../../components/Table';
 import { dateConversion, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
-import { createClaimRequest, getBranchRequest,getStaffRequest, getClaimRequest, getClaimTypeRequest, resetCreateClaim, resetGetBranch, resetGetClaim,resetGetStaff, resetGetClaimType, resetUpdateClaim, updateClaimRequest } from '../../redux/actions';
+import { createClaimRequest, getBranchRequest, getStaffRequest, getClaimRequest, getClaimTypeRequest, resetCreateClaim, resetGetBranch, resetGetClaim, resetGetStaff, resetGetClaimType, resetUpdateClaim, updateClaimRequest } from '../../redux/actions';
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 import moment from 'moment';
@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom';
 
 let isEdit = false;
 
-function Index() { 
+function Index({ userRole, userRights }) {
 
     const { dispatch, appSelector } = useRedux();
     const navigate = useNavigate();
@@ -22,7 +22,7 @@ function Index() {
         getBranchSuccess, getBranchList, getBranchFailure,
         getClaimTypeSuccess, getClaimTypeList, getClaimTypeFailure,
         createClaimSuccess, createClaimData, createClaimFailure,
-        updateClaimSuccess, updateClaimData, updateClaimFailure,errorMessage,getStaffSuccess,
+        updateClaimSuccess, updateClaimData, updateClaimFailure, errorMessage, getStaffSuccess,
         getStaffList,
         getStaffFailure,
 
@@ -53,7 +53,9 @@ function Index() {
 
         errorMessage: state.claimReducer.errorMessage,
     }));
-
+    const isUserCanCreate = userRole === 'Staff' && userRights.claim_ins;
+    const isUserCanUpdate = userRole === 'Staff' && userRights.claim_upd;
+    const isUserCanDelete = userRole === 'Staff' && userRights.claim_del;
     const columns = [
         {
             Header: 'S.No',
@@ -97,14 +99,18 @@ function Index() {
             Cell: ({ row }) => {
                 return (
                     <div>
-                        <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index)}>
-                            <i className={'fe-edit-1'}></i>
-                        </span>
-                        <span className="text-success  me-2 cursor-pointer" onClick={() => onApprovedClaim(row.original, row.index)}>
-                            <i className={'fe-check-circle'}></i>
-                        </span>
+                        {(isUserCanUpdate || userRole === 'Admin') && (
+                            <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index)}>
+                                <i className={'fe-edit-1'}></i>
+                            </span>
+                        )}
+                        {(isUserCanUpdate || userRole === 'Admin') && (
+                            <span className="text-success  me-2 cursor-pointer" onClick={() => onApprovedClaim(row.original, row.index)}>
+                                <i className={'fe-check-circle'}></i>
+                            </span>
+                        )}
                     </div>
-                    
+
                 )
             },
         },
@@ -113,15 +119,15 @@ function Index() {
     const [state, setState] = useState({});
     const [optionListState, setOptionListState] = useState({
         staffList: [],
-        paymentModeList:[
-          {  
-            paymentModeId : 5,
-            paymentModeName : 'Cash'
-          },
-          {  
-            paymentModeId : 6,
-            paymentModeName : 'Neft'
-          },
+        paymentModeList: [
+            {
+                paymentModeId: 5,
+                paymentModeName: 'Cash'
+            },
+            {
+                paymentModeId: 6,
+                paymentModeName: 'Neft'
+            },
         ]
     })
     const [parentList, setParentList] = useState([]);
@@ -138,8 +144,8 @@ function Index() {
         setIsLoading(true)
         dispatch(getClaimRequest());
         dispatch(getStaffRequest());
-        const req={
-            isActive : 1
+        const req = {
+            isActive: 1
         }
         dispatch(getBranchRequest(req));
         dispatch(getClaimTypeRequest(req));
@@ -180,14 +186,14 @@ function Index() {
             setIsLoading(false)
             setOptionListState({
                 ...optionListState,
-                claimTypeList : getClaimTypeList
+                claimTypeList: getClaimTypeList
             })
             dispatch(resetGetClaimType())
         } else if (getClaimTypeFailure) {
             setIsLoading(false)
             setOptionListState({
                 ...optionListState,
-                claimTypeList : []
+                claimTypeList: []
             })
             dispatch(resetGetClaimType())
         }
@@ -198,14 +204,14 @@ function Index() {
             setIsLoading(false)
             setOptionListState({
                 ...optionListState,
-                branchList : getBranchList
+                branchList: getBranchList
             })
             dispatch(resetGetBranch())
         } else if (getBranchFailure) {
             setIsLoading(false)
             setOptionListState({
                 ...optionListState,
-                branchList : []
+                branchList: []
             })
             dispatch(resetGetBranch())
         }
@@ -246,11 +252,11 @@ function Index() {
         setApprovedModal(false)
     }
 
-    const onApprovedClaim = (data, index)=>{
+    const onApprovedClaim = (data, index) => {
         setState({
             ...state,
-            approvedDate : moment().format("YYYY-MM-DD"),
-            claimAmount : ""
+            approvedDate: moment().format("YYYY-MM-DD"),
+            claimAmount: ""
         })
         setSelectedItem(data)
         setSelectedIndex(index)
@@ -263,7 +269,7 @@ function Index() {
         setState({
             ...state,
             applyDate: "",
-            branchId:  "",
+            branchId: "",
             requestedBy: "",
             claimTypeId: "",
             requestedAmount: "",
@@ -316,12 +322,12 @@ function Index() {
         }
     };
 
-    const onApprovedFormSubmit = ()=>{
+    const onApprovedFormSubmit = () => {
         const submitRequest = {
             approvedDate: state.approvedDate ? dateConversion(state.approvedDate, "YYYY-MM-DD") : "",
             claimAmount: state?.claimAmount || "",
             claimStatus: 29,
-            approvedBy : 1
+            approvedBy: 1
         }
         dispatch(updateClaimRequest(submitRequest, selectedItem.claimId))
     }
@@ -336,19 +342,19 @@ function Index() {
 
     return (
         <React.Fragment>
-        <NotificationContainer />
-           { isLoading ? <div className='bg-light opacity-0.25'>
-            <div className="d-flex justify-content-center m-5">
-                <Spinner className='mt-5 mb-5' animation="border" />
-            </div>
+            <NotificationContainer />
+            {isLoading ? <div className='bg-light opacity-0.25'>
+                <div className="d-flex justify-content-center m-5">
+                    <Spinner className='mt-5 mb-5' animation="border" />
+                </div>
             </div> :
-            <Table
-                columns={columns}
-                Title={'Claim List'}
-                data={parentList || []}
-                pageSize={25}
-                toggle={createModel}
-            />}
+                <Table
+                    columns={columns}
+                    Title={'Claim List'}
+                    data={parentList || []}
+                    pageSize={25}
+                    toggle={isUserCanCreate || userRole === 'Admin' ? createModel : null}
+                />}
 
             <ModelViewBox
                 modal={modal}

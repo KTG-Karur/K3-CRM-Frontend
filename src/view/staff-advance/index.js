@@ -12,7 +12,7 @@ import _ from 'lodash';
 
 let isEdit = false;
 let isEditorpayment = 'forEdit';
-function Index() {
+function Index({ userRole, userRights }) {
 
     const { dispatch, appSelector } = useRedux();
 
@@ -60,7 +60,9 @@ function Index() {
 
         errorMessage: state.staffAdvanceReducer.errorMessage,
     }));
-
+    const isUserCanCreate = userRole === 'Staff' && userRights.master_ins;
+    const isUserCanUpdate = userRole === 'Staff' && userRights.master_upd;
+    const isUserCanDelete = userRole === 'Staff' && userRights.master_del;
     const columns = [
         {
             Header: 'S.No',
@@ -103,14 +105,16 @@ function Index() {
                 const deleteMessage = activeChecker ? "You want to In-Active...?" : "You want to retrive this Data...?";
                 return (
                     <div>
-                        <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index, "forEdit")}>
-                            <i className={'fe-edit-1'}></i>
-                        </span>
-
-                        <span className="text-primary  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index, "forPayment")}>
-                            <i className={'fe-info'}></i>
-                        </span>
-
+                        {(isUserCanUpdate || userRole === 'Admin') && (
+                            <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index)}>
+                                <i className={'fe-edit-1'}></i>
+                            </span>
+                        )}
+                        {(isUserCanDelete || userRole === 'Admin') && (
+                            <span className="text-primary  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index, "forPayment")}>
+                                <i className={'fe-info'}></i>
+                            </span>
+                        )}
                     </div>
                 )
             },
@@ -157,12 +161,11 @@ function Index() {
                 const deleteMessage = activeChecker ? "You want to In-Active...?" : "You want to retrive this Data...?";
                 return (
                     <div>
-                        <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index, "forEdit")}>
-                            <i className={'fe-edit-1'}></i>
-                        </span>
-
-
-
+                        {(isUserCanUpdate || userRole === 'Admin') && (
+                            <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index)}>
+                                <i className={'fe-edit-1'}></i>
+                            </span>
+                        )}
                     </div>
                 )
             },
@@ -407,7 +410,7 @@ function Index() {
                     Title={'Staff Advance List'}
                     data={parentList || []}
                     pageSize={25}
-                    toggle={createModel}
+                    toggle={isUserCanCreate || userRole === 'Admin' ? createModel : null}
                 />}
 
             <ModelViewBox

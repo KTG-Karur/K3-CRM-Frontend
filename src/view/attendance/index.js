@@ -35,7 +35,7 @@ let parentList = [];
 let staffPermanetList = [];
 let isShowBtn = true;
 let modelHead = false;
-function Index() {
+function Index({ userRole, userRights }) {
     const { dispatch, appSelector } = useRedux();
 
     const {
@@ -97,7 +97,9 @@ function Index() {
         getStaffList: state.staffReducer.getStaffList,
         getStaffFailure: state.staffReducer.getStaffFailure,
     }));
-
+    const isUserCanCreate = userRole === 'Staff' && userRights.staff_attendance_ins;
+    const isUserCanUpdate = userRole === 'Staff' && userRights.staff_attendance_upd;
+    const isUserCanDelete = userRole === 'Staff' && userRights.staff_attendance_del;
     const columns = [
         {
             Header: 'S.No',

@@ -21,7 +21,7 @@ import moment from 'moment';
 
 let isEdit = false;
 
-function Index() {
+function Index({ userRole, userRights }) {
     const { dispatch, appSelector } = useRedux();
 
     const {
@@ -58,7 +58,9 @@ function Index() {
 
         errorMessage: state.staffLeaveReducer.errorMessage,
     }));
-
+    const isUserCanCreate = userRole === 'Staff' && userRights.staff_leave_ins;
+    const isUserCanUpdate = userRole === 'Staff' && userRights.staff_leave_upd;
+    const isUserCanDelete = userRole === 'Staff' && userRights.staff_leave_del;
     const columns = [
         {
             Header: 'S.No',
@@ -122,14 +124,13 @@ function Index() {
                     <div>
                         {row.original.leaveStatusId === 28 && (
                             <span>
+                                {(isUserCanUpdate || userRole === 'Admin') && (
+                                    <>
                                 <span
                                     className="text-primary  me-2 cursor-pointer"
                                     onClick={() => onEditForm(row.original, row.index)}>
                                     <i className={'fe-edit-1'}></i>
                                 </span>
-
-
-
                                 <span
                                     className={`text-success me-2 cursor-pointer`}
                                     onClick={() =>
@@ -152,6 +153,8 @@ function Index() {
                                     }>
                                     <i className={'fe-thumbs-down'}></i>
                                 </span>
+                                </>
+                                )}
                             </span>
                         )}
                     </div>
@@ -331,7 +334,7 @@ function Index() {
                     Title={'Leave Apply List'}
                     data={parentList || []}
                     pageSize={25}
-                    toggle={createModel}
+                    toggle={isUserCanCreate || userRole === 'Admin' ? createModel : null}
                 />
             )}
 

@@ -11,7 +11,7 @@ import { NotificationContainer } from 'react-notifications';
 
 let isEdit = false;
 
-function Index() { 
+function Index({ userRole, userRights }) { 
 
     const { dispatch, appSelector } = useRedux();
 
@@ -34,7 +34,9 @@ function Index() {
 
         errorMessage: state.branchReducer.errorMessage,
     }));
-
+    const isUserCanCreate = userRole === 'Staff' && userRights.master_ins;
+    const isUserCanUpdate = userRole === 'Staff' && userRights.master_upd;
+    const isUserCanDelete = userRole === 'Staff' && userRights.master_del;
     const columns = [
         {
             Header: 'S.No',
@@ -64,10 +66,11 @@ function Index() {
                 const deleteMessage = activeChecker ? "You want to In-Active...?" : "You want to retrive this Data...?";
                 return (
                     <div>
-                        <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index)}>
-                            <i className={'fe-edit-1'}></i>
-                        </span>
-                        
+                        {(isUserCanUpdate || userRole === 'Admin') && (
+                            <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index)}>
+                                <i className={'fe-edit-1'}></i>
+                            </span>
+                        )}
                     </div>
                 )
             },
@@ -211,7 +214,7 @@ function Index() {
                 Title={'Branch List'}
                 data={parentList || []}
                 pageSize={5}
-                toggle={createModel}
+                toggle={isUserCanCreate || userRole === 'Admin' ? createModel : null}
             />}
 
             <ModelViewBox

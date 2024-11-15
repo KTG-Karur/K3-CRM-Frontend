@@ -11,13 +11,13 @@ import { NotificationContainer } from 'react-notifications';
 
 let isEdit = false;
 
-function Index() { 
+function Index({ userRole, userRights }) {
 
     const { dispatch, appSelector } = useRedux();
 
     const { getActivitySuccess, getActivityList, getActivityFailure,
         createActivitySuccess, createActivityData, createActivityFailure,
-        updateActivitySuccess, updateActivityData, updateActivityFailure,errorMessage
+        updateActivitySuccess, updateActivityData, updateActivityFailure, errorMessage
 
     } = appSelector((state) => ({
         getActivitySuccess: state.activityReducer.getActivitySuccess,
@@ -34,7 +34,9 @@ function Index() {
 
         errorMessage: state.activityReducer.errorMessage,
     }));
-
+    const isUserCanCreate = userRole === 'Staff' && userRights.master_ins;
+    const isUserCanUpdate = userRole === 'Staff' && userRights.master_upd;
+    const isUserCanDelete = userRole === 'Staff' && userRights.master_del;
     const columns = [
         {
             Header: 'S.No',
@@ -68,22 +70,26 @@ function Index() {
                 const deleteMessage = activeChecker ? "You want to In-Active...?" : "You want to retrive this Data...?";
                 return (
                     <div>
-                        <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index)}>
-                            <i className={'fe-edit-1'}></i>
-                        </span>
-                        <span
-                            className={`${iconColor} cursor-pointer`}
-                            onClick={() =>
-                                showConfirmationDialog(
-                                    deleteMessage,
-                                    () => onDeleteForm(row.original, row.index, activeChecker),
-                                    'Yes'
-                                )
-                            }>
-                            {
-                                row?.original?.isActive ? <i className={'fe-trash-2'}></i> : <i className={'fas fa-recycle'}></i>
-                            }
-                        </span>
+                        {(isUserCanUpdate || userRole === 'Admin') && (
+                            <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index)}>
+                                <i className={'fe-edit-1'}></i>
+                            </span>
+                        )}
+                        {(isUserCanDelete || userRole === 'Admin') && (
+                            <span
+                                className={`${iconColor} cursor-pointer`}
+                                onClick={() =>
+                                    showConfirmationDialog(
+                                        deleteMessage,
+                                        () => onDeleteForm(row.original, row.index, activeChecker),
+                                        'Yes'
+                                    )
+                                }>
+                                {
+                                    row?.original?.isActive ? <i className={'fe-trash-2'}></i> : <i className={'fas fa-recycle'}></i>
+                                }
+                            </span>
+                        )}
                     </div>
                 )
             },
@@ -199,19 +205,19 @@ function Index() {
 
     return (
         <React.Fragment>
-        <NotificationContainer />
-           { isLoading ? <div className='bg-light opacity-0.25'>
-            <div className="d-flex justify-content-center m-5">
-                <Spinner className='mt-5 mb-5' animation="border" />
-            </div>
+            <NotificationContainer />
+            {isLoading ? <div className='bg-light opacity-0.25'>
+                <div className="d-flex justify-content-center m-5">
+                    <Spinner className='mt-5 mb-5' animation="border" />
+                </div>
             </div> :
-            <Table
-                columns={columns}
-                Title={'Activity List'}
-                data={parentList || []}
-                pageSize={5}
-                toggle={createModel}
-            />}
+                <Table
+                    columns={columns}
+                    Title={'Activity List'}
+                    data={parentList || []}
+                    pageSize={5}
+                    toggle={isUserCanCreate || userRole === 'Admin' ? createModel : null}
+                />}
 
             <ModelViewBox
                 modal={modal}
