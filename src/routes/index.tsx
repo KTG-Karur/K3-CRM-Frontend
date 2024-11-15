@@ -50,9 +50,8 @@ import {
     SettingBenefit,
     StaffLeave,
     Attendance,
-    Salary
+    Salary,
 } from './Route_Menu';
-
 
 const loading = () => <div className=""></div>;
 
@@ -153,11 +152,21 @@ const AllRoutes = () => {
                 },
                 {
                     path: 'staff-attendance',
-                    element: <LoadComponent component={Attendance} permission={['staff_attendance_ins', 'staff_attendance_upd', 'staff_attendance_del']} />,
+                    element: (
+                        <LoadComponent
+                            component={Attendance}
+                            permission={['staff_attendance_ins', 'staff_attendance_upd', 'staff_attendance_del']}
+                        />
+                    ),
                 },
                 {
                     path: 'staff-leave',
-                    element: <LoadComponent component={StaffLeave} permission={['staff_leave_ins', 'staff_leave_upd', 'staff_leave_del']} />,
+                    element: (
+                        <LoadComponent
+                            component={StaffLeave}
+                            permission={['staff_leave_ins', 'staff_leave_upd', 'staff_leave_del']}
+                        />
+                    ),
                 },
                 {
                     path: 'staff-salary',
@@ -168,56 +177,118 @@ const AllRoutes = () => {
                     children: [
                         {
                             path: 'activity',
-                            element: <LoadComponent component={Activity} permission={['master_ins', 'master_upd', 'master_del']} />,
+                            element: (
+                                <LoadComponent
+                                    component={Activity}
+                                    permission={['master_ins', 'master_upd', 'master_del']}
+                                />
+                            ),
                         },
                         {
                             path: 'holiday',
-                            element: <LoadComponent component={Holiday} permission={['holiday_ins', 'holiday_upd', 'holiday_del']} />,
+                            element: (
+                                <LoadComponent
+                                    component={Holiday}
+                                    permission={['holiday_ins', 'holiday_upd', 'holiday_del']}
+                                />
+                            ),
                         },
                         {
                             path: 'branch',
-                            element: <LoadComponent component={Branch} permission={['master_ins', 'master_upd', 'master_del']} />,
+                            element: (
+                                <LoadComponent
+                                    component={Branch}
+                                    permission={['master_ins', 'master_upd', 'master_del']}
+                                />
+                            ),
                         },
                         {
                             path: 'department',
-                            element: <LoadComponent component={Department} permission={['master_ins', 'master_upd', 'master_del']} />,
+                            element: (
+                                <LoadComponent
+                                    component={Department}
+                                    permission={['master_ins', 'master_upd', 'master_del']}
+                                />
+                            ),
                         },
                         {
                             path: 'designation',
-                            element: <LoadComponent component={Designation} permission={['master_ins', 'master_upd', 'master_del']} />,
+                            element: (
+                                <LoadComponent
+                                    component={Designation}
+                                    permission={['master_ins', 'master_upd', 'master_del']}
+                                />
+                            ),
                         },
                         {
                             path: 'staff',
-                            element: <LoadComponent component={Staff} permission={['staff_ins', 'staff_upd', 'staff_del']} />,
+                            element: (
+                                <LoadComponent component={Staff} permission={['staff_ins', 'staff_upd', 'staff_del']} />
+                            ),
                         },
                         {
                             path: 'claim-type',
-                            element: <LoadComponent component={ClaimType} permission={['master_ins', 'master_upd', 'master_del']} />,
+                            element: (
+                                <LoadComponent
+                                    component={ClaimType}
+                                    permission={['master_ins', 'master_upd', 'master_del']}
+                                />
+                            ),
                         },
                         {
                             path: 'transfer-staff',
-                            element: <LoadComponent component={TransferStaff} permission={['master_ins', 'master_upd', 'master_del']} />,
+                            element: (
+                                <LoadComponent
+                                    component={TransferStaff}
+                                    permission={['master_ins', 'master_upd', 'master_del']}
+                                />
+                            ),
                         },
                         {
                             path: 'setting-leave-deduction',
-                            element: <LoadComponent component={SettingLeaveDeduction} permission={['setting_ins', 'setting_upd', 'setting_del']} />,
+                            element: (
+                                <LoadComponent
+                                    component={SettingLeaveDeduction}
+                                    permission={['setting_ins', 'setting_upd', 'setting_del']}
+                                />
+                            ),
                         },
 
                         {
                             path: 'permission',
-                            element: <LoadComponent component={Permission} permission={['master_ins', 'master_upd', 'master_del']} />,
+                            element: (
+                                <LoadComponent
+                                    component={Permission}
+                                    permission={['master_ins', 'master_upd', 'master_del']}
+                                />
+                            ),
                         },
                         {
                             path: 'setting',
-                            element: <LoadComponent component={Setting} permission={['setting_ins', 'setting_upd', 'setting_del']} />,
+                            element: (
+                                <LoadComponent
+                                    component={Setting}
+                                    permission={['setting_ins', 'setting_upd', 'setting_del']}
+                                />
+                            ),
                         },
                         {
                             path: 'setting-working-day',
-                            element: <LoadComponent component={SettingWorkingDay} permission={['setting_ins', 'setting_upd', 'setting_del']} />,
+                            element: (
+                                <LoadComponent
+                                    component={SettingWorkingDay}
+                                    permission={['setting_ins', 'setting_upd', 'setting_del']}
+                                />
+                            ),
                         },
                         {
                             path: 'setting-benefit',
-                            element: <LoadComponent component={SettingBenefit} permission={['setting_ins', 'setting_upd', 'setting_del']} />,
+                            element: (
+                                <LoadComponent
+                                    component={SettingBenefit}
+                                    permission={['setting_ins', 'setting_upd', 'setting_del']}
+                                />
+                            ),
                         },
                         {
                             path: 'attendance-incharge',
@@ -225,11 +296,21 @@ const AllRoutes = () => {
                         },
                         {
                             path: 'staff-advance',
-                            element: <LoadComponent component={StaffAdvance} permission={['master_ins', 'master_upd', 'master_del']} />,
+                            element: (
+                                <LoadComponent
+                                    component={StaffAdvance}
+                                    permission={['master_ins', 'master_upd', 'master_del']}
+                                />
+                            ),
                         },
                         {
                             path: 'deputation',
-                            element: <LoadComponent component={Deputation} permission={['master_ins', 'master_upd', 'master_del']} />,
+                            element: (
+                                <LoadComponent
+                                    component={Deputation}
+                                    permission={['master_ins', 'master_upd', 'master_del']}
+                                />
+                            ),
                         },
                         {
                             path: 'role',
@@ -246,17 +327,35 @@ const AllRoutes = () => {
                     children: [
                         {
                             path: 'visit-entry',
-                            element: <LoadComponent component={VisitEntry} permission={['visit_entry_ins', 'visit_entry_upd', 'visit_entry_del']} />,
+                            element: (
+                                <LoadComponent
+                                    component={VisitEntry}
+                                    permission={['visit_entry_ins', 'visit_entry_upd', 'visit_entry_del']}
+                                />
+                            ),
                         },
                         {
                             path: 'petrol-allowance',
-                            element: <LoadComponent component={PetrolAllowance} permission={['petrol_allowance_ins', 'petrol_allowance_upd', 'petrol_allowance_del']} />,
+                            element: (
+                                <LoadComponent
+                                    component={PetrolAllowance}
+                                    permission={[
+                                        'petrol_allowance_ins',
+                                        'petrol_allowance_upd',
+                                        'petrol_allowance_del',
+                                    ]}
+                                />
+                            ),
                         },
                     ],
                 },
                 {
                     path: 'access-denied',
                     element: <LoadComponent component={Error500} />,
+                },
+                {
+                    path: '*',
+                    element: <LoadComponent component={Error404} />,
                 },
             ],
         },

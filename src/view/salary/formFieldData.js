@@ -1,13 +1,32 @@
-const employeeFormContainer = [
+const staffFilterFormContainer = [
     {
         formFields: [
             {
-                'label': "Department Name",
-                'name': "departmentName",
-                'inputType': "text",
-                'placeholder': "Enter Department Name",
-                'require': true,
-                'classStyle':'col-6'
+                'label': 'Salary Month',
+                'name': 'salaryDate',
+                'inputType': 'date',
+                'classStyle': 'col-3',
+                'onChange': 'handleDate',
+            },
+            {
+                'label': 'Branch',
+                'name': 'branchId',
+                'inputType': 'select',
+                'optionList': 'branchList',
+                'displayKey': 'branchName',
+                'uniqueKey': 'branchId',
+                'classStyle': 'col-3',
+                onChange: 'handleBranch',
+            },
+            {
+                'label': 'Department',
+                'name': 'departmentId',
+                'inputType': 'select',
+                'optionList': 'departmentList',
+                'displayKey': 'departmentName',
+                'uniqueKey': 'departmentId',
+                'classStyle': 'col-3',
+                onChange: 'handleDepartment',
             },
         ]
     },
@@ -21,13 +40,13 @@ const staffSalaryBtn = [
                 'name': "departmentName",
                 'inputType': "button",
                 'onClick': "onFormSubmit",
-                 'classStyle':'col-12',
+                'classStyle': 'col-12',
             },
         ]
     },
 ]
 
 export {
-    employeeFormContainer,
+    staffFilterFormContainer,
     staffSalaryBtn
 }

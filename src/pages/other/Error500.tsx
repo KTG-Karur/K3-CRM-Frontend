@@ -16,7 +16,7 @@ const Error500 = () => {
                     </Link>
                 </p>
 
-                <Link to="/" className="btn btn-danger waves-effect waves-light">
+                <Link to="/auth/login" className="btn btn-danger waves-effect waves-light">
                     <i className="fas fa-home me-1"></i> Back to Home
                 </Link>
             </div>

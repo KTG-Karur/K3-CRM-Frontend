@@ -2,13 +2,13 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Badge, Button, Form, Spinner } from 'react-bootstrap';
 import ModelViewBox from '../../components/Atom/ModelViewBox';
 import FormLayout from '../../utils/formLayout';
-import { employeeFormContainer, staffSalaryBtn } from './formFieldData';
+import { staffFilterFormContainer, staffSalaryBtn } from './formFieldData';
 import Table from '../../components/Table';
 import { showConfirmationDialog, showMessage } from '../../utils/AllFunction';
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 import { createStaffSalaryRequest, getStaffSalaryRequest, resetCreateStaffSalary, resetGetStaffSalary, resetUpdateStaffSalary, updateStaffSalaryRequest } from '../../redux/staff-salary/actions';
-import { getSettingBenefitRequest, resetGetSettingBenefit } from '../../redux/actions';
+import { getBranchRequest, getDepartmentRequest, getSettingBenefitRequest, resetGetBranch, resetGetDepartment, resetGetSettingBenefit } from '../../redux/actions';
 
 let isEdit = false;
 
@@ -25,7 +25,19 @@ function Index() {
         createStaffSalarySuccess, createStaffSalaryFailure, createStaffSalaryData,
         errorMessage,
 
+        getBranchSuccess, getBranchList, getBranchFailure,
+        getDepartmentSuccess, getDepartmentList, getDepartmentFailure,
+
     } = appSelector((state) => ({
+
+
+        getBranchSuccess: state.branchReducer.getBranchSuccess,
+        getBranchList: state.branchReducer.getBranchList,
+        getBranchFailure: state.branchReducer.getBranchFailure,
+
+        getDepartmentSuccess: state.departmentReducer.getDepartmentSuccess,
+        getDepartmentList: state.departmentReducer.getDepartmentList,
+        getDepartmentFailure: state.departmentReducer.getDepartmentFailure,
 
         getSettingBenefitSuccess: state.settingBenefitReducer.getSettingBenefitSuccess,
         getSettingBenefitList: state.settingBenefitReducer.getSettingBenefitList,
@@ -141,6 +153,10 @@ function Index() {
     const [state, setState] = useState({
         staffSalary: [{}]
     });
+    const [optionListState, setOptionListState] = useState({
+        branchList: [],
+        departmentList: [],
+    })
     const [parentList, setParentList] = useState([]);
     const [selectedItem, setSelectedItem] = useState({});
     const [selectedIndex, setSelectedIndex] = useState(false);
@@ -152,6 +168,8 @@ function Index() {
         setIsLoading(true)
         dispatch(getSettingBenefitRequest());
         dispatch(getStaffSalaryRequest());
+        dispatch(getBranchRequest());
+        dispatch(getDepartmentRequest());
     }, []);
 
     useEffect(() => {
@@ -211,11 +229,49 @@ function Index() {
     }, [createStaffSalarySuccess, createStaffSalaryFailure]);
 
     useEffect(() => {
+        if (getBranchSuccess) {
+            setIsLoading(false)
+            setOptionListState({
+                ...optionListState,
+                branchList: getBranchList
+            })
+            dispatch(resetGetBranch())
+        } else if (getBranchFailure) {
+            setIsLoading(false)
+            setOptionListState({
+                ...optionListState,
+                branchList: []
+            })
+            dispatch(resetGetBranch())
+        }
+    }, [getBranchSuccess, getBranchFailure]);
+
+    useEffect(() => {
+        if (getDepartmentSuccess) {
+            setIsLoading(false)
+            setOptionListState({
+                ...optionListState,
+                departmentList: getDepartmentList
+            })
+            dispatch(resetGetDepartment())
+        } else if (getDepartmentFailure) {
+            setIsLoading(false)
+            setOptionListState({
+                ...optionListState,
+                departmentList: []
+            })
+            dispatch(resetGetDepartment())
+        }
+    }, [getDepartmentSuccess, getDepartmentFailure]);
+
+
+
+    useEffect(() => {
         if (updateStaffSalarySuccess) {
             const temp_state = [...parentList];
             temp_state[selectedIndex] = updateStaffSalaryData[0];
-            console.log("updateStaffSalarySuccess temp_state")
-            console.log(temp_state)
+            console.log("updateStaffSalarySuccess temp_state");
+            console.log(temp_state);
             // setParentList(temp_state)
             isEdit && showMessage('success', 'Updated Successfully');
             closeModel()
@@ -291,8 +347,44 @@ function Index() {
         });
     };
 
-    console.log("state.staffSalary")
-    console.log(state.staffSalary)
+
+    const handleDate = (event, formName) => {
+        setState({
+            ...state,
+            [formName]: event.target.value
+        })
+        const filterDepartment = {
+            salaryDate: event.target.value
+        }
+        dispatch(getStaffSalaryRequest(filterDepartment));
+    }
+
+
+    const handleDepartment = (option, formName, uniqueKey, displayKey) => {
+        const filterDepartment = {
+            departmentId: option[uniqueKey] || '',
+            branchId: state?.branchId || ''
+        }
+        dispatch(getStaffSalaryRequest(filterDepartment));
+        setIsLoading(true);
+        setState({
+            ...state,
+            [formName]: option[uniqueKey],
+        })
+    }
+
+    const handleBranch = (option, formName, uniqueKey, displayKey) => {
+        const filterBranch = {
+            branchId: option[uniqueKey] || '',
+            departmentId: state?.departmentId || ''
+        }
+        dispatch(getStaffSalaryRequest(filterBranch));
+        setIsLoading(true);
+        setState({
+            ...state,
+            [formName]: option[uniqueKey],
+        })
+    }
 
     return (
         <React.Fragment>
@@ -309,6 +401,14 @@ function Index() {
                     pageSize={5}
                     toggle={false}
                     pagination={false}
+                    filterTbl={true}
+                    footerTbl={true}
+                    filterFormContainer={staffFilterFormContainer}
+                    onChangeCallBack={{ "handleDate": handleDate, "handleDepartment": handleDepartment, "handleBranch": handleBranch }}
+                    optionListState={optionListState}
+                    setState={setState}
+                    state={state}
+                    noOfColumns={1}
                 />}
 
             <ModelViewBox
@@ -318,7 +418,7 @@ function Index() {
                 modelSize={'md'}
                 isEdit={isEdit}>
                 <FormLayout
-                    dynamicForm={employeeFormContainer}
+                    dynamicForm={staffFilterFormContainer}
                     handleSubmit={onFormSubmit}
                     setState={setState}
                     state={state}

@@ -64,6 +64,7 @@ const IndeterminateCheckbox = forwardRef(({ indeterminate, ...rest }, ref) => {
 const Table = (props) => {
     const isSearchable = props['isSearchable'] || true;
     const filterTbl = props['filterTbl'] || false;
+    const footerTbl = props['footerTbl'] || false;
     const isSortable = props['isSortable'] || true;
     const pagination = props['pagination'] === undefined ? true : false;
     const isSelectable = props['isSelectable'] || false;
@@ -259,15 +260,18 @@ const Table = (props) => {
                                                 );
                                             })}
                                     </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            {dataTable.footerGroups[0].headers.map((column) => (
-                                                <td {...column.getFooterProps()}>
-                                                    {column.render('Footer')}
-                                                </td>
-                                            ))}
-                                        </tr>
-                                    </tfoot>
+                                    {
+                                        footerTbl &&
+                                        <tfoot>
+                                            <tr>
+                                                {dataTable.footerGroups[0].headers.map((column) => (
+                                                    <td {...column.getFooterProps()}>
+                                                        {column.render('Footer')}
+                                                    </td>
+                                                ))}
+                                            </tr>
+                                        </tfoot>
+                                    }
                                 </table>
                             </div>
 

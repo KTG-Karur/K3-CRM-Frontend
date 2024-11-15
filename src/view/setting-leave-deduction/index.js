@@ -87,9 +87,9 @@ function Index() {
     const [parentList, setParentList] = useState([]);
     const [optionListState, setOptionListState] = useState({
         leaveTypeList: [
-            { leaveTypeId: 26, leaveTypeName: 'CL' },
-            { leaveTypeId: 27, leaveTypeName: 'SL' },
-        ],
+            { leaveTypeId: 26, leaveTypeName: 'Casual Leave' },
+            { leaveTypeId: 27, leaveTypeName: 'Sick Leave' },
+        ]
     })
     const [selectedItem, setSelectedItem] = useState({});
     const [selectedIndex, setSelectedIndex] = useState(false);
