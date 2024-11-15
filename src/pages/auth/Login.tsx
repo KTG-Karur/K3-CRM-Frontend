@@ -77,7 +77,7 @@ const Login = () => {
     }));
 
     useEffect(() => {
-        localStorage.clear();
+        sessionStorage.clear();
         dispatch(resetGetEmployeeLogin())
     }, [dispatch]);
 
