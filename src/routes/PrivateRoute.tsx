@@ -27,12 +27,14 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ component: RouteComponent, 
     // Redirect to login if not authenticated
     if (!loginStatus) {
         sessionStorage.removeItem("loginInfo");
+        sessionStorage.clear();
         return <Navigate to={'/auth/login'} state={{ from: location }} replace />;
     }
 
     // Redirect to access-denied if the role is not authorized
     if (roles.length && !roles.includes(userRole)) {
         sessionStorage.removeItem("loginInfo");
+        sessionStorage.clear();
         return <Navigate to={'/auth/login'} state={{ from: location }} replace />;
     }
 
