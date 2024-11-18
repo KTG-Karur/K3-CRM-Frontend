@@ -78,6 +78,12 @@ const Navigate: NavigateTypes[] = [
     //     url: '/view/monthly-reciept',
     // },
     {
+        label: 'Salary',
+        isTitle: false,
+        icon: 'mdi mdi-account-cash',
+        url: 'staff-salary',
+    },
+    {
         label: 'Holiday',
         isTitle: false,
         icon: 'mdi mdi-account-cash',
@@ -160,7 +166,6 @@ const Navigate: NavigateTypes[] = [
         isTitle: false,
         icon: 'mdi mdi-chart-donut-variant',
         children: [
-            
             {
                 label: 'Working Day',
                 url: '/view/setting-working-day',
@@ -176,7 +181,6 @@ const Navigate: NavigateTypes[] = [
                 url: '/view/setting-benefit',
                 parentKey: 'Setting',
             },
-            
         ],
     },
 

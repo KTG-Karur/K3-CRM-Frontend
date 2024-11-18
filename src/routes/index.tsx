@@ -109,9 +109,9 @@ import {
     SettingWorkingDay,
     SettingBenefit,
     StaffLeave,
-    Attendance
+    Attendance,
+    Salary,
 } from './Route_Menu';
-
 
 const loading = () => <div className=""></div>;
 
@@ -217,6 +217,10 @@ const AllRoutes = () => {
                     element: <LoadComponent component={StaffLeave} />,
                 },
                 {
+                    path: 'staff-salary',
+                    element: <LoadComponent component={Salary} />,
+                },
+                {
                     path: 'view',
                     children: [
                         {
@@ -259,7 +263,7 @@ const AllRoutes = () => {
                             path: 'setting-leave-deduction',
                             element: <LoadComponent component={SettingLeaveDeduction} />,
                         },
-                        
+
                         {
                             path: 'permission',
                             element: <LoadComponent component={Permission} />,
@@ -313,7 +317,7 @@ const AllRoutes = () => {
                 },
                 {
                     path: 'apps',
-                    children: [                        
+                    children: [
                         {
                             path: 'calendar',
                             element: <LoadComponent component={CalendarApp} />,
