@@ -87,6 +87,11 @@ function Index() {
             Cell: ({ row }) => <div> {(row.original.amount) - (row.original.paidAmount)} </div>,
             sort: true,
         },
+        {
+            Header: 'Status',
+            accessor: 'statusId',
+            sort: true,
+        }, 
 
         {
             Header: 'Actions',

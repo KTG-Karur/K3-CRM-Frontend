@@ -79,6 +79,11 @@ function Index() {
             accessor: 'toPlaceName',
             sort: true,
         },
+        {
+            Header: 'Status',
+            accessor: 'statusId',
+            sort: true,
+        },
        
         {
             Header: 'Actions',

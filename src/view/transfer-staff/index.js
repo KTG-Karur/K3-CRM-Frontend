@@ -84,7 +84,11 @@ function Index() {
             accessor: 'transferToName',
             sort: true,
         },
-
+        {
+            Header: 'Status',
+            accessor: 'statusId',
+            sort: true,
+        },
         {
             Header: 'Actions',
             accessor: 'actions',

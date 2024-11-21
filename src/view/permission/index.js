@@ -73,6 +73,11 @@ function Index() {
             Header: 'Permission Type',
             accessor: 'permissionTypeName',
             sort: true,
+        },
+        {
+            Header: 'Status',
+            accessor: 'statusId',
+            sort: true,
         },       
         {
             Header: 'Actions',

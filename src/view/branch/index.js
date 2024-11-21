@@ -128,6 +128,9 @@ function Index() {
         }
     }, [updateBranchSuccess, updateBranchFailure]);
 
+    console.log("parentList")
+    console.log(parentList)
+
     const closeModel = () => {
         isEdit = false;
         onFormClear()

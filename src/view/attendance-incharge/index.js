@@ -73,6 +73,11 @@ function Index() {
             Header: 'Department Name',
             accessor: 'departmentName',
             sort: true,
+        }, 
+        {
+            Header: 'Status',
+            accessor: 'statusId',
+            sort: true,
         },       
         {
             Header: 'Actions',
