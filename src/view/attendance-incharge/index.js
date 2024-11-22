@@ -5,12 +5,12 @@ import FormLayout from '../../utils/formLayout';
 import { attendanceInchargeContainer } from './formFieldData';
 import Table from '../../components/Table';
 import { dateConversion, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
-import { createAttendanceInchargeRequest, getBranchRequest,  getStaffRequest,getDepartmentRequest, getAttendanceInchargeRequest, resetCreateAttendanceIncharge, resetGetBranch,  resetGetStaff, resetGetDepartment, resetGetAttendanceIncharge, resetUpdateAttendanceIncharge, updateAttendanceInchargeRequest } from '../../redux/actions';
+import { createAttendanceInchargeRequest, getBranchRequest, getStaffRequest, getDepartmentRequest, getAttendanceInchargeRequest, resetCreateAttendanceIncharge, resetGetBranch, resetGetStaff, resetGetDepartment, resetGetAttendanceIncharge, resetUpdateAttendanceIncharge, updateAttendanceInchargeRequest } from '../../redux/actions';
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 import _ from 'lodash';
 
-let isEdit = false; 
+let isEdit = false;
 
 function Index() {
 
@@ -21,7 +21,7 @@ function Index() {
         getDepartmentSuccess, getDepartmentList, getDepartmentFailure,
         createAttendanceInchargeSuccess, createAttendanceInchargeData, createAttendanceInchargeFailure,
         updateAttendanceInchargeSuccess, updateAttendanceInchargeData, updateAttendanceInchargeFailure,
-        errorMessage,getStaffSuccess,
+        errorMessage, getStaffSuccess,
         getStaffList,
         getStaffFailure,
 
@@ -63,22 +63,50 @@ function Index() {
             Header: 'Staff Name',
             accessor: 'staffName',
             sort: true,
-        }, 
+        },
         {
             Header: 'Branch Name',
             accessor: 'branchName',
             sort: true,
-        }, 
+        },
         {
             Header: 'Department Name',
             accessor: 'departmentName',
             sort: true,
-        }, 
+        },
         {
             Header: 'Status',
             accessor: 'statusId',
-            sort: true,
-        },       
+            Cell: ({ row }) => (
+                <Badge
+                    bg={
+                        row.original.statusId === 30
+                            ? 'danger'
+                            : row.original.statusId === 28
+                                ? 'primary'
+                                : 'success'
+                    }>
+                    {row.original.statusId === 30
+                        ? 'Cancelled'
+                        : row.original.statusId === 28
+                            ? 'Request'
+                            : 'Approved'}
+                </Badge>
+            ),
+        },
+        {
+            Header: 'isActive',
+            accessor: 'isActive',
+            Cell: ({ row }) => (
+                <div>
+                    {row?.original?.isActive ? (
+                        <Badge bg={'success'}>Active</Badge>
+                    ) : (
+                        <Badge bg={'danger'}>In active</Badge>
+                    )}
+                </div>
+            ),
+        },
         {
             Header: 'Actions',
             accessor: 'actions',
@@ -88,12 +116,54 @@ function Index() {
                 const deleteMessage = activeChecker ? "You want to In-Active...?" : "You want to retrive this Data...?";
                 return (
                     <div>
-                        <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index)}>
-                            <i className={'fe-edit-1'}></i>
-                        </span>
-                        
+                        {row.original.statusId === 28 && (
+                            <span>
+                                <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index)}>
+                                    <i className={'fe-edit-1'}></i>
+                                </span>
+
+                                <span
+                                    className={`text-success me-2 cursor-pointer`}
+                                    onClick={() =>
+                                        showConfirmationDialog(
+                                            'You want to Approved?',
+                                            () => onStatusForm(row.original, row.index, 29),
+                                            'Yes'
+                                        )
+                                    }>
+                                    <i className={'fe-thumbs-up'}></i>
+                                </span>
+                                <span
+                                    className={`text-danger cursor-pointer`}
+                                    onClick={() =>
+                                        showConfirmationDialog(
+                                            'You want to Cancelled?',
+                                            () => onStatusForm(row.original, row.index, 30),
+                                            'Yes'
+                                        )
+                                    }>
+                                    <i className={'fe-thumbs-down'}></i>
+                                </span>
+                            </span>
+                        )}
+                        {
+                            row.original.statusId === 29 &&
+                            <span
+                                className={`${iconColor} cursor-pointer mx-2`}
+                                onClick={() =>
+                                    showConfirmationDialog(
+                                        deleteMessage,
+                                        () => onDeleteForm(row.original, row.index, activeChecker),
+                                        'Yes'
+                                    )
+                                }>
+                                {
+                                    row?.original?.isActive ? <i className={'fe-trash-2'}></i> : <i className={'fas fa-recycle'}></i>
+                                }
+                            </span>
+                        }
                     </div>
-                )
+                );
             },
         },
     ];
@@ -114,14 +184,14 @@ function Index() {
     const errorHandle = useRef();
 
     useEffect(() => {
-        setIsLoading(true)        
+        setIsLoading(true)
         dispatch(getAttendanceInchargeRequest());
-        dispatch(getStaffRequest());
+        // dispatch(getStaffRequest());
         const req = {
             isActive: 1
         }
-        dispatch(getBranchRequest());  
-        dispatch(getDepartmentRequest());        
+        dispatch(getBranchRequest());
+        dispatch(getDepartmentRequest());
     }, []);
 
     useEffect(() => {
@@ -233,6 +303,10 @@ function Index() {
             departmentId: '',
             branchId: '',
         });
+        setOptionListState({
+            ...optionListState,
+            staffList: [],
+        });
     };
 
     const createModel = () => {
@@ -248,6 +322,10 @@ function Index() {
             departmentId: data?.departmentId || "",
             branchId: data?.branchId || ""
         });
+        const branchFilter = {
+            branchId: data?.branchId
+        }
+        dispatch(getStaffRequest(branchFilter));
         isEdit = true;
         setSelectedItem(data)
         setSelectedIndex(index)
@@ -267,27 +345,54 @@ function Index() {
         if (isEdit) {
             dispatch(updateAttendanceInchargeRequest(submitRequest, selectedItem.attendanceInchargeId))
         } else {
-            console.log(submitRequest)
             dispatch(createAttendanceInchargeRequest(submitRequest))
         }
     };
 
-    
+    const onBranchChange = async (option, formName, formUniqueKey, formDisplayKey) => {
+        const branchFilter = {
+            branchId: option[formUniqueKey]
+        }
+        setState({
+            ...state,
+            [formName]: option[formUniqueKey]
+        })
+        dispatch(getStaffRequest(branchFilter));
+    }
+
+
+    const onStatusForm = (data, index, statusId) => {
+        const submitRequest = {
+            statusId: statusId,
+            isActive: statusId == 30 ? 0 : 1
+        };
+        setSelectedIndex(index);
+        dispatch(updateAttendanceInchargeRequest(submitRequest, data.attendanceInchargeId))
+    };
+
+    const onDeleteForm = (data, index, activeChecker) => {
+        const submitRequest = {
+            isActive: activeChecker == 0 ? 1 : 0
+        }
+        setSelectedIndex(index)
+        dispatch(updateAttendanceInchargeRequest(submitRequest, data.attendanceInchargeId))
+    };
+
     return (
         <React.Fragment>
             <NotificationContainer />
-           { isLoading ? <div className='bg-light opacity-0.25'>
-            <div className="d-flex justify-content-center m-5">
-                <Spinner className='mt-5 mb-5' animation="border" />
-            </div>
+            {isLoading ? <div className='bg-light opacity-0.25'>
+                <div className="d-flex justify-content-center m-5">
+                    <Spinner className='mt-5 mb-5' animation="border" />
+                </div>
             </div> :
-            <Table
-                columns={columns}
-                Title={'Attendance Incharge List'}
-                data={parentList || []}
-                pageSize={25}
-                toggle={createModel}
-            />}
+                <Table
+                    columns={columns}
+                    Title={'Attendance Incharge List'}
+                    data={parentList || []}
+                    pageSize={25}
+                    toggle={createModel}
+                />}
 
             <ModelViewBox
                 modal={modal}
@@ -302,6 +407,7 @@ function Index() {
                     optionListState={optionListState}
                     setState={setState}
                     state={state}
+                    onChangeCallBack={{ "onBranchChange": onBranchChange }}
                     ref={errorHandle}
                     noOfColumns={1}
                     errors={errors}

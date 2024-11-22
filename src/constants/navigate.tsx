@@ -99,11 +99,11 @@ const Navigate: NavigateTypes[] = [
                 url: '/view/branch',
                 parentKey: 'Master',
             },
-            // {
-            //     label: 'Bank Account',
-            //     url: '/view/bank-account',
-            //     parentKey: 'Master',
-            // },
+            {
+                label: 'Bank Account',
+                url: '/view/bank-account',
+                parentKey: 'Master',
+            },
             {
                 label: 'Transfer Staff',
                 url: '/view/transfer-staff',

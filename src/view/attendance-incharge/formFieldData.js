@@ -1,8 +1,8 @@
 const attendanceInchargeContainer = [
     {
-        formFields: [         
-            
-                      
+        formFields: [
+
+
             {
                 label: 'Department',
                 name: 'departmentId',
@@ -11,17 +11,18 @@ const attendanceInchargeContainer = [
                 displayKey: 'departmentName',
                 uniqueKey: 'departmentId',
                 require: true,
-                'classStyle' : 'col-6'
-            },  
+                'classStyle': 'col-6'
+            },
             {
                 label: 'Branch',
                 name: 'branchId',
                 inputType: 'select',
                 optionList: 'branchList',
                 displayKey: 'branchName',
+                'onChange': 'onBranchChange',
                 uniqueKey: 'branchId',
                 require: true,
-                'classStyle' : 'col-6'
+                'classStyle': 'col-6'
             },
             {
                 label: 'Staff',
@@ -31,8 +32,8 @@ const attendanceInchargeContainer = [
                 displayKey: 'staffName',
                 uniqueKey: 'staffId',
                 require: true,
-                'classStyle' : 'col-6'
-            },    
+                'classStyle': 'col-6'
+            },
         ]
     },
 ]

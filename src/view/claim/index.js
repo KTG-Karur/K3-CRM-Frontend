@@ -5,28 +5,34 @@ import FormLayout from '../../utils/formLayout';
 import { approvedFormContainer, employeeFormContainer } from './formFieldData';
 import Table from '../../components/Table';
 import { dateConversion, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
-import { createClaimRequest, getBranchRequest,getStaffRequest, getClaimRequest, getClaimTypeRequest, resetCreateClaim, resetGetBranch, resetGetClaim,resetGetStaff, resetGetClaimType, resetUpdateClaim, updateClaimRequest } from '../../redux/actions';
+import { createClaimRequest, getBranchRequest, getStaffRequest, getClaimRequest, getClaimTypeRequest, resetCreateClaim, resetGetBranch, resetGetClaim, resetGetStaff, resetGetClaimType, resetUpdateClaim, updateClaimRequest, getBankAccountRequest, resetGetBankAccount } from '../../redux/actions';
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
+import _ from 'lodash';
 
 let isEdit = false;
 
-function Index() { 
+function Index() {
 
     const { dispatch, appSelector } = useRedux();
     const navigate = useNavigate();
 
-    const { getClaimSuccess, getClaimList, getClaimFailure,
+    const { getBankAccountSuccess, getBankAccountList, getBankAccountFailure,
+        getClaimSuccess, getClaimList, getClaimFailure,
         getBranchSuccess, getBranchList, getBranchFailure,
         getClaimTypeSuccess, getClaimTypeList, getClaimTypeFailure,
         createClaimSuccess, createClaimData, createClaimFailure,
-        updateClaimSuccess, updateClaimData, updateClaimFailure,errorMessage,getStaffSuccess,
+        updateClaimSuccess, updateClaimData, updateClaimFailure, errorMessage, getStaffSuccess,
         getStaffList,
         getStaffFailure,
 
     } = appSelector((state) => ({
+        getBankAccountSuccess: state.bankAccountReducer.getBankAccountSuccess,
+        getBankAccountList: state.bankAccountReducer.getBankAccountList,
+        getBankAccountFailure: state.bankAccountReducer.getBankAccountFailure,
+
         getStaffSuccess: state.staffReducer.getStaffSuccess,
         getStaffList: state.staffReducer.getStaffList,
         getStaffFailure: state.staffReducer.getStaffFailure,
@@ -104,25 +110,31 @@ function Index() {
                             <i className={'fe-check-circle'}></i>
                         </span>
                     </div>
-                    
+
                 )
             },
         },
     ];
 
-    const [state, setState] = useState({});
+    const [state, setState] = useState({
+        applyDate: moment().format("YYYY-MM-DD"),
+        modeOfPaymentId: 5,
+        uploadImage: []
+    });
     const [optionListState, setOptionListState] = useState({
         staffList: [],
-        paymentModeList:[
-          {  
-            paymentModeId : 5,
-            paymentModeName : 'Cash'
-          },
-          {  
-            paymentModeId : 6,
-            paymentModeName : 'Neft'
-          },
-        ]
+        paymentModeList: [
+            {
+                paymentModeId: 5,
+                paymentModeName: 'Cash'
+            },
+            {
+                paymentModeId: 6,
+                paymentModeName: 'Neft'
+            },
+        ],
+        bankAccountList: [],
+        claimTypeList: []
     })
     const [parentList, setParentList] = useState([]);
     const [selectedItem, setSelectedItem] = useState({});
@@ -131,19 +143,36 @@ function Index() {
     const [approvedModal, setApprovedModal] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState([]);
+    const [claimContainer, setClaimContainer] = useState(employeeFormContainer);
 
     const errorHandle = useRef();
 
     useEffect(() => {
         setIsLoading(true)
         dispatch(getClaimRequest());
-        dispatch(getStaffRequest());
-        const req={
-            isActive : 1
-        }
-        dispatch(getBranchRequest(req));
-        dispatch(getClaimTypeRequest(req));
+        // dispatch(getStaffRequest());
+        dispatch(getBranchRequest());
+        dispatch(getClaimTypeRequest());
+        dispatch(getBankAccountRequest());
     }, []);
+
+    useEffect(() => {
+        if (getBankAccountSuccess) {
+            setIsLoading(false)
+            setOptionListState({
+                ...optionListState,
+                bankAccountList: getBankAccountList,
+            });
+            dispatch(resetGetBankAccount())
+        } else if (getBankAccountFailure) {
+            setIsLoading(false)
+            setOptionListState({
+                ...optionListState,
+                bankAccountList: [],
+            });
+            dispatch(resetGetBankAccount())
+        }
+    }, [getBankAccountSuccess, getBankAccountFailure]);
 
     useEffect(() => {
         if (getStaffSuccess) {
@@ -168,6 +197,22 @@ function Index() {
             setIsLoading(false)
             setParentList(getClaimList)
             dispatch(resetGetClaim())
+
+            const formData = new FormData();
+            state.uploadImage.map((ele) => {
+                const originalFile = ele[0];
+                //${state}-
+                const renamedFile = new File([originalFile], `${originalFile.name}`, {
+                    type: originalFile.type,
+                    lastModified: originalFile.lastModified,
+                });
+                formData.append("proofImages", renamedFile);
+                // filterImageName.push([renamedFile]);
+            })
+            for (const value of formData.values()) {
+                console.log("value");
+                console.log(value);
+            }
         } else if (getClaimFailure) {
             setIsLoading(false)
             setParentList([])
@@ -180,14 +225,14 @@ function Index() {
             setIsLoading(false)
             setOptionListState({
                 ...optionListState,
-                claimTypeList : getClaimTypeList
+                claimTypeList: getClaimTypeList
             })
             dispatch(resetGetClaimType())
         } else if (getClaimTypeFailure) {
             setIsLoading(false)
             setOptionListState({
                 ...optionListState,
-                claimTypeList : []
+                claimTypeList: []
             })
             dispatch(resetGetClaimType())
         }
@@ -198,14 +243,14 @@ function Index() {
             setIsLoading(false)
             setOptionListState({
                 ...optionListState,
-                branchList : getBranchList
+                branchList: getBranchList
             })
             dispatch(resetGetBranch())
         } else if (getBranchFailure) {
             setIsLoading(false)
             setOptionListState({
                 ...optionListState,
-                branchList : []
+                branchList: []
             })
             dispatch(resetGetBranch())
         }
@@ -246,24 +291,24 @@ function Index() {
         setApprovedModal(false)
     }
 
-    const onApprovedClaim = (data, index)=>{
+    const onApprovedClaim = (data, index) => {
         setState({
             ...state,
-            approvedDate : moment().format("YYYY-MM-DD"),
-            claimAmount : ""
+            approvedDate: moment().format("YYYY-MM-DD"),
+            claimAmount: ""
         })
         setSelectedItem(data)
         setSelectedIndex(index)
         setApprovedModal(true)
         // navigate('/claim-approved', { state: { data: data } });
-
     }
 
     const onFormClear = () => {
         setState({
             ...state,
-            applyDate: "",
-            branchId:  "",
+            modeOfPaymentId: 5,
+            applyDate: moment().format("YYYY-MM-DD"),
+            branchId: "",
             requestedBy: "",
             claimTypeId: "",
             requestedAmount: "",
@@ -275,6 +320,24 @@ function Index() {
         onFormClear()
         isEdit = false;
         setModal(true)
+
+        const updatedTabList = _.cloneDeep(employeeFormContainer);
+        const changedArr = [
+            {
+                label: 'Bank Account',
+                name: 'bankAccountId',
+                inputType: 'select',
+                optionList: 'bankAccountList',
+                displayKey: 'bankAndBranch',
+                uniqueKey: 'bankAccountId',
+                'classStyle': 'col-6'
+            },
+        ]
+        updatedTabList[0].formFields = _.reject(
+            updatedTabList[0].formFields,
+            (field) => _.some(changedArr, { name: field.name })
+        );
+        setClaimContainer(updatedTabList);
     };
 
     const onEditForm = (data, index) => {
@@ -292,6 +355,10 @@ function Index() {
         setSelectedItem(data)
         setSelectedIndex(index)
         setModal(true)
+        const paymentModeId = {
+            paymentModeId: data?.modeOfPaymentId
+        }
+        onPaymentMode(paymentModeId, "modeOfPaymentId");
     };
 
     const handleValidation = () => {
@@ -307,8 +374,12 @@ function Index() {
             requestedAmount: state?.requestedAmount || "",
             reason: state?.reason || "",
             modeOfPaymentId: state?.modeOfPaymentId || "",
-            claimStatus: 28
+            bankAccountId: state?.modeOfPaymentId == 5 ? '' : state.bankAccountId,
+            claimStatus: 28,
         }
+        console.log("submitRequest");
+        console.log(submitRequest);
+        return;
         if (isEdit) {
             dispatch(updateClaimRequest(submitRequest, selectedItem.claimId))
         } else {
@@ -316,12 +387,12 @@ function Index() {
         }
     };
 
-    const onApprovedFormSubmit = ()=>{
+    const onApprovedFormSubmit = () => {
         const submitRequest = {
             approvedDate: state.approvedDate ? dateConversion(state.approvedDate, "YYYY-MM-DD") : "",
             claimAmount: state?.claimAmount || "",
             claimStatus: 29,
-            approvedBy : 1
+            approvedBy: 1
         }
         dispatch(updateClaimRequest(submitRequest, selectedItem.claimId))
     }
@@ -334,21 +405,66 @@ function Index() {
         dispatch(updateClaimRequest(submitRequest, data.claimId))
     };
 
+    const onPaymentMode = (event, formName) => {
+        setState({
+            ...state,
+            [formName]: event.paymentModeId,
+            bankAccountId: event.paymentModeId == 5 ? '' : state.bankAccountId
+        })
+        const updatedTabList = _.cloneDeep(employeeFormContainer);
+        const changedArr = [
+            {
+                label: 'Bank Account',
+                name: 'bankAccountId',
+                inputType: 'select',
+                optionList: 'bankAccountList',
+                displayKey: 'bankAndBranch',
+                uniqueKey: 'bankAccountId',
+                'classStyle': 'col-6'
+            },
+        ]
+        if (event.paymentModeId == 6) {
+            updatedTabList[0].formFields = _.concat(
+                _.slice(updatedTabList[0].formFields, 0, 2),
+                changedArr,
+                _.slice(updatedTabList[0].formFields, 2),
+            );
+        } else {
+            updatedTabList[0].formFields = _.reject(
+                updatedTabList[0].formFields,
+                (field) => _.some(changedArr, { name: field.name })
+            );
+        }
+        setClaimContainer(updatedTabList);
+    }
+
+    const onBranchChange = async (option, formName, formUniqueKey, formDisplayKey) => {
+        const branchFilter = {
+            branchId: option[formUniqueKey]
+        }
+        setState({
+            ...state,
+            [formName]: option[formUniqueKey]
+        })
+
+        dispatch(getStaffRequest(branchFilter));
+    }
+
     return (
         <React.Fragment>
-        <NotificationContainer />
-           { isLoading ? <div className='bg-light opacity-0.25'>
-            <div className="d-flex justify-content-center m-5">
-                <Spinner className='mt-5 mb-5' animation="border" />
-            </div>
+            <NotificationContainer />
+            {isLoading ? <div className='bg-light opacity-0.25'>
+                <div className="d-flex justify-content-center m-5">
+                    <Spinner className='mt-5 mb-5' animation="border" />
+                </div>
             </div> :
-            <Table
-                columns={columns}
-                Title={'Claim List'}
-                data={parentList || []}
-                pageSize={25}
-                toggle={createModel}
-            />}
+                <Table
+                    columns={columns}
+                    Title={'Claim List'}
+                    data={parentList || []}
+                    pageSize={25}
+                    toggle={createModel}
+                />}
 
             <ModelViewBox
                 modal={modal}
@@ -358,11 +474,12 @@ function Index() {
                 isEdit={isEdit}
                 handleSubmit={handleValidation}>
                 <FormLayout
-                    dynamicForm={employeeFormContainer}
+                    dynamicForm={claimContainer}
                     handleSubmit={onFormSubmit}
                     optionListState={optionListState}
                     setState={setState}
                     state={state}
+                    onChangeCallBack={{ "onPaymentMode": onPaymentMode, "onBranchChange": onBranchChange }}
                     ref={errorHandle}
                     noOfColumns={1}
                     errors={errors}

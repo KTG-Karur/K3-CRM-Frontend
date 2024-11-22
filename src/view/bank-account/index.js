@@ -106,26 +106,6 @@ function Index() {
     ];
 
     const [state, setState] = useState({});
-    const [optionListState, setOptionListState] = useState({
-        // applicantList : [
-        //     {
-        //         "applicantId" : 1,
-        //         "applicantName" : "HFC-2425-FL-0001/Aravinth",
-        //     },
-        //     {
-        //         "applicantId" : 2,
-        //         "applicantName" : "HFC-2425-FL-0001/Ragul",
-        //     },
-        //     {
-        //         "applicantId" : 3,
-        //         "applicantName" : "HFC-2425-FL-0001/Mohan",
-        //     },
-        //     {
-        //         "applicantId" : 4,
-        //         "applicantName" : "HFC-2425-FL-0001/Jeeva",
-        //     },
-        // ]
-    });
     const [parentList, setParentList] = useState([]);
     const [selectedItem, setSelectedItem] = useState({});
     const [selectedIndex, setSelectedIndex] = useState(false);
@@ -188,9 +168,7 @@ function Index() {
     const onFormClear = () => {
         setState({
             ...state,
-            applicantId: '',
             accountHolderName: '',
-            companyAccount: false,
             bankName: '',
             branchName: '',
             accountNo: '',
@@ -207,9 +185,7 @@ function Index() {
     const onEditForm = (data, index) => {
         setState({
             ...state,
-            applicantId: data?.applicantId || "",
             accountHolderName: data?.accountHolderName || "",
-            companyAccount: data.companyAccount === 1 ? true : false,
             bankName: data?.bankName || "",
             branchName: data?.branchName || "",
             accountNo: data?.accountNo || "",
@@ -227,9 +203,7 @@ function Index() {
 
     const onFormSubmit = async () => {
         const submitRequest = {
-             applicantId: state?.applicantId || "",
              accountHolderName: state?.accountHolderName || "",
-             companyAccount: state.companyAccount ? 1 : 0,
              bankName: state?.bankName || "",
              branchName: state?.branchName || "",
              accountNo: state?.accountNo || "",
@@ -278,7 +252,6 @@ function Index() {
                     handleSubmit={onFormSubmit}
                     setState={setState}
                     state={state}
-                    optionListState={optionListState}
                     ref={errorHandle}
                     noOfColumns={1}
                     errors={errors}

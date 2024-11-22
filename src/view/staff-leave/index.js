@@ -4,7 +4,7 @@ import ModelViewBox from '../../components/Atom/ModelViewBox';
 import FormLayout from '../../utils/formLayout';
 import { staffLeaveContainer } from './formFieldData';
 import Table from '../../components/Table';
-import { dateConversion, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
+import { dateConversion, noOfDayCount, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
 import {
     createStaffLeaveRequest,
     getStaffLeaveRequest,
@@ -17,6 +17,7 @@ import {
 } from '../../redux/actions';
 import { useRedux } from '../../hooks';
 import { NotificationContainer } from 'react-notifications';
+import moment from 'moment';
 
 let isEdit = false;
 
@@ -95,7 +96,7 @@ function Index() {
         },
         {
             Header: 'Status',
-            accessor: 'nothig',
+            accessor: 'status',
             Cell: ({ row }) => (
                 <Badge
                     bg={
@@ -159,7 +160,10 @@ function Index() {
         },
     ];
 
-    const [state, setState] = useState({});
+    const [state, setState] = useState({
+        minmumFrom: moment().format("YYYY-MM-DD"),
+        minmumTo: moment().format("YYYY-MM-DD"),
+    });
     const [parentList, setParentList] = useState([]);
     const [selectedItem, setSelectedItem] = useState({});
     const [selectedIndex, setSelectedIndex] = useState(false);
@@ -183,6 +187,14 @@ function Index() {
     }, []);
 
     useEffect(() => {
+        setState({
+            ...state,
+            minmumTo: state?.fromDate,
+            dayCount: noOfDayCount(state?.fromDate, state?.toDate)
+        })
+    }, [state?.fromDate, state?.toDate])
+
+    useEffect(() => {
         if (getStaffSuccess) {
             setIsLoading(false);
             setOptionListState({
@@ -199,9 +211,6 @@ function Index() {
             dispatch(resetGetStaff());
         }
     }, [getStaffSuccess, getStaffFailure]);
-
-    console.log("optionListState")
-    console.log(optionListState)
 
     useEffect(() => {
         if (getStaffLeaveSuccess) {
@@ -232,9 +241,7 @@ function Index() {
         if (updateStaffLeaveSuccess) {
             const temp_state = [...parentList];
             temp_state[selectedIndex] = updateStaffLeaveData[0];
-            // console.log('temp_state');
-            // console.log(temp_state);
-            // setParentList(temp_state);
+            setParentList(temp_state);
             isEdit && showMessage('success', 'Updated Successfully');
             closeModel();
             dispatch(resetUpdateStaffLeave());
@@ -306,7 +313,7 @@ function Index() {
 
     const onStatusForm = (data, index, activeChecker) => {
         const submitRequest = {
-            leaveStatusId: activeChecker,
+            statusId: activeChecker,
         };
         setSelectedIndex(index);
         dispatch(updateStaffLeaveRequest(submitRequest, data.staffLeaveId));

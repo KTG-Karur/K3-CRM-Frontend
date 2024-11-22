@@ -14,6 +14,7 @@ const employeeFormContainer = [
                 inputType: 'radio',
                 optionList: 'paymentModeList',
                 displayKey: 'paymentModeName',
+                onChange: 'onPaymentMode',
                 uniqueKey: 'paymentModeId',
                 require: true,
                 'classStyle': 'col-6'
@@ -31,6 +32,7 @@ const employeeFormContainer = [
                 optionList: 'branchList',
                 displayKey: 'branchName',
                 uniqueKey: 'branchId',
+                'onChange': 'onBranchChange',
                 require: true,
                 'classStyle': 'col-6'
             },

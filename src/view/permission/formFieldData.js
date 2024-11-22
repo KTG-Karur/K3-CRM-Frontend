@@ -1,7 +1,7 @@
 const permissionContainer = [
     {
         formFields: [
-            
+
             {
                 label: 'Permission Type',
                 name: 'permissionTypeId',
@@ -9,8 +9,27 @@ const permissionContainer = [
                 optionList: 'permissionTypeList',
                 displayKey: 'permissionTypeName',
                 uniqueKey: 'permissionTypeId',
-                require: true
-            }, 
+                require: true,
+                'classStyle': 'col-6'
+            },
+            {
+                'label': "Permission Date",
+                'name': "permissionDate",
+                'inputType': "date",
+                'require': true,
+                'classStyle': 'col-6'
+            },
+            {
+                label: 'Branch',
+                name: 'branchId',
+                inputType: 'select',
+                optionList: 'branchList',
+                displayKey: 'branchName',
+                'onChange': 'onBranchChange',
+                uniqueKey: 'branchId',
+                require: true,
+                'classStyle': 'col-6'
+            },
             {
                 label: 'Staff',
                 name: 'staffId',
@@ -19,24 +38,17 @@ const permissionContainer = [
                 displayKey: 'staffName',
                 uniqueKey: 'staffId',
                 require: true,
-                'classStyle' : 'col-6'
-            },  
-            
-            {
-                'label': "Permission Date",
-                'name': "permissionDate",
-                'inputType': "date",
-                'require': true,
-                'classStyle' : 'col-6'
-            },         
+                'classStyle': 'col-6'
+            },
             {
                 'label': "Reason",
                 'name': "reason",
                 'inputType': "textarea",
                 'placeholder': "Enter Reason",
-                'require': true
+                'require': true,
+                'classStyle': 'col-12'
             },
-            
+
         ]
     },
 ]

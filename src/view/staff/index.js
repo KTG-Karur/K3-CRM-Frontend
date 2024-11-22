@@ -538,7 +538,6 @@ function Index() {
     const showMultiAdd = ['staffDetails', 'qualification', 'language', 'workExperience', 'idProof', 'workExperience', 'staffQualification'];
     const [isEdit, setIsEdit] = useState(false);
     const [tabList, setTabList] = useState(staffTabs);
-
     const [modal, setModal] = useState(false);
     const [modelForm, setModelForm] = useState({});
     const [modelState, setModelState] = useState({});

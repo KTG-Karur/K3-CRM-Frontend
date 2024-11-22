@@ -4,8 +4,8 @@ import ModelViewBox from '../../components/Atom/ModelViewBox';
 import FormLayout from '../../utils/formLayout';
 import { transferStaffContainer } from './formFieldData';
 import Table from '../../components/Table';
-import { dateConversion, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
-import { createTransferStaffRequest, getActivityRequest, getStaffRequest, getBranchRequest, getTransferStaffRequest, resetCreateTransferStaff, resetGetActivity, resetGetBranch, resetGetStaff,resetGetTransferStaff, resetUpdateTransferStaff, updateTransferStaffRequest } from '../../redux/actions';
+import { dateConversion, deleteData, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
+import { createTransferStaffRequest, getActivityRequest, getStaffRequest, getBranchRequest, getTransferStaffRequest, resetCreateTransferStaff, resetGetActivity, resetGetBranch, resetGetStaff, resetGetTransferStaff, resetUpdateTransferStaff, updateTransferStaffRequest } from '../../redux/actions';
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 import _ from 'lodash';
@@ -87,23 +87,62 @@ function Index() {
         {
             Header: 'Status',
             accessor: 'statusId',
-            sort: true,
+            Cell: ({ row }) => (
+                <Badge
+                    bg={
+                        row.original.statusId === 30
+                            ? 'danger'
+                            : row.original.statusId === 28
+                                ? 'primary'
+                                : 'success'
+                    }>
+                    {row.original.statusId === 30
+                        ? 'Cancelled'
+                        : row.original.statusId === 28
+                            ? 'Request'
+                            : 'Approved'}
+                </Badge>
+            ),
         },
         {
             Header: 'Actions',
             accessor: 'actions',
             Cell: ({ row }) => {
-                const activeChecker = row.original.isActive
-                const iconColor = activeChecker ? "text-danger" : "text-warning";
-                const deleteMessage = activeChecker ? "You want to In-Active...?" : "You want to retrive this Data...?";
                 return (
                     <div>
-                        <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index)}>
-                            <i className={'fe-edit-1'}></i>
-                        </span>
+                        {row.original.statusId === 28 && (
+                            <span>
+                                <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index)}>
+                                    <i className={'fe-edit-1'}></i>
+                                </span>
 
+
+                                <span
+                                    className={`text-success me-2 cursor-pointer`}
+                                    onClick={() =>
+                                        showConfirmationDialog(
+                                            'You want to Approved?',
+                                            () => onStatusForm(row.original, row.index, 29),
+                                            'Yes'
+                                        )
+                                    }>
+                                    <i className={'fe-thumbs-up'}></i>
+                                </span>
+                                <span
+                                    className={`text-danger cursor-pointer`}
+                                    onClick={() =>
+                                        showConfirmationDialog(
+                                            'You want to Cancelled?',
+                                            () => onStatusForm(row.original, row.index, 30),
+                                            'Yes'
+                                        )
+                                    }>
+                                    <i className={'fe-thumbs-down'}></i>
+                                </span>
+                            </span>
+                        )}
                     </div>
-                )
+                );
             },
         },
     ];
@@ -113,6 +152,7 @@ function Index() {
     const [optionListState, setOptionListState] = useState({
         staffList: [],
         branchList: [],
+        branchListTo: [],
     })
     const [selectedItem, setSelectedItem] = useState({});
     const [selectedIndex, setSelectedIndex] = useState(false);
@@ -124,7 +164,6 @@ function Index() {
 
     useEffect(() => {
         setIsLoading(true)
-        dispatch(getStaffRequest());
         dispatch(getTransferStaffRequest());
         dispatch(getBranchRequest());
     }, []);
@@ -162,17 +201,16 @@ function Index() {
     useEffect(() => {
         if (getBranchSuccess) {
             setIsLoading(false)
-            // console.log(getBranchList)
             setOptionListState({
                 ...optionListState,
-                branchList: getBranchList
+                branchList: getBranchList,
             })
             dispatch(resetGetBranch())
         } else if (getBranchFailure) {
             setIsLoading(false)
             setOptionListState({
                 ...optionListState,
-                branchList: []
+                branchList: [],
             })
             dispatch(resetGetBranch())
         }
@@ -219,6 +257,11 @@ function Index() {
             transferFrom: '',
             transferTo: '',
         });
+        setOptionListState({
+            ...optionListState,
+            staffList: [],
+            branchListTo: []
+        });
     };
 
     const createModel = () => {
@@ -227,7 +270,7 @@ function Index() {
         setModal(true)
     };
 
-    const onEditForm = (data, index) => {        
+    const onEditForm = async (data, index) => {
         setState({
             ...state,
             staffId: data?.staffId || "",
@@ -235,6 +278,15 @@ function Index() {
             transferTo: data?.transferTo || "",
             transferDate: data.transferDate ? dateConversion(data.transferDate, "YYYY-MM-DD") : ""
         });
+        const branchFilter = {
+            branchId: data?.transferFrom
+        }
+        dispatch(getStaffRequest(branchFilter));
+        const remainingBranchListTo = await deleteData(optionListState.branchList, data?.transferFrom, 'branchId');
+        setOptionListState({
+            ...optionListState,
+            branchListTo: remainingBranchListTo
+        })
         isEdit = true;
         setSelectedItem(data)
         setSelectedIndex(index)
@@ -259,6 +311,31 @@ function Index() {
             dispatch(createTransferStaffRequest(submitRequest))
         }
     };
+
+    const onBranchChange = async (option, formName, formUniqueKey, formDisplayKey) => {
+        const branchFilter = {
+            branchId: option[formUniqueKey]
+        }
+        setState({
+            ...state,
+            [formName]: option[formUniqueKey]
+        })
+        const remainingBranchListTo = await deleteData(optionListState.branchList, option[formUniqueKey], formUniqueKey);
+        setOptionListState({
+            ...optionListState,
+            branchListTo: remainingBranchListTo
+        })
+        dispatch(getStaffRequest(branchFilter));
+    }
+
+    const onStatusForm = (data, index, activeChecker) => {
+        const submitRequest = {
+            statusId: activeChecker,
+        };
+        setSelectedIndex(index);
+        dispatch(updateTransferStaffRequest(submitRequest, data.transferStaffId));
+    };
+
 
 
     return (
@@ -290,6 +367,7 @@ function Index() {
                     optionListState={optionListState}
                     setState={setState}
                     state={state}
+                    onChangeCallBack={{ "onBranchChange": onBranchChange }}
                     ref={errorHandle}
                     noOfColumns={1}
                     errors={errors}

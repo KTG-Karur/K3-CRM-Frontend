@@ -67,6 +67,12 @@ function FormComponent(props) {
                     [formName]: [e.target.files[0]],
                 }));
                 break;
+            case 'multifile':
+                setState((prev) => ({
+                    ...prev,
+                    [formName]: [e.target.files],
+                }));
+                break;
             case 'checkbox':
                 setState((prev) => ({
                     ...prev,
@@ -194,6 +200,37 @@ function FormComponent(props) {
                                     onFocus={form?.require ? () => removeHanldeErrors(form?.name) : null}
                                     onChange={(e) => {
                                         handleChange(e, 'file', form?.name);
+                                    }}
+                                />
+                                {errors?.includes(form?.name) && (
+                                    <p
+                                        className="text-danger"
+                                        style={{ fontWeight: 'bold' }}>{`* Please Enter ${form?.name}`}</p>
+                                )}
+                            </div>
+                        );
+                    case 'multifile':
+                        return (
+                            <div key={index} className={`${form?.classStyle || ""} mb-2`}>
+                                <Form.Label>
+                                    <span>
+                                        {form?.label}{' '}
+                                        {form?.require ? (
+                                            <span style={{ fontWeight: 'bold', color: 'red' }}>*</span>
+                                        ) : null}
+                                    </span>
+                                </Form.Label>
+                                <Form.Control
+                                    type="file"
+                                    name={form?.name}
+                                    className="mb-1"
+                                    multiple
+                                    placeholder={form?.placeholder}
+                                    required={form?.require}
+                                    disabled={form?.isDisabled}
+                                    onFocus={form?.require ? () => removeHanldeErrors(form?.name) : null}
+                                    onChange={(e) => {
+                                        handleChange(e, 'multifile', form?.name);
                                     }}
                                 />
                                 {errors?.includes(form?.name) && (

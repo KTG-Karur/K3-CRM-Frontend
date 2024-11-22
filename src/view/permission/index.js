@@ -5,25 +5,32 @@ import FormLayout from '../../utils/formLayout';
 import { permissionContainer } from './formFieldData';
 import Table from '../../components/Table';
 import { dateConversion, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
-import { createPermissionRequest, getStaffRequest, getPermissionRequest, resetCreatePermission, resetGetPermission, resetUpdatePermission, resetGetStaff, updatePermissionRequest } from '../../redux/actions';
+import { createPermissionRequest, getStaffRequest, getPermissionRequest, resetCreatePermission, resetGetPermission, resetUpdatePermission, resetGetStaff, updatePermissionRequest, resetGetBranch, getBranchRequest } from '../../redux/actions';
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 import _ from 'lodash';
+import moment from 'moment';
 
-let isEdit = false; 
+let isEdit = false;
 
 function Index() {
 
     const { dispatch, appSelector } = useRedux();
 
-    const { getPermissionSuccess, getPermissionList, getPermissionFailure,
+    const {
+        getBranchSuccess, getBranchList, getBranchFailure,
+        getPermissionSuccess, getPermissionList, getPermissionFailure,
         createPermissionSuccess, createPermissionData, createPermissionFailure,
         updatePermissionSuccess, updatePermissionData, updatePermissionFailure,
-        errorMessage,  getStaffSuccess,
+        errorMessage, getStaffSuccess,
         getStaffList,
         getStaffFailure,
 
     } = appSelector((state) => ({
+        getBranchSuccess: state.branchReducer.getBranchSuccess,
+        getBranchList: state.branchReducer.getBranchList,
+        getBranchFailure: state.branchReducer.getBranchFailure,
+
         getStaffSuccess: state.staffReducer.getStaffSuccess,
         getStaffList: state.staffReducer.getStaffList,
         getStaffFailure: state.staffReducer.getStaffFailure,
@@ -59,7 +66,7 @@ function Index() {
             Cell: ({ row }) => {
                 return (
                     <div>
-                       {dateConversion(row.original.permissionDate, "DD-MM-YYYY") }
+                        {dateConversion(row.original.permissionDate, "DD-MM-YYYY")}
                     </div>
                 )
             },
@@ -68,7 +75,7 @@ function Index() {
             Header: 'Staff Name',
             accessor: 'staffName',
             sort: true,
-        }, 
+        },
         {
             Header: 'Permission Type',
             accessor: 'permissionTypeName',
@@ -77,28 +84,69 @@ function Index() {
         {
             Header: 'Status',
             accessor: 'statusId',
-            sort: true,
-        },       
+            Cell: ({ row }) => (
+                <Badge
+                    bg={
+                        row.original.statusId === 30
+                            ? 'danger'
+                            : row.original.statusId === 28
+                                ? 'primary'
+                                : 'success'
+                    }>
+                    {row.original.statusId === 30
+                        ? 'Cancelled'
+                        : row.original.statusId === 28
+                            ? 'Request'
+                            : 'Approved'}
+                </Badge>
+            ),
+        },
         {
             Header: 'Actions',
             accessor: 'actions',
             Cell: ({ row }) => {
-                const activeChecker = row.original.isActive
-                const iconColor = activeChecker ? "text-danger" : "text-warning";
-                const deleteMessage = activeChecker ? "You want to In-Active...?" : "You want to retrive this Data...?";
                 return (
                     <div>
-                        <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index)}>
-                            <i className={'fe-edit-1'}></i>
-                        </span>
-                        
+                        {row.original.statusId === 28 && (
+                            <span>
+                                <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index)}>
+                                    <i className={'fe-edit-1'}></i>
+                                </span>
+
+
+                                <span
+                                    className={`text-success me-2 cursor-pointer`}
+                                    onClick={() =>
+                                        showConfirmationDialog(
+                                            'You want to Approved?',
+                                            () => onStatusForm(row.original, row.index, 29),
+                                            'Yes'
+                                        )
+                                    }>
+                                    <i className={'fe-thumbs-up'}></i>
+                                </span>
+                                <span
+                                    className={`text-danger cursor-pointer`}
+                                    onClick={() =>
+                                        showConfirmationDialog(
+                                            'You want to Cancelled?',
+                                            () => onStatusForm(row.original, row.index, 30),
+                                            'Yes'
+                                        )
+                                    }>
+                                    <i className={'fe-thumbs-down'}></i>
+                                </span>
+                            </span>
+                        )}
                     </div>
-                )
+                );
             },
         },
     ];
 
-    const [state, setState] = useState({});
+    const [state, setState] = useState({
+        permissionDate: moment().format("YYYY-MM-DD"),
+    });
     const [parentList, setParentList] = useState([]);
     const [optionListState, setOptionListState] = useState({
         staffList: [],
@@ -117,10 +165,30 @@ function Index() {
     const errorHandle = useRef();
 
     useEffect(() => {
-        setIsLoading(true)        
-        dispatch(getPermissionRequest()); 
-        dispatch(getStaffRequest());       
+        setIsLoading(true)
+        dispatch(getPermissionRequest());
+        // dispatch(getStaffRequest());
+        dispatch(getBranchRequest());
     }, []);
+
+
+    useEffect(() => {
+        if (getBranchSuccess) {
+            setIsLoading(false)
+            setOptionListState({
+                ...optionListState,
+                branchList: getBranchList
+            })
+            dispatch(resetGetBranch())
+        } else if (getBranchFailure) {
+            setIsLoading(false)
+            setOptionListState({
+                ...optionListState,
+                branchList: [],
+            })
+            dispatch(resetGetBranch())
+        }
+    }, [getBranchSuccess, getBranchFailure]);
 
     useEffect(() => {
         if (getStaffSuccess) {
@@ -188,10 +256,15 @@ function Index() {
     const onFormClear = () => {
         setState({
             ...state,
-            permissionDate: '',
+            permissionDate: moment().format("YYYY-MM-DD"),
             staffId: '',
+            branchId: '',
             permissionTypeId: '',
             reason: '',
+        });
+        setOptionListState({
+            ...optionListState,
+            staffList: [],
         });
     };
 
@@ -206,9 +279,14 @@ function Index() {
             ...state,
             staffId: data?.staffId || "",
             reason: data?.reason || "",
+            branchId: data?.staffBranchId || "",
             permissionTypeId: data?.permissionTypeId || "",
             permissionDate: data.permissionDate ? dateConversion(data.permissionDate, "YYYY-MM-DD") : ""
         });
+        const branchFilter = {
+            branchId: data?.staffBranchId
+        }
+        dispatch(getStaffRequest(branchFilter));
         isEdit = true;
         setSelectedItem(data)
         setSelectedIndex(index)
@@ -230,27 +308,46 @@ function Index() {
         if (isEdit) {
             dispatch(updatePermissionRequest(submitRequest, selectedItem.permissionId))
         } else {
-            console.log(submitRequest)
             dispatch(createPermissionRequest(submitRequest))
         }
     };
 
-    
+    const onBranchChange = async (option, formName, formUniqueKey, formDisplayKey) => {
+        const branchFilter = {
+            branchId: option[formUniqueKey]
+        }
+        setState({
+            ...state,
+            [formName]: option[formUniqueKey]
+        })
+
+        dispatch(getStaffRequest(branchFilter));
+    }
+
+    const onStatusForm = (data, index, activeChecker) => {
+        const submitRequest = {
+            statusId: activeChecker,
+        };
+        setSelectedIndex(index);
+        dispatch(updatePermissionRequest(submitRequest, data.permissionId));
+    };
+
+
     return (
         <React.Fragment>
             <NotificationContainer />
-           { isLoading ? <div className='bg-light opacity-0.25'>
-            <div className="d-flex justify-content-center m-5">
-                <Spinner className='mt-5 mb-5' animation="border" />
-            </div>
+            {isLoading ? <div className='bg-light opacity-0.25'>
+                <div className="d-flex justify-content-center m-5">
+                    <Spinner className='mt-5 mb-5' animation="border" />
+                </div>
             </div> :
-            <Table
-                columns={columns}
-                Title={'Permission List'}
-                data={parentList || []}
-                pageSize={25}
-                toggle={createModel}
-            />}
+                <Table
+                    columns={columns}
+                    Title={'Permission List'}
+                    data={parentList || []}
+                    pageSize={25}
+                    toggle={createModel}
+                />}
 
             <ModelViewBox
                 modal={modal}
@@ -263,6 +360,7 @@ function Index() {
                     dynamicForm={permissionContainer}
                     handleSubmit={onFormSubmit}
                     optionListState={optionListState}
+                    onChangeCallBack={{ "onBranchChange": onBranchChange }}
                     setState={setState}
                     state={state}
                     ref={errorHandle}

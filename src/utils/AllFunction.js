@@ -22,15 +22,14 @@ const showMessage = (type, msg, title = null) => {
 };
 
 const findMultiSelectObj = (optionList, uniqueKey, selectedValues) => {
-    if(selectedValues){
+    if (selectedValues) {
         return optionList.filter((option) =>
             selectedValues.includes(option[uniqueKey])
         );
     }
 };
 
-const amountFormat = (amount)=>{
-    console.log(amount)
+const amountFormat = (amount) => {
     let formattedNumber = parseInt(amount).toFixed(2);
     return formattedNumber;
 }
@@ -59,6 +58,16 @@ function formatDate(date) {
 
     return [year, month, day].join('-');
 }
+
+
+function noOfDayCount(fromDate, toDate) {
+    const from = new Date(fromDate);
+    const to = new Date(toDate);
+    const differenceInTime = to.getTime() - from.getTime();
+    const differenceInDays = differenceInTime / (1000 * 3600 * 24);
+    return differenceInDays + 1;
+}
+
 
 function DateMonthYear(date) {
     const ddmmyyyy = date.split('-');
@@ -144,7 +153,7 @@ const showConfirmationDialog = (
     }).then((result) => {
         if (result.isConfirmed && sucessViewFalse) {
             callback();
-        }else if (result.isConfirmed) {
+        } else if (result.isConfirmed) {
             Swal.fire({
                 title: action,
                 text: successTitle,
@@ -285,4 +294,5 @@ export {
     amountFormat,
     capitalizeFirstLetter,
     objectToKeyValueArray,
+    noOfDayCount,
 };
