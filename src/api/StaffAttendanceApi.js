@@ -1,6 +1,6 @@
 import { apiReturnCallBack } from './ApiConfig';
 import apiContainer from './apiContainer';
-const StaffAttendance = apiContainer.StaffAttendance
+const StaffAttendance = apiContainer.staffAttendance
 //GET--->
 export async function getStaffAttendance(request) {
   try {

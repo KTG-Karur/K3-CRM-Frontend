@@ -2,6 +2,17 @@ const staffLeaveContainer = [
     {
         formFields: [
             {
+                label: 'Branch',
+                name: 'branchId',
+                inputType: 'select',
+                optionList: 'branchList',
+                displayKey: 'branchName',
+                'onChange': 'onBranchChange',
+                uniqueKey: 'branchId',
+                require: true,
+                'classStyle': 'col-6'
+            },
+            {
                 label: 'Requested By',
                 name: 'staffId',
                 inputType: 'select',
@@ -9,6 +20,7 @@ const staffLeaveContainer = [
                 displayKey: 'staffName',
                 uniqueKey: 'staffId',
                 require: true,
+                'classStyle': 'col-6'
             },
             {
                 label: 'Leave Type',

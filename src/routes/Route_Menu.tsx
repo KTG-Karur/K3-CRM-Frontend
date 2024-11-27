@@ -39,6 +39,15 @@ export const AttendanceIncharge = React.lazy(() => import('../view/attendance-in
 export const StaffAdvance = React.lazy(() => import('../view/staff-advance'));
 export const Deputation = React.lazy(() => import('../view/deputation'));
 
+// user rights
+export const UserRights = React.lazy(() => import('../view/user-rights'));
+
+//report
+export const DeputationReport = React.lazy(() => import('../view/deputaion-report'));
+export const TransferReport = React.lazy(() => import('../view/transfer-report'));
+export const PermissionReport = React.lazy(() => import('../view/permission-report'));
+export const PetrolAllowanceReport = React.lazy(() => import('../view/petrol-allowance-report'));
+
 // apps
 export const CalendarApp = React.lazy(() => import('../pages/apps/Calendar'));
 export const ChatApp = React.lazy(() => import('../pages/apps/Chat'));

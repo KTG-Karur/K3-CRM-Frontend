@@ -1,6 +1,6 @@
 import { apiReturnCallBack } from './ApiConfig';
 import apiContainer from './apiContainer';
-const staffsalary = apiContainer.StaffSalary
+const staffsalary = apiContainer.staffSalary
 //GET--->
 export async function getStaffSalary(request) {
   try {

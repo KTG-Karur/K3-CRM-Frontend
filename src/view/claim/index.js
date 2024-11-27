@@ -11,6 +11,7 @@ import { NotificationContainer } from 'react-notifications';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
 import _ from 'lodash';
+import { createUploadImagesRequest } from '../../redux/uploads/actions';
 
 let isEdit = false;
 
@@ -83,7 +84,7 @@ function Index() {
             sort: true,
         },
         {
-            Header: 'Requested By',
+            Header: 'Req By',
             accessor: 'requestedBy',
             sort: true,
         },
@@ -93,9 +94,29 @@ function Index() {
             sort: true,
         },
         {
-            Header: 'Requested Amount',
+            Header: 'Req Amt',
             accessor: 'requestedAmount',
             sort: true,
+        },
+        {
+            Header: 'Status',
+            accessor: 'statusId',
+            Cell: ({ row }) => (
+                <Badge
+                    bg={
+                        row.original.statusId === 30
+                            ? 'danger'
+                            : row.original.statusId === 28
+                                ? 'primary'
+                                : 'success'
+                    }>
+                    {row.original.statusId === 30
+                        ? 'Cancelled'
+                        : row.original.statusId === 28
+                            ? 'Request'
+                            : 'Approved'}
+                </Badge>
+            ),
         },
         {
             Header: 'Actions',
@@ -103,12 +124,43 @@ function Index() {
             Cell: ({ row }) => {
                 return (
                     <div>
-                        <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index)}>
-                            <i className={'fe-edit-1'}></i>
-                        </span>
-                        <span className="text-success  me-2 cursor-pointer" onClick={() => onApprovedClaim(row.original, row.index)}>
-                            <i className={'fe-check-circle'}></i>
-                        </span>
+                        {row.original.statusId === 28 && (
+                            <span>
+                                <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index)}>
+                                    <i className={'fe-edit-1'}></i>
+                                </span>
+
+                                <span
+                                    className={`text-success me-2 cursor-pointer`}
+                                    onClick={() =>
+                                        showConfirmationDialog(
+                                            'You want to Approved?',
+                                            () => onStatusForm(row.original, row.index, 29),
+                                            'Yes'
+                                        )
+                                    }>
+                                    <i className={'fe-thumbs-up'}></i>
+                                </span>
+                                <span
+                                    className={`text-danger cursor-pointer me-2`}
+                                    onClick={() =>
+                                        showConfirmationDialog(
+                                            'You want to Cancelled?',
+                                            () => onStatusForm(row.original, row.index, 30),
+                                            'Yes'
+                                        )
+                                    }>
+                                    <i className={'fe-thumbs-down'}></i>
+                                </span>
+                            </span>
+                        )}
+
+                        {
+                            row.original.statusId === 29 &&
+                            <span className="text-success  me-2 cursor-pointer" onClick={() => onApprovedClaim(row.original, row.index)}>
+                                <i className={'fe-check-circle'}></i>
+                            </span>
+                        }
                     </div>
 
                 )
@@ -197,22 +249,6 @@ function Index() {
             setIsLoading(false)
             setParentList(getClaimList)
             dispatch(resetGetClaim())
-
-            const formData = new FormData();
-            state.uploadImage.map((ele) => {
-                const originalFile = ele[0];
-                //${state}-
-                const renamedFile = new File([originalFile], `${originalFile.name}`, {
-                    type: originalFile.type,
-                    lastModified: originalFile.lastModified,
-                });
-                formData.append("proofImages", renamedFile);
-                // filterImageName.push([renamedFile]);
-            })
-            for (const value of formData.values()) {
-                console.log("value");
-                console.log(value);
-            }
         } else if (getClaimFailure) {
             setIsLoading(false)
             setParentList([])
@@ -260,6 +296,29 @@ function Index() {
         if (createClaimSuccess) {
             const temp_state = [createClaimData[0], ...parentList];
             setParentList(temp_state)
+            console.log("createClaimData")
+            console.log(createClaimData)
+            console.log("temp_state")
+            console.log(temp_state)
+            console.log(state?.uploadImage)
+
+            if (state.uploadImage > 0) {
+                const formData = new FormData();
+                const originalFile = state.uploadImage[0];
+                if (state.uploadImage) {
+                    const renamedFile = new File(
+                        [originalFile],
+                        `Claim-${createClaimData[0].requestedBy}-${createClaimData[0].claimId}-${originalFile.name}`,
+                        {
+                            type: originalFile.type,
+                            lastModified: originalFile.lastModified,
+                        }
+                    );
+                    formData.append('claimProof', renamedFile);
+                    formData.append('recordId', createClaimData[0].claimId);
+                }
+                dispatch(createUploadImagesRequest(formData))
+            }
             showMessage('success', 'Created Successfully');
             closeModel()
             dispatch(resetCreateClaim())
@@ -350,15 +409,47 @@ function Index() {
             claimTypeId: data?.claimTypeId || "",
             requestedAmount: data?.requestedAmount || "",
             reason: data?.reason || "",
+            bankAccountId: data?.bankAccountId || "",
+            modeOfPaymentId: data?.modeOfPaymentId || ""
         });
         isEdit = true;
         setSelectedItem(data)
         setSelectedIndex(index)
         setModal(true)
-        const paymentModeId = {
-            paymentModeId: data?.modeOfPaymentId
+        // const paymentModeId = {
+        //     paymentModeId: data?.modeOfPaymentId
+        // }
+        // onPaymentMode(paymentModeId, "modeOfPaymentId");
+
+        const updatedTabList = _.cloneDeep(employeeFormContainer);
+        const changedArr = [
+            {
+                label: 'Bank Account',
+                name: 'bankAccountId',
+                inputType: 'select',
+                optionList: 'bankAccountList',
+                displayKey: 'bankAndBranch',
+                uniqueKey: 'bankAccountId',
+                'classStyle': 'col-6'
+            },
+        ]
+        if (data?.modeOfPaymentId == 6) {
+            updatedTabList[0].formFields = _.concat(
+                _.slice(updatedTabList[0].formFields, 0, 2),
+                changedArr,
+                _.slice(updatedTabList[0].formFields, 2),
+            );
+        } else {
+            updatedTabList[0].formFields = _.reject(
+                updatedTabList[0].formFields,
+                (field) => _.some(changedArr, { name: field.name })
+            );
         }
-        onPaymentMode(paymentModeId, "modeOfPaymentId");
+        setClaimContainer(updatedTabList);
+        const branchFilter = {
+            branchId: data?.branchId
+        }
+        dispatch(getStaffRequest(branchFilter));
     };
 
     const handleValidation = () => {
@@ -374,12 +465,11 @@ function Index() {
             requestedAmount: state?.requestedAmount || "",
             reason: state?.reason || "",
             modeOfPaymentId: state?.modeOfPaymentId || "",
-            bankAccountId: state?.modeOfPaymentId == 5 ? '' : state.bankAccountId,
-            claimStatus: 28,
+            bankAccountId: state?.modeOfPaymentId == 5 ? '' : state.bankAccountId
         }
-        console.log("submitRequest");
-        console.log(submitRequest);
-        return;
+        // console.log("submitRequest");
+        // console.log(submitRequest);
+        // return;
         if (isEdit) {
             dispatch(updateClaimRequest(submitRequest, selectedItem.claimId))
         } else {
@@ -437,6 +527,14 @@ function Index() {
         }
         setClaimContainer(updatedTabList);
     }
+
+    const onStatusForm = (data, index, statusId) => {
+        const submitRequest = {
+            statusId: statusId,
+        };
+        setSelectedIndex(index);
+        dispatch(updateClaimRequest(submitRequest, data.claimId))
+    };
 
     const onBranchChange = async (option, formName, formUniqueKey, formDisplayKey) => {
         const branchFilter = {

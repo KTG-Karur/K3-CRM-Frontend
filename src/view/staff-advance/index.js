@@ -5,7 +5,7 @@ import FormLayout from '../../utils/formLayout';
 import { staffAdvanceContainer, staffAdvancePayContainer } from './formFieldData';
 import Table from '../../components/Table';
 import { dateConversion, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
-import { createAdvancePaymentHistoryRequest, createStaffAdvanceRequest, getActivityRequest, getAdvancePaymentHistoryRequest, getStaffAdvanceRequest, getStaffRequest, resetCreateStaffAdvance, resetGetActivity, resetGetAdvancePaymentHistory, resetGetStaffAdvance, resetGetStaff, resetUpdateStaffAdvance, updateAdvancePaymentHistoryRequest, updateStaffAdvanceRequest, getBranchRequest, resetGetBranch } from '../../redux/actions';
+import { createAdvancePaymentHistoryRequest, createStaffAdvanceRequest, getActivityRequest, getAdvancePaymentHistoryRequest, getStaffAdvanceRequest, getStaffRequest, resetCreateStaffAdvance, resetGetActivity, resetGetAdvancePaymentHistory, resetGetStaffAdvance, resetGetStaff, resetUpdateStaffAdvance, updateAdvancePaymentHistoryRequest, updateStaffAdvanceRequest, getBranchRequest, resetGetBranch, resetCreateAdvancePaymentHistory, resetUpdateAdvancePaymentHistory } from '../../redux/actions';
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 import _ from 'lodash';
@@ -25,7 +25,8 @@ function Index() {
         getStaffList,
         getStaffFailure,
         getBranchSuccess, getBranchList, getBranchFailure,
-
+        updateAdvancePaymentHistorySuccess, updateAdvancePaymentHistoryData, updateAdvancePaymentHistoryFailure,
+        createAdvancePaymentHistoryFailure, createAdvancePaymentHistoryData, createAdvancePaymentHistorySuccess
     } = appSelector((state) => ({
 
         getBranchSuccess: state.branchReducer.getBranchSuccess,
@@ -47,6 +48,14 @@ function Index() {
         getAdvancePaymentHistorySuccess: state.advancePaymentHistoryReducer.getAdvancePaymentHistorySuccess,
         getAdvancePaymentHistoryList: state.advancePaymentHistoryReducer.getAdvancePaymentHistoryList,
         getAdvancePaymentHistoryFailure: state.advancePaymentHistoryReducer.getAdvancePaymentHistoryFailure,
+
+        createAdvancePaymentHistoryFailure: state.advancePaymentHistoryReducer.createAdvancePaymentHistoryFailure,
+        createAdvancePaymentHistoryData: state.advancePaymentHistoryReducer.createAdvancePaymentHistoryData,
+        createAdvancePaymentHistorySuccess: state.advancePaymentHistoryReducer.createAdvancePaymentHistorySuccess,
+
+        updateAdvancePaymentHistorySuccess: state.advancePaymentHistoryReducer.updateAdvancePaymentHistorySuccess,
+        updateAdvancePaymentHistoryData: state.advancePaymentHistoryReducer.updateAdvancePaymentHistoryData,
+        updateAdvancePaymentHistoryFailure: state.advancePaymentHistoryReducer.updateAdvancePaymentHistoryFailure,
 
         createStaffAdvanceSuccess: state.staffAdvanceReducer.createStaffAdvanceSuccess,
         createStaffAdvanceData: state.staffAdvanceReducer.createStaffAdvanceData,
@@ -94,9 +103,36 @@ function Index() {
         {
             Header: 'Status',
             accessor: 'statusId',
-            sort: true,
+            Cell: ({ row }) => (
+                <Badge
+                    bg={
+                        row.original.statusId === 30
+                            ? 'danger'
+                            : row.original.statusId === 28
+                                ? 'primary'
+                                : 'success'
+                    }>
+                    {row.original.statusId === 30
+                        ? 'Cancelled'
+                        : row.original.statusId === 28
+                            ? 'Request'
+                            : 'Approved'}
+                </Badge>
+            ),
         },
-
+        {
+            Header: 'isActive',
+            accessor: 'isActive',
+            Cell: ({ row }) => (
+                <div>
+                    {row?.original?.isActive ? (
+                        <Badge bg={'success'}>Active</Badge>
+                    ) : (
+                        <Badge bg={'danger'}>In active</Badge>
+                    )}
+                </div>
+            ),
+        },
         {
             Header: 'Actions',
             accessor: 'actions',
@@ -106,13 +142,57 @@ function Index() {
                 const deleteMessage = activeChecker ? "You want to In-Active...?" : "You want to retrive this Data...?";
                 return (
                     <div>
-                        <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index, "forEdit")}>
-                            <i className={'fe-edit-1'}></i>
-                        </span>
+                        {row.original.statusId === 28 && (
+                            <span>
+                                <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index, "forEdit")}>
+                                    <i className={'fe-edit-1'}></i>
+                                </span>
 
-                        <span className="text-primary  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index, "forPayment")}>
-                            <i className={'fe-info'}></i>
-                        </span>
+                                {/* <span
+                                    className={`${iconColor} cursor-pointer me-2`}
+                                    onClick={() =>
+                                        showConfirmationDialog(
+                                            deleteMessage,
+                                            () => onDeleteForm(row.original, row.index, activeChecker),
+                                            'Yes'
+                                        )
+                                    }>
+                                    {
+                                        row?.original?.isActive ? <i className={'fe-trash-2'}></i> : <i className={'fas fa-recycle'}></i>
+                                    }
+                                </span> */}
+
+                                <span
+                                    className={`text-success me-2 cursor-pointer`}
+                                    onClick={() =>
+                                        showConfirmationDialog(
+                                            'You want to Approved?',
+                                            () => onStatusForm(row.original, row.index, 29),
+                                            'Yes'
+                                        )
+                                    }>
+                                    <i className={'fe-thumbs-up'}></i>
+                                </span>
+                                <span
+                                    className={`text-danger me-2 cursor-pointer`}
+                                    onClick={() =>
+                                        showConfirmationDialog(
+                                            'You want to Cancelled?',
+                                            () => onStatusForm(row.original, row.index, 30),
+                                            'Yes'
+                                        )
+                                    }>
+                                    <i className={'fe-thumbs-down'}></i>
+                                </span>
+                            </span>
+                        )}
+
+                        {
+                            row.original.statusId === 29 &&
+                            <span className="text-primary  me-2 cursor-pointer" onClick={() => onPaymentModal(row.original, row.index, "forPayment")}>
+                                <i className={'fe-info'}></i>
+                            </span>
+                        }
 
                     </div>
                 )
@@ -149,7 +229,19 @@ function Index() {
             },
 
         },
-
+        {
+            Header: 'isActive',
+            accessor: 'isActive',
+            Cell: ({ row }) => (
+                <div>
+                    {row?.original?.isActive ? (
+                        <Badge bg={'success'}>Active</Badge>
+                    ) : (
+                        <Badge bg={'danger'}>In active</Badge>
+                    )}
+                </div>
+            ),
+        },
         {
             Header: 'Actions',
             accessor: 'actions',
@@ -159,12 +251,22 @@ function Index() {
                 const deleteMessage = activeChecker ? "You want to In-Active...?" : "You want to retrive this Data...?";
                 return (
                     <div>
-                        <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index, "forEdit")}>
+                        <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index, "forPayment")}>
                             <i className={'fe-edit-1'}></i>
                         </span>
-
-
-
+                        <span
+                            className={`${iconColor} cursor-pointer me-2`}
+                            onClick={() =>
+                                showConfirmationDialog(
+                                    deleteMessage,
+                                    () => onDeleteFormPayment(row.original, row.index, activeChecker),
+                                    'Yes'
+                                )
+                            }>
+                            {
+                                row?.original?.isActive ? <i className={'fe-trash-2'}></i> : <i className={'fas fa-recycle'}></i>
+                            }
+                        </span>
                     </div>
                 )
             },
@@ -176,6 +278,7 @@ function Index() {
 
     const [state, setState] = useState({
         applyDate: moment().format("YYYY-MM-DD"),
+        paidDate: moment().format("YYYY-MM-DD"),
     });
     const [parentList, setParentList] = useState([]);
     const [parentPaymentList, setParentPaymentList] = useState([]);
@@ -274,9 +377,7 @@ function Index() {
         }
     }, [updateStaffAdvanceSuccess, updateStaffAdvanceFailure]);
 
-
     useEffect(() => {
-
         if (getAdvancePaymentHistorySuccess) {
             setIsLoading(false)
             setParentPaymentList(getAdvancePaymentHistoryList);
@@ -287,11 +388,37 @@ function Index() {
         }
     }, [getAdvancePaymentHistorySuccess, getAdvancePaymentHistoryFailure]);
 
+    useEffect(() => {
+        if (createAdvancePaymentHistorySuccess) {
+            const temp_state = [createAdvancePaymentHistoryData[0], ...parentList];
+            setParentPaymentList(temp_state);
+            showMessage('success', 'Created Successfully');
+            closeModel()
+            dispatch(resetCreateAdvancePaymentHistory())
+        } else if (createAdvancePaymentHistoryFailure) {
+            showMessage('warning', errorMessage);
+            dispatch(resetCreateAdvancePaymentHistory())
+        }
+    }, [createAdvancePaymentHistorySuccess, createAdvancePaymentHistoryFailure]);
+
+    useEffect(() => {
+        if (updateAdvancePaymentHistorySuccess) {
+            const temp_state = [...parentList];
+            temp_state[selectedIndex] = updateAdvancePaymentHistoryData[0];
+            setParentPaymentList(temp_state);
+            isEdit && showMessage('success', 'Updated Successfully');
+            closeModel()
+            dispatch(resetUpdateAdvancePaymentHistory())
+        } else if (updateAdvancePaymentHistoryFailure) {
+            showMessage('warning', errorMessage);
+            dispatch(resetUpdateAdvancePaymentHistory())
+        }
+    }, [updateAdvancePaymentHistorySuccess, updateAdvancePaymentHistoryFailure]);
+
     const closeModel = () => {
         isEdit = false;
-        onFormClear()
-        onPaymentFormClear()
-        setModal(false)
+        onFormClear();
+        setModal(false);
     }
 
     const onFormClear = () => {
@@ -301,13 +428,8 @@ function Index() {
             staffId: '',
             amount: '',
             reason: '',
-        });
-    };
 
-    const onPaymentFormClear = () => {
-        setState({
-            ...state,
-            paidDate: '',
+            paidDate: moment().format("YYYY-MM-DD"),
             paidAmount: '',
             reason: '',
         });
@@ -315,13 +437,26 @@ function Index() {
 
     const createModel = () => {
         onFormClear()
-        onPaymentFormClear()
         isEdit = false;
         setModal(true);
         isEditorpayment = 'forEdit'
     };
 
-
+    const onPaymentModal = (data, index, name) => {
+        isEdit = false;
+        setState({
+            ...state,
+            staffAdvanceId: data?.staffAdvanceId || "",
+        });
+        const reqData = {
+            staffAdvanceId: data?.staffAdvanceId
+        }
+        dispatch(getAdvancePaymentHistoryRequest(reqData));
+        setSelectedItem(data)
+        setSelectedIndex(index)
+        setModal(true)
+        isEditorpayment = name;
+    };
 
     const onEditForm = (data, index, name) => {
         if (name == "forEdit") {
@@ -330,12 +465,15 @@ function Index() {
                 staffId: data?.staffId || "",
                 amount: data?.amount || "",
                 reason: data?.reason || "",
+                branchId: data?.branchId || "",
                 applyDate: data.applyDate ? dateConversion(data.applyDate, "YYYY-MM-DD") : ""
             });
         } else if (name == "forPayment") {
             setState({
                 ...state,
                 staffAdvanceId: data?.staffAdvanceId || "",
+                paidAmount: data?.paidAmount || "",
+                paidDate: data?.paidDate || "",
             });
         }
         isEdit = true;
@@ -343,11 +481,6 @@ function Index() {
         setSelectedIndex(index)
         setModal(true)
         isEditorpayment = name;
-        const reqData = {
-            staffAdvanceId: data?.staffAdvanceId
-        }
-        dispatch(getAdvancePaymentHistoryRequest(reqData));
-
     };
 
     const handleValidation = () => {
@@ -357,10 +490,10 @@ function Index() {
     const onFormSubmit = async () => {
         const submitRequest = {
             staffId: state?.staffId || "",
+            branchId: state?.branchId || "",
             amount: state?.amount || "",
             reason: state?.reason || "",
-            advanceStatus: 28,
-            applyDate: state.applyDate ? dateConversion(state.applyDate, "YYYY-MM-DD") : "",
+            applyDate: state?.applyDate ? dateConversion(state.applyDate, "YYYY-MM-DD") : "",
         }
         if (isEdit) {
             dispatch(updateStaffAdvanceRequest(submitRequest, selectedItem.staffAdvanceId))
@@ -376,7 +509,11 @@ function Index() {
             paidAmount: state?.paidAmount || "",
             paidDate: state.paidDate ? dateConversion(state.paidDate, "YYYY-MM-DD") : "",
         }
-        dispatch(createAdvancePaymentHistoryRequest(submitRequest))
+        if (isEdit) {
+            dispatch(updateAdvancePaymentHistoryRequest(submitRequest, selectedItem.advancePaymentHistoryId))
+        } else {
+            dispatch(createAdvancePaymentHistoryRequest(submitRequest))
+        }
 
     }
 
@@ -390,6 +527,31 @@ function Index() {
         })
         dispatch(getStaffRequest(branchFilter));
     }
+
+    // const onDeleteForm = (data, index, activeChecker) => {
+    //     const submitRequest = {
+    //         isActive: activeChecker == 0 ? 1 : 0
+    //     }
+    //     setSelectedIndex(index)
+    //     dispatch(updateStaffAdvanceRequest(submitRequest, data.staffAdvanceId))
+    // };
+
+    const onDeleteFormPayment = (data, index, activeChecker) => {
+        const submitRequest = {
+            isActive: activeChecker == 0 ? 1 : 0
+        }
+        setSelectedIndex(index)
+        dispatch(updateAdvancePaymentHistoryRequest(submitRequest, data.advancePaymentHistoryId))
+    };
+
+    const onStatusForm = (data, index, statusId) => {
+        const submitRequest = {
+            statusId: statusId,
+            isActive: statusId == 30 ? 0 : 1
+        };
+        setSelectedIndex(index);
+        dispatch(updateStaffAdvanceRequest(submitRequest, data.staffAdvanceId))
+    };
 
 
     return (

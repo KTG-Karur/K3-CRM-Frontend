@@ -4,14 +4,17 @@ import ModelViewBox from '../../components/Atom/ModelViewBox';
 import FormLayout from '../../utils/formLayout';
 import { settingLeaveDeductionContainer } from './formFieldData';
 import Table from '../../components/Table';
-import { dateConversion, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
+import { dateConversion, removeExistsList, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
 import { createSettingLeaveDeductionRequest, getActivityRequest, getSettingLeaveDeductionRequest, resetCreateSettingLeaveDeduction, resetGetActivity, resetGetSettingLeaveDeduction, resetUpdateSettingLeaveDeduction, updateSettingLeaveDeductionRequest } from '../../redux/actions';
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 import _ from 'lodash';
 
-let isEdit = false; 
-
+let isEdit = false;
+const leaveList = [
+    { leaveTypeId: 26, leaveTypeName: 'CL' },
+    { leaveTypeId: 27, leaveTypeName: 'SL' },
+]
 function Index() {
 
     const { dispatch, appSelector } = useRedux();
@@ -63,7 +66,7 @@ function Index() {
             accessor: 'leaveCountDay',
             sort: true,
         },
-       
+
         {
             Header: 'Actions',
             accessor: 'actions',
@@ -76,7 +79,7 @@ function Index() {
                         <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index)}>
                             <i className={'fe-edit-1'}></i>
                         </span>
-                        
+
                     </div>
                 )
             },
@@ -86,10 +89,7 @@ function Index() {
     const [state, setState] = useState({});
     const [parentList, setParentList] = useState([]);
     const [optionListState, setOptionListState] = useState({
-        leaveTypeList: [
-            { leaveTypeId: 26, leaveTypeName: 'CL' },
-            { leaveTypeId: 27, leaveTypeName: 'SL' },
-        ],
+        leaveTypeList: leaveList,
     })
     const [selectedItem, setSelectedItem] = useState({});
     const [selectedIndex, setSelectedIndex] = useState(false);
@@ -100,14 +100,14 @@ function Index() {
     const errorHandle = useRef();
 
     useEffect(() => {
-        setIsLoading(true)        
-        dispatch(getSettingLeaveDeductionRequest());        
+        setIsLoading(true)
+        dispatch(getSettingLeaveDeductionRequest());
     }, []);
 
     useEffect(() => {
         if (getSettingLeaveDeductionSuccess) {
             setIsLoading(false)
-            setParentList(getSettingLeaveDeductionList)
+            setParentList(getSettingLeaveDeductionList);
             dispatch(resetGetSettingLeaveDeduction())
         } else if (getSettingLeaveDeductionFailure) {
             setIsLoading(false)
@@ -158,10 +158,15 @@ function Index() {
         });
     };
 
-    const createModel = () => {
+    const createModel = async () => {
         onFormClear()
         isEdit = false;
         setModal(true)
+        const remainingLeaveDeductionList = await removeExistsList(optionListState.leaveTypeList, parentList, 'leaveTypeId');
+        setOptionListState({
+            ...optionListState,
+            leaveTypeList: remainingLeaveDeductionList
+        })
     };
 
     const onEditForm = (data, index) => {
@@ -171,6 +176,10 @@ function Index() {
             leaveCountDay: data?.leaveCountDay || "",
             leaveDeductionPercentage: data?.leaveDeductionPercentage || ""
         });
+        setOptionListState({
+            ...optionListState,
+            leaveTypeList: leaveList
+        })
         isEdit = true;
         setSelectedItem(data)
         setSelectedIndex(index)
@@ -190,27 +199,26 @@ function Index() {
         if (isEdit) {
             dispatch(updateSettingLeaveDeductionRequest(submitRequest, selectedItem.settingLeaveDeductionId))
         } else {
-            console.log(submitRequest)
             dispatch(createSettingLeaveDeductionRequest(submitRequest))
         }
     };
 
-    
+
     return (
         <React.Fragment>
             <NotificationContainer />
-           { isLoading ? <div className='bg-light opacity-0.25'>
-            <div className="d-flex justify-content-center m-5">
-                <Spinner className='mt-5 mb-5' animation="border" />
-            </div>
+            {isLoading ? <div className='bg-light opacity-0.25'>
+                <div className="d-flex justify-content-center m-5">
+                    <Spinner className='mt-5 mb-5' animation="border" />
+                </div>
             </div> :
-            <Table
-                columns={columns}
-                Title={'Leave Deduction List'}
-                data={parentList || []}
-                pageSize={25}
-                toggle={createModel}
-            />}
+                <Table
+                    columns={columns}
+                    Title={'Leave Deduction List'}
+                    data={parentList || []}
+                    pageSize={25}
+                    toggle={createModel}
+                />}
 
             <ModelViewBox
                 modal={modal}

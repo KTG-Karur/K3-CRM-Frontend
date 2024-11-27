@@ -32,6 +32,7 @@ import staffLeaveReducer from './staff-leave/reducers';
 import staffAttendanceReducer from './staff-attendance/reducers';
 import staffsalaryReducer from './staff-salary/reducers';
 import bankAccountReducer from './bank-account/reducers';
+import userRightsReducer from './user-rights/reducers';
 
 export default combineReducers({
     Auth,
@@ -66,4 +67,5 @@ export default combineReducers({
     staffAttendanceReducer,
     staffsalaryReducer,
     bankAccountReducer,
+    userRightsReducer,
 });

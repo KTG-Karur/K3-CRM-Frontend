@@ -1,13 +1,49 @@
 const deputationContainer = [
     {
         formFields: [
-            
+
             {
                 'label': "Deputation Date",
                 'name': "deputationDate",
                 'inputType': "date",
                 'require': true,
-                'classStyle' : 'col-6'
+                'classStyle': 'col-12'
+            },
+            {
+                'label': "From Date",
+                'name': "fromDate",
+                'inputType': "date",
+                'require': true,
+                'classStyle': 'col-6',
+                'minmumDate': 'minmumFrom',
+
+            },
+            {
+                'label': "To Date",
+                'name': "toDate",
+                'inputType': "date",
+                'require': true,
+                'classStyle': 'col-6',
+                'minmumDate': 'minmumTo',
+            },
+            {
+                'label': "No Of Debutation Days",
+                'name': "dayCount",
+                'inputType': "number",
+                'placeholder': "0",
+                'isDisabled': true,
+                'classStyle': 'col-6',
+            },
+            {
+                label: 'From Place',
+                name: 'fromPlace',
+                inputType: 'select',
+                optionList: 'branchList',
+                displayKey: 'branchName',
+                'onChange': 'onBranchChange',
+                uniqueKey: 'branchId',
+                require: true,
+                'classStyle': 'col-6'
             },
             {
                 label: 'Staff',
@@ -17,49 +53,25 @@ const deputationContainer = [
                 displayKey: 'staffName',
                 uniqueKey: 'staffId',
                 require: true,
-                'classStyle' : 'col-6'
-            },  
-            {
-                'label': "From Date",
-                'name': "fromDate",
-                'inputType': "date",
-                'require': true,
-                'classStyle' : 'col-6'
+                'classStyle': 'col-6',
             },
-            {
-                'label': "To Date",
-                'name': "toDate",
-                'inputType': "date",
-                'require': true,
-                'classStyle' : 'col-6'
-            },
-            {
-                label: 'From Place',
-                name: 'fromPlace',
-                inputType: 'select',
-                optionList: 'branchList',
-                displayKey: 'branchName',
-                uniqueKey: 'branchId',
-                require: true,
-                'classStyle' : 'col-6'
-            },            
             {
                 label: 'To Place',
                 name: 'toPlace',
                 inputType: 'select',
-                optionList: 'branchList',
+                optionList: 'branchListTo',
                 displayKey: 'branchName',
                 uniqueKey: 'branchId',
                 require: true,
-                'classStyle' : 'col-6'
-            },            
+                'classStyle': 'col-6'
+            },
             {
                 'label': "Reason",
                 'name': "reason",
                 'inputType': "textarea",
                 'placeholder': "Enter Reason",
                 'require': true,
-                'classStyle' : 'col-6'
+                'classStyle': 'col-12'
             },
         ]
     },

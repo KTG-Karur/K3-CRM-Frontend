@@ -7,9 +7,11 @@ import Table from '../../components/Table';
 import { dateConversion, noOfDayCount, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
 import {
     createStaffLeaveRequest,
+    getBranchRequest,
     getStaffLeaveRequest,
     getStaffRequest,
     resetCreateStaffLeave,
+    resetGetBranch,
     resetGetStaff,
     resetGetStaffLeave,
     resetUpdateStaffLeave,
@@ -25,6 +27,7 @@ function Index() {
     const { dispatch, appSelector } = useRedux();
 
     const {
+        getBranchSuccess, getBranchList, getBranchFailure,
         getStaffLeaveSuccess,
         getStaffLeaveList,
         getStaffLeaveFailure,
@@ -40,6 +43,10 @@ function Index() {
         getStaffList,
         getStaffFailure,
     } = appSelector((state) => ({
+        getBranchSuccess: state.branchReducer.getBranchSuccess,
+        getBranchList: state.branchReducer.getBranchList,
+        getBranchFailure: state.branchReducer.getBranchFailure,
+
         getStaffSuccess: state.staffReducer.getStaffSuccess,
         getStaffList: state.staffReducer.getStaffList,
         getStaffFailure: state.staffReducer.getStaffFailure,
@@ -100,15 +107,15 @@ function Index() {
             Cell: ({ row }) => (
                 <Badge
                     bg={
-                        row.original.leaveStatusId === 30
+                        row.original.statusId === 30
                             ? 'danger'
-                            : row.original.leaveStatusId === 28
+                            : row.original.statusId === 28
                                 ? 'primary'
                                 : 'success'
                     }>
-                    {row.original.leaveStatusId === 30
+                    {row.original.statusId === 30
                         ? 'Cancelled'
-                        : row.original.leaveStatusId === 28
+                        : row.original.statusId === 28
                             ? 'Request'
                             : 'Approved'}
                 </Badge>
@@ -120,7 +127,7 @@ function Index() {
             Cell: ({ row }) => {
                 return (
                     <div>
-                        {row.original.leaveStatusId === 28 && (
+                        {row.original.statusId === 28 && (
                             <span>
                                 <span
                                     className="text-primary  me-2 cursor-pointer"
@@ -175,6 +182,7 @@ function Index() {
             { leaveTypeId: 26, leaveTypeName: 'Causal Leave' },
             { leaveTypeId: 27, leaveTypeName: 'Sick Leave' },
         ],
+        branchList: [],
     });
     const [errors, setErrors] = useState([]);
 
@@ -183,8 +191,29 @@ function Index() {
     useEffect(() => {
         setIsLoading(true);
         dispatch(getStaffLeaveRequest());
-        dispatch(getStaffRequest());
+        // dispatch(getStaffRequest());
+        dispatch(getBranchRequest());
     }, []);
+
+
+    useEffect(() => {
+        if (getBranchSuccess) {
+            setIsLoading(false)
+            setOptionListState({
+                ...optionListState,
+                branchList: getBranchList
+            })
+            dispatch(resetGetBranch())
+        } else if (getBranchFailure) {
+            setIsLoading(false)
+            setOptionListState({
+                ...optionListState,
+                branchList: [],
+            })
+            dispatch(resetGetBranch())
+        }
+    }, [getBranchSuccess, getBranchFailure]);
+
 
     useEffect(() => {
         setState({
@@ -263,6 +292,8 @@ function Index() {
             staffId: '',
             leaveTypeId: '',
             fromDate: '',
+            branchId: '',
+            dayCount: '',
             toDate: '',
             reason: '',
         });
@@ -280,6 +311,8 @@ function Index() {
             staffId: data?.staffId || '',
             leaveTypeId: data?.leaveTypeId || '',
             fromDate: data?.fromDate || '',
+            branchId: data?.branchId || '',
+            dayCount: data?.dayCount || '',
             toDate: data?.toDate || '',
             reason: data?.reason || '',
         });
@@ -293,18 +326,18 @@ function Index() {
         errorHandle.current.validateFormFields();
     };
 
-    // console.log("state")
-    // console.log(state)
     const onFormSubmit = async () => {
         let submitRequest = {
             staffId: state?.staffId || '',
             leaveTypeId: state?.leaveTypeId || '',
             fromDate: state?.fromDate || '',
             toDate: state?.toDate || '',
+            dayCount: state?.dayCount || '',
+            branchId: state?.branchId || '',
             reason: state?.reason || '',
         };
         if (isEdit) {
-            submitRequest.leaveStatusId = selectedItem?.leaveStatusId;
+            submitRequest.statusId = selectedItem?.statusId;
             dispatch(updateStaffLeaveRequest(submitRequest, selectedItem.staffLeaveId));
         } else {
             dispatch(createStaffLeaveRequest(submitRequest));
@@ -318,6 +351,18 @@ function Index() {
         setSelectedIndex(index);
         dispatch(updateStaffLeaveRequest(submitRequest, data.staffLeaveId));
     };
+
+    const onBranchChange = async (option, formName, formUniqueKey, formDisplayKey) => {
+        const branchFilter = {
+            branchId: option[formUniqueKey]
+        }
+        setState({
+            ...state,
+            [formName]: option[formUniqueKey]
+        })
+
+        dispatch(getStaffRequest(branchFilter));
+    }
 
     return (
         <React.Fragment>
@@ -351,6 +396,7 @@ function Index() {
                     handleSubmit={onFormSubmit}
                     setState={setState}
                     state={state}
+                    onChangeCallBack={{ "onBranchChange": onBranchChange }}
                     ref={errorHandle}
                     noOfColumns={1}
                     errors={errors}

@@ -50,7 +50,7 @@ export async function createStaff(request) {
 //UPDATE---->
 export async function updateStaff(request, staffId) {
   try {
-    const response = await apiReturnCallBack("PUT", staff+`/${staffId}`, request);
+    const response = await apiReturnCallBack("PUT", staff + `/${staffId}`, request);
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.message || JSON.stringify(data));
@@ -62,6 +62,18 @@ export async function updateStaff(request, staffId) {
 }
 
 //DELETE---->
+export async function deleteStaff(request, staffId) {
+  try {
+    const response = await apiReturnCallBack("PUT", staff + `-delete/${staffId}`, request);
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || JSON.stringify(data));
+    }
+    return data;
+  } catch (error) {
+    throw error;
+  }
+}
 // export async function deleteStaff(staffId) {
 //   try {
 //     const response = await apiReturnCallBack("DELETE", staff+`/${staffId}`);

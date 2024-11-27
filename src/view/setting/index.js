@@ -107,7 +107,6 @@ function Index() {
 
     const errorHandle = useRef();
 
-
     useEffect(() => {
         setIsLoading(true)
         dispatch(getSettingRequest());
@@ -207,7 +206,6 @@ function Index() {
         if (isEdit) {
             dispatch(updateSettingRequest(submitRequest, selectedItem.settingId))
         } else {
-            console.log(submitRequest)
             dispatch(createSettingRequest(submitRequest))
         }
     };
@@ -235,28 +233,28 @@ function Index() {
                 <div className="d-flex justify-content-center m-5">
                     <Spinner className='mt-5 mb-5' animation="border" />
                 </div>
-            </div> :                
-            <CardViewBox
-                card={card}
-                setCard={setCard}
-                cardHeader={'Work Day Setting'}
-                cardSize={'md'}
-                isEdit={isEdit}
-                handleSubmit={handleValidation}>
-                <FormLayout
-                    dynamicForm={settingContainer}
-                    handleSubmit={onFormSubmit}
-                    optionListState={optionListState}
-                    setState={setState}
-                    onChangeCallBack={{ onHandleCheckbox: onHandleCheckbox }}
-                    state={state}
-                    ref={errorHandle}
-                    noOfColumns={1}
-                    errors={errors}
-                    setErrors={setErrors}
-                />
-            </CardViewBox>}
-            
+            </div> :
+                <CardViewBox
+                    card={card}
+                    setCard={setCard}
+                    cardHeader={'Work Day Setting'}
+                    cardSize={'md'}
+                    isEdit={isEdit}
+                    handleSubmit={handleValidation}>
+                    <FormLayout
+                        dynamicForm={settingContainer}
+                        handleSubmit={onFormSubmit}
+                        optionListState={optionListState}
+                        setState={setState}
+                        onChangeCallBack={{ onHandleCheckbox: onHandleCheckbox }}
+                        state={state}
+                        ref={errorHandle}
+                        noOfColumns={1}
+                        errors={errors}
+                        setErrors={setErrors}
+                    />
+                </CardViewBox>}
+
         </React.Fragment>
     );
 }

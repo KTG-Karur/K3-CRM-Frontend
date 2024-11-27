@@ -327,6 +327,7 @@ function Index() {
     const onStatusForm = (data, index, activeChecker) => {
         const submitRequest = {
             statusId: activeChecker,
+            isActive: activeChecker == 30 ? 0 : 1,
         };
         setSelectedIndex(index);
         dispatch(updatePermissionRequest(submitRequest, data.permissionId));

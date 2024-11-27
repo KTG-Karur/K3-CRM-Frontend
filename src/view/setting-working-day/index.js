@@ -10,6 +10,8 @@ import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 import _ from 'lodash';
 import CardViewBox from '../../components/Atom/CardViewBox';
+import { createUploadImagesRequest } from '../../redux/uploads/actions';
+import moment from 'moment';
 
 let isEdit = false;
 
@@ -44,7 +46,6 @@ function Index() {
         workDay: [],
         settingWorkingDayId: 1
     });
-    const [parentList, setParentList] = useState([]);
     const [optionListState, setOptionListState] = useState({
         workDayList: [
             { workDay: 1, workDayName: 'Monday' },
@@ -56,7 +57,6 @@ function Index() {
             { workDay: 7, workDayName: 'Sunday' },
         ],
     });
-    const [selectedIndex, setSelectedIndex] = useState(false);
     const [card, setCard] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState([]);
@@ -103,8 +103,26 @@ function Index() {
                 logoName: createSettingWorkingDayData[0]?.logoName || '',
                 settingWorkingDayId: 1
             }
+            if (state.logoName > 0) {
+                const formData = new FormData();
+                const originalFile = state.logoName[0];
+                if (state.logoName) {
+                    const renamedFile = new File(
+                        [originalFile],
+                        `K3-Logo-${moment().format('DD-MM-YYYY')}-${originalFile.name}`,
+                        {
+                            type: originalFile.type,
+                            lastModified: originalFile.lastModified,
+                        }
+                    );
+                    formData.append('logo', renamedFile);
+                }
+                dispatch(createUploadImagesRequest(formData))
+            }
             setState(data)
             isEdit = true;
+
+
             showMessage('success', 'Created Successfully');
             dispatch(resetCreateSettingWorkingDay())
         } else if (createSettingWorkingDayFailure) {
@@ -119,6 +137,24 @@ function Index() {
                 workDay: JSON.parse(updateSettingWorkingDayData[0]?.workDay || '[]'),
                 logoName: updateSettingWorkingDayData[0]?.logoName || '',
                 settingWorkingDayId: 1
+            }
+
+            if (state.logoName.length > 0) {
+                const formData = new FormData();
+                const originalFile = state.logoName[0];
+                if (state.logoName) {
+
+                    const renamedFile = new File(
+                        [originalFile],
+                        `K3-Logo-${moment().format('DD-MM-YYYY')}-${originalFile.name}`,
+                        {
+                            type: originalFile.type,
+                            lastModified: originalFile.lastModified,
+                        }
+                    );
+                    formData.append('logo', renamedFile);
+                }
+                dispatch(createUploadImagesRequest(formData))
             }
             setState(data)
             isEdit && showMessage('success', 'Updated Successfully');
@@ -158,7 +194,7 @@ function Index() {
             };
         });
     }
-    
+
 
     return (
         <React.Fragment>

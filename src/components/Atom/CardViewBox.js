@@ -3,15 +3,15 @@ import { VerticalForm } from '../form';
 import { Card, Button } from 'react-bootstrap';
 
 function CardViewBox(props) {
-    const { card, setCard, children, cardHeader, cancelBtn = true, cardSize,saveBtn = true, handleSubmit, btnName = false, isEdit, cardHead = false, backgroundColor = "", headerBg = "" } = props;
+    const { card, setCard, children, cardHeader, cancelBtn = true, cardSize, saveBtn = true, handleSubmit, btnName = false, isEdit, cardHead = false, backgroundColor = "", headerBg = "" } = props;
     const handleClose = () => {
         setCard(false);
     };
 
     return (
         <React.Fragment>
-            <Card show={card} onHide={handleClose} centered size={cardSize}>
-                <Card.Header style={{ backgroundColor: headerBg }} closeButton>
+            <Card show={card ? "true" : "false"} centered={"true"} size={cardSize}>
+                <Card.Header style={{ backgroundColor: headerBg }}>
                     <Card.Title as="h4">{`${isEdit ? 'Edit ' : cardHead ? '' : ''} ${cardHeader}`}</Card.Title>
                 </Card.Header>
                 <Card.Body style={{ backgroundColor: backgroundColor }}>

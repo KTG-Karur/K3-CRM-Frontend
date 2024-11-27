@@ -11,7 +11,7 @@ import { NotificationContainer } from 'react-notifications';
 import _ from 'lodash';
 import { Form } from 'react-bootstrap';
 import Select from 'react-select';
-import { createBranchRequest, createDepartmentRequest, createDesignationRequest, createStaffRequest, deleteStaffProofRequest, deleteStaffQualificationRequest, getBranchRequest, getDepartmentRequest, getDesignationRequest, getProofTypeRequest, getStaffDetailsRequest, getStaffRequest, resetCreateBranch, resetCreateDepartment, resetCreateDesignation, resetCreateStaff, resetGetBranch, resetGetDepartment, resetGetDesignation, resetGetDetailsStaff, resetGetProofType, resetGetStaff, resetUpdateStaff, updateStaffRequest } from '../../redux/actions';
+import { createBranchRequest, createDepartmentRequest, createDesignationRequest, createStaffRequest, deleteStaffProofRequest, deleteStaffQualificationRequest, deleteStaffRequest, deleteUpdateStaff, getBranchRequest, getDepartmentRequest, getDesignationRequest, getProofTypeRequest, getStaffDetailsRequest, getStaffRequest, resetCreateBranch, resetCreateDepartment, resetCreateDesignation, resetCreateStaff, resetGetBranch, resetGetDepartment, resetGetDesignation, resetGetDetailsStaff, resetGetProofType, resetGetStaff, resetUpdateStaff, updateStaffRequest } from '../../redux/actions';
 import moment from 'moment';
 import { deleteStaffWorkExperienceRequest } from '../../redux/staff-work-experience/actions';
 import { deleteStaffLanguageRequest } from '../../redux/staff-language/actions';
@@ -98,7 +98,8 @@ function Index() {
         createStaffSuccess, createStaffData, createStaffFailure,
         updateStaffSuccess, updateStaffData, updateStaffFailure, errorMessage,
         createBranchSuccess, createBranchData, createBranchFailure, createDepartmentSuccess,
-        createDepartmentData, createDepartmentFailure, createDesignationSuccess, createDesignationData, createDesignationFailure,
+        createDepartmentData, createDepartmentFailure, createDesignationSuccess, createDesignationData, createDesignationFailure, deleteStaffSuccess,
+        deleteStaffData, deleteStaffFailure,
 
     } = appSelector((state) => ({
         getStaffSuccess: state.staffReducer.getStaffSuccess,
@@ -145,6 +146,10 @@ function Index() {
         updateStaffData: state.staffReducer.updateStaffData,
         updateStaffFailure: state.staffReducer.updateStaffFailure,
 
+        deleteStaffSuccess: state.staffReducer.deleteStaffSuccess,
+        deleteStaffData: state.staffReducer.deleteStaffData,
+        deleteStaffFailure: state.staffReducer.deleteStaffFailure,
+
         errorMessage: state.staffReducer.errorMessage,
     }));
 
@@ -178,6 +183,19 @@ function Index() {
             Header: 'Role',
             accessor: 'roleName',
             sort: false,
+        },
+        {
+            Header: 'Status',
+            accessor: 'isActive',
+            Cell: ({ row }) => (
+                <div>
+                    {row?.original?.isActive ? (
+                        <Badge bg={'success'}>Active</Badge>
+                    ) : (
+                        <Badge bg={'danger'}>In active</Badge>
+                    )}
+                </div>
+            ),
         },
         {
             Header: 'Actions',
@@ -679,8 +697,6 @@ function Index() {
                 // filterImageName.push([renamedFile]);
             })
             dispatch(createUploadImagesRequest(formData))
-
-
         } else if (createStaffFailure) {
             showMessage('warning', errorMessage);
             dispatch(resetCreateStaff())
@@ -695,7 +711,6 @@ function Index() {
             isEdit && showMessage('success', 'Updated Successfully');
             closeModel()
             dispatch(resetUpdateStaff())
-
             if (uploadImages) {
                 uploadImages = false;
                 const formData = new FormData();
@@ -714,6 +729,20 @@ function Index() {
             dispatch(resetUpdateStaff())
         }
     }, [updateStaffSuccess, updateStaffFailure]);
+
+    useEffect(() => {
+        if (deleteStaffSuccess) {
+            const temp_state = [...parentList];
+            temp_state[selectedIndex] = deleteStaffData[0];
+            setParentList(temp_state)
+            isEdit && showMessage('success', 'Updated Successfully');
+            closeModel()
+            dispatch(deleteUpdateStaff())
+        } else if (deleteStaffFailure) {
+            showMessage('warning', errorMessage);
+            dispatch(deleteUpdateStaff())
+        }
+    }, [deleteStaffSuccess, deleteStaffFailure]);
 
     // Branch Model Data
     useEffect(() => {
@@ -1029,7 +1058,7 @@ function Index() {
         const updatedState = { ...data, selectedIdx: index };
         setState(updatedState);
     };
-    
+
     //handleDelete
     const handleDeleteTabTable = async (data, idx, selectedName) => {
         if (isEdit) {
@@ -1053,12 +1082,14 @@ function Index() {
 
     const onDeleteForm = (data, index, activeChecker) => {
         const submitRequest = {
-            personalInfo: [{
-                isActive: activeChecker == 0 ? 1 : 0
-            }]
+            isActive: activeChecker == 0 ? 1 : 0,
         }
+        console.log("data")
+        console.log(data.staffId)
         setSelectedIndex(index)
-        // dispatch(updateStaffRequest(submitRequest, data.staffId))
+        console.log("submitRequest")
+        console.log(submitRequest)
+        dispatch(deleteStaffRequest(submitRequest, data.staffId))
     };
 
     const toggleModal = (form) => {

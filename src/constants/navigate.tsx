@@ -64,6 +64,7 @@ const Navigate: NavigateTypes[] = [
         icon: 'mdi mdi-account-check',
         url: '/allowance/petrol-allowance',
     },
+
     { label: 'Master', isTitle: true },
     // {
     //     label: 'Customer',
@@ -159,6 +160,11 @@ const Navigate: NavigateTypes[] = [
                 url: '/view/proof-type',
                 parentKey: 'Master',
             },
+            {
+                label: 'User Rights',
+                url: '/view/user-rights',
+                parentKey: 'Master',
+            },
         ],
     },
     {
@@ -182,6 +188,32 @@ const Navigate: NavigateTypes[] = [
                 parentKey: 'Setting',
             },
         ],
+    },
+
+    { label: 'Reports', isTitle: true },
+    {
+        label: 'Deputation Order Report',
+        isTitle: false,
+        icon: 'mdi mdi-account-check',
+        url: '/deputation-report',
+    },
+    {
+        label: 'Transfer Order Report',
+        isTitle: false,
+        icon: 'mdi mdi-account-check',
+        url: '/transfer-report',
+    },
+    {
+        label: 'Permission/ Leave/ OD',
+        isTitle: false,
+        icon: 'mdi mdi-account-check',
+        url: '/permission-report',
+    },
+    {
+        label: 'Petrol Allowance Report',
+        isTitle: false,
+        icon: 'mdi mdi-account-check',
+        url: '/petrol-allowance-report',
     },
 
     // { label: 'Apps', isTitle: true },

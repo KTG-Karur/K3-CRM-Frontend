@@ -5,26 +5,34 @@ import FormLayout from '../../utils/formLayout';
 import { petrolAllowanceContainer } from './formFieldData';
 import Table from '../../components/Table';
 import { dateConversion, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
-import { createPetrolAllowanceRequest, getActivityRequest, getStaffRequest, getPetrolAllowanceRequest, resetCreatePetrolAllowance, resetGetActivity, resetGetStaff, resetGetPetrolAllowance, resetUpdatePetrolAllowance, updatePetrolAllowanceRequest } from '../../redux/actions';
+import { createPetrolAllowanceRequest, getActivityRequest, getStaffRequest, getPetrolAllowanceRequest, resetCreatePetrolAllowance, resetGetActivity, resetGetStaff, resetGetPetrolAllowance, resetUpdatePetrolAllowance, updatePetrolAllowanceRequest, resetGetBranch, getBranchRequest } from '../../redux/actions';
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 import _ from 'lodash';
+import moment from 'moment';
 
-let isEdit = false; 
+let isEdit = false;
 
 function Index() {
 
     const { dispatch, appSelector } = useRedux();
 
-    const { getPetrolAllowanceSuccess, getPetrolAllowanceList, getPetrolAllowanceFailure,
+    const {
+        getBranchSuccess, getBranchList, getBranchFailure,
+        getPetrolAllowanceSuccess, getPetrolAllowanceList, getPetrolAllowanceFailure,
         getActivitySuccess, getActivityList, getActivityFailure,
         createPetrolAllowanceSuccess, createPetrolAllowanceData, createPetrolAllowanceFailure,
         updatePetrolAllowanceSuccess, updatePetrolAllowanceData, updatePetrolAllowanceFailure,
-        errorMessage,getStaffSuccess,
+        errorMessage, getStaffSuccess,
         getStaffList,
         getStaffFailure,
 
     } = appSelector((state) => ({
+
+        getBranchSuccess: state.branchReducer.getBranchSuccess,
+        getBranchList: state.branchReducer.getBranchList,
+        getBranchFailure: state.branchReducer.getBranchFailure,
+
         getStaffSuccess: state.staffReducer.getStaffSuccess,
         getStaffList: state.staffReducer.getStaffList,
         getStaffFailure: state.staffReducer.getStaffFailure,
@@ -60,7 +68,7 @@ function Index() {
             Cell: ({ row }) => {
                 return (
                     <div>
-                       {dateConversion(row.original.allowanceDate, "DD-MM-YYYY") }
+                        {dateConversion(row.original.allowanceDate, "DD-MM-YYYY")}
                     </div>
                 )
             },
@@ -121,10 +129,13 @@ function Index() {
         },
     ];
 
-    const [state, setState] = useState({});
+    const [state, setState] = useState({
+        allowanceDate: moment().format("YYYY-MM-DD")
+    });
     const [parentList, setParentList] = useState([]);
     const [optionListState, setOptionListState] = useState({
         staffList: [],
+        branchList: [],
     })
     const [selectedItem, setSelectedItem] = useState({});
     const [selectedIndex, setSelectedIndex] = useState(false);
@@ -136,13 +147,29 @@ function Index() {
 
     useEffect(() => {
         setIsLoading(true)
-        dispatch(getStaffRequest());
-        const getReq={
-            isActive : 1
-        }
-        dispatch(getPetrolAllowanceRequest(getReq));
-        dispatch(getActivityRequest(getReq));
+        // dispatch(getStaffRequest());
+        dispatch(getBranchRequest());
+        dispatch(getPetrolAllowanceRequest());
+        dispatch(getActivityRequest());
     }, []);
+
+    useEffect(() => {
+        if (getBranchSuccess) {
+            setIsLoading(false)
+            setOptionListState({
+                ...optionListState,
+                branchList: getBranchList
+            })
+            dispatch(resetGetBranch())
+        } else if (getBranchFailure) {
+            setIsLoading(false)
+            setOptionListState({
+                ...optionListState,
+                branchList: [],
+            })
+            dispatch(resetGetBranch())
+        }
+    }, [getBranchSuccess, getBranchFailure]);
 
     useEffect(() => {
         if (getStaffSuccess) {
@@ -179,14 +206,14 @@ function Index() {
             setIsLoading(false)
             setOptionListState({
                 ...optionListState,
-                activityList : getActivityList
+                activityList: getActivityList
             })
             dispatch(resetGetActivity())
         } else if (getActivityFailure) {
             setIsLoading(false)
             setOptionListState({
                 ...optionListState,
-                activityList : []
+                activityList: []
             })
             dispatch(resetGetActivity())
         }
@@ -228,10 +255,11 @@ function Index() {
     const onFormClear = () => {
         setState({
             ...state,
-            allowanceDate: '',
+            allowanceDate: moment().format("YYYY-MM-DD"),
             staffId: '',
             activityIds: '',
             fromPlace: '',
+            branchId: '',
             toPlace: '',
             totalKm: '',
         });
@@ -249,6 +277,7 @@ function Index() {
             staffId: data?.staffId || "",
             activityIds: data.activityId ? _.map(_.split(data.activityId, ','), _.toNumber) : "",
             fromPlace: data?.fromPlace || "",
+            branchId: data?.branchId || "",
             toPlace: data?.toPlace || "",
             totalKm: data?.totalKm || "",
             allowanceDate: data.allowanceDate ? dateConversion(data.allowanceDate, "YYYY-MM-DD") : ""
@@ -268,6 +297,7 @@ function Index() {
             staffId: state?.staffId || "",
             activityId: state.activityIds ? state.activityIds.toString() : "",
             fromPlace: state?.fromPlace || "",
+            branchId: state?.branchId || "",
             toPlace: state?.toPlace || "",
             totalKm: state?.totalKm || "",
             allowanceDate: state.allowanceDate ? dateConversion(state.allowanceDate, "YYYY-MM-DD") : "",
@@ -275,7 +305,6 @@ function Index() {
         if (isEdit) {
             dispatch(updatePetrolAllowanceRequest(submitRequest, selectedItem.petrolAllowanceId))
         } else {
-            console.log(submitRequest)
             dispatch(createPetrolAllowanceRequest(submitRequest))
         }
     };
@@ -288,21 +317,32 @@ function Index() {
         dispatch(updatePetrolAllowanceRequest(submitRequest, data.petrolAllowanceId))
     };
 
+    const onBranchChange = async (option, formName, formUniqueKey, formDisplayKey) => {
+        const branchFilter = {
+            branchId: option[formUniqueKey]
+        }
+        setState({
+            ...state,
+            [formName]: option[formUniqueKey]
+        })
+        dispatch(getStaffRequest(branchFilter));
+    }
+
     return (
         <React.Fragment>
             <NotificationContainer />
-           { isLoading ? <div className='bg-light opacity-0.25'>
-            <div className="d-flex justify-content-center m-5">
-                <Spinner className='mt-5 mb-5' animation="border" />
-            </div>
+            {isLoading ? <div className='bg-light opacity-0.25'>
+                <div className="d-flex justify-content-center m-5">
+                    <Spinner className='mt-5 mb-5' animation="border" />
+                </div>
             </div> :
-            <Table
-                columns={columns}
-                Title={'Visit Entry List'}
-                data={parentList || []}
-                pageSize={25}
-                toggle={createModel}
-            />}
+                <Table
+                    columns={columns}
+                    Title={'Visit Entry List'}
+                    data={parentList || []}
+                    pageSize={25}
+                    toggle={createModel}
+                />}
 
             <ModelViewBox
                 modal={modal}
@@ -316,6 +356,7 @@ function Index() {
                     handleSubmit={onFormSubmit}
                     optionListState={optionListState}
                     setState={setState}
+                    onChangeCallBack={{ "onBranchChange": onBranchChange }}
                     state={state}
                     ref={errorHandle}
                     noOfColumns={1}

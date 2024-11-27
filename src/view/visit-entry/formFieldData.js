@@ -6,7 +6,18 @@ const petrolAllowanceContainer = [
                 'name': "allowanceDate",
                 'inputType': "date",
                 'require': true,
-                'classStyle' : 'col-12'
+                'classStyle': 'col-12'
+            },
+            {
+                label: 'Branch',
+                name: 'branchId',
+                inputType: 'select',
+                optionList: 'branchList',
+                displayKey: 'branchName',
+                'onChange': 'onBranchChange',
+                uniqueKey: 'branchId',
+                require: true,
+                'classStyle': 'col-6'
             },
             {
                 label: 'Staff',
@@ -16,7 +27,7 @@ const petrolAllowanceContainer = [
                 displayKey: 'staffName',
                 uniqueKey: 'staffId',
                 require: true,
-                'classStyle' : 'col-6'
+                'classStyle': 'col-6'
             },
             {
                 'label': "Total Km",
@@ -24,7 +35,7 @@ const petrolAllowanceContainer = [
                 'inputType': "text",
                 'placeholder': "Enter Total Km",
                 'require': true,
-                'classStyle' : 'col-6'
+                'classStyle': 'col-6'
             },
             {
                 label: 'Activity',
@@ -34,7 +45,8 @@ const petrolAllowanceContainer = [
                 displayKey: 'activityName',
                 uniqueKey: 'activityId',
                 require: true,
-                isMultiple : true
+                isMultiple: true,
+                'classStyle': 'col-6'
             },
             {
                 'label': "From Place",
@@ -42,7 +54,7 @@ const petrolAllowanceContainer = [
                 'inputType': "textarea",
                 'placeholder': "Enter From Place",
                 'require': true,
-                'classStyle' : 'col-6'
+                'classStyle': 'col-6'
             },
             {
                 'label': "To Place",
@@ -50,7 +62,7 @@ const petrolAllowanceContainer = [
                 'inputType': "textarea",
                 'placeholder': "Enter To Place",
                 'require': true,
-                'classStyle' : 'col-6'
+                'classStyle': 'col-6'
             },
         ]
     },

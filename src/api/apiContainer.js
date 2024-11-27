@@ -15,7 +15,7 @@ const apiContainer = {
   proofType: "/proof-type",
   transferStaff: "/transfer-staff",
   advancePaymentHistory: "/advance-payment-history",
-  settingWorkingDay: "/setting-working-day",  
+  settingWorkingDay: "/setting-working-day",
   settingLeaveDeduction: "/setting-leave-deduction",
   settingBenefit: "/setting-benefit",
   attendanceIncharge: "/attendance-incharge",
@@ -30,7 +30,8 @@ const apiContainer = {
   staffRelation: "/staff-relation",
   staffWorkExperience: "/work-experience",
   staffLeave: "/staff-leave",
-  StaffAttendance:'/staff-attendance'
+  staffAttendance: '/staff-attendance',
+  staffSalary: "/staff-salary-history",
 };
 
 export default apiContainer;

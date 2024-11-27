@@ -94,6 +94,13 @@ function deleteData(arr, id, accessKey = null) {
     });
 }
 
+const removeExistsList = async (allList, existsArrayList, key) => {
+    const list = allList.filter(item =>
+        !existsArrayList.some(existsItem => existsItem[key] === item[key])
+    );
+    return list;
+};
+
 function findObj(optionList = [], accessKey, value = '') {
     const filterData = optionList.filter((item) => item[accessKey] === value);
     return filterData.length > 0 ? filterData[0] : '';
@@ -275,6 +282,7 @@ export {
     showConfirmationDialog,
     updateData,
     deleteData,
+    removeExistsList,
     findObj,
     findArrObj,
     percentageVal,

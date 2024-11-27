@@ -450,7 +450,7 @@ function FormComponent(props) {
                                         (<Row>
                                             {(optionListState?.[form?.optionList] || []).map((item, i) => {
                                                 return (
-                                                    <Col xs={form?.colValue || "3"}>
+                                                    <Col xs={form?.colValue || "3"} key={i}>
                                                         <Form.Check
                                                             key={i}
                                                             label={form.displayKey ? item[form?.displayKey] || form?.label : ""}

@@ -178,7 +178,6 @@ function Index() {
         if (isEdit) {
             dispatch(updateSettingBenefitRequest(submitRequest, selectedItem.settingBenefitId))
         } else {
-            console.log(submitRequest)
             dispatch(createSettingBenefitRequest(submitRequest))
         }
     };

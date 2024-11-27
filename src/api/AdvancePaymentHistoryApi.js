@@ -17,8 +17,6 @@ export async function getAdvancePaymentHistory(request) {
 }
 //CREATE---->
 export async function createAdvancePaymentHistory(request) {
-
-  console.log(request);
   try {
     const response = await apiReturnCallBack("POST", advancePaymentHistory, request);
     const data = await response.json();

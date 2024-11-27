@@ -4,13 +4,14 @@ import ModelViewBox from '../../components/Atom/ModelViewBox';
 import FormLayout from '../../utils/formLayout';
 import { deputationContainer } from './formFieldData';
 import Table from '../../components/Table';
-import { dateConversion, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
+import { dateConversion, deleteData, noOfDayCount, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
 import { createDeputationRequest, getDeputationRequest, getStaffRequest, resetCreateDeputation, resetGetDeputation, resetUpdateDeputation, resetGetBranch, resetGetStaff, updateDeputationRequest, getBranchRequest } from '../../redux/actions';
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 import _ from 'lodash';
+import moment from 'moment';
 
-let isEdit = false; 
+let isEdit = false;
 
 function Index() {
 
@@ -59,7 +60,7 @@ function Index() {
             Cell: ({ row }) => {
                 return (
                     <div>
-                       {dateConversion(row.original.deputationDate, "DD-MM-YYYY") }
+                        {dateConversion(row.original.deputationDate, "DD-MM-YYYY")}
                     </div>
                 )
             },
@@ -82,33 +83,76 @@ function Index() {
         {
             Header: 'Status',
             accessor: 'statusId',
-            sort: true,
+            Cell: ({ row }) => (
+                <Badge
+                    bg={
+                        row.original.statusId === 30
+                            ? 'danger'
+                            : row.original.statusId === 28
+                                ? 'primary'
+                                : 'success'
+                    }>
+                    {row.original.statusId === 30
+                        ? 'Cancelled'
+                        : row.original.statusId === 28
+                            ? 'Request'
+                            : 'Approved'}
+                </Badge>
+            ),
         },
-       
         {
             Header: 'Actions',
             accessor: 'actions',
             Cell: ({ row }) => {
-                const activeChecker = row.original.isActive
-                const iconColor = activeChecker ? "text-danger" : "text-warning";
-                const deleteMessage = activeChecker ? "You want to In-Active...?" : "You want to retrive this Data...?";
                 return (
                     <div>
-                        <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index)}>
-                            <i className={'fe-edit-1'}></i>
-                        </span>
-                        
+                        {row.original.statusId === 28 && (
+                            <span>
+                                <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index)}>
+                                    <i className={'fe-edit-1'}></i>
+                                </span>
+
+
+                                <span
+                                    className={`text-success me-2 cursor-pointer`}
+                                    onClick={() =>
+                                        showConfirmationDialog(
+                                            'You want to Approved?',
+                                            () => onStatusForm(row.original, row.index, 29),
+                                            'Yes'
+                                        )
+                                    }>
+                                    <i className={'fe-thumbs-up'}></i>
+                                </span>
+                                <span
+                                    className={`text-danger cursor-pointer`}
+                                    onClick={() =>
+                                        showConfirmationDialog(
+                                            'You want to Cancelled?',
+                                            () => onStatusForm(row.original, row.index, 30),
+                                            'Yes'
+                                        )
+                                    }>
+                                    <i className={'fe-thumbs-down'}></i>
+                                </span>
+                            </span>
+                        )}
                     </div>
-                )
+                );
             },
         },
     ];
 
-    const [state, setState] = useState({});
+    const [state, setState] = useState({
+        deputationDate: moment().format("YYYY-MM-DD"),
+        minmumFrom: moment().format("YYYY-MM-DD"),
+        minmumTo: moment().format("YYYY-MM-DD"),
+    });
     const [parentList, setParentList] = useState([]);
     const [optionListState, setOptionListState] = useState({
         staffList: [],
         branchList: [],
+        branchListTo: [],
     })
     const [selectedItem, setSelectedItem] = useState({});
     const [selectedIndex, setSelectedIndex] = useState(false);
@@ -119,10 +163,10 @@ function Index() {
     const errorHandle = useRef();
 
     useEffect(() => {
-        setIsLoading(true)  
-        dispatch(getStaffRequest());      
-        dispatch(getDeputationRequest());  
-        dispatch(getBranchRequest());      
+        setIsLoading(true)
+        // dispatch(getStaffRequest());
+        dispatch(getDeputationRequest());
+        dispatch(getBranchRequest());
     }, []);
 
     useEffect(() => {
@@ -158,7 +202,6 @@ function Index() {
     useEffect(() => {
         if (getBranchSuccess) {
             setIsLoading(false)
-            console.log(getBranchList)
             setOptionListState({
                 ...optionListState,
                 branchList: getBranchList
@@ -201,6 +244,15 @@ function Index() {
         }
     }, [updateDeputationSuccess, updateDeputationFailure]);
 
+    useEffect(() => {
+        setState({
+            ...state,
+            minmumTo: state?.fromDate,
+            dayCount: noOfDayCount(state?.fromDate, state?.toDate)
+        })
+    }, [state?.fromDate, state?.toDate])
+
+
     const closeModel = () => {
         isEdit = false;
         onFormClear()
@@ -210,13 +262,18 @@ function Index() {
     const onFormClear = () => {
         setState({
             ...state,
-            deputationDate: '',
+            deputationDate: moment().format("YYYY-MM-DD"),
             staffId: '',
             fromPlace: '',
             toPlace: '',
             fromDate: '',
             toDate: '',
             reason: '',
+        });
+        setOptionListState({
+            ...optionListState,
+            staffList: [],
+            branchListTo: []
         });
     };
 
@@ -226,7 +283,7 @@ function Index() {
         setModal(true)
     };
 
-    const onEditForm = (data, index) => {
+    const onEditForm = async (data, index) => {
         setState({
             ...state,
             staffId: data?.staffId || "",
@@ -236,10 +293,16 @@ function Index() {
             fromDate: data.fromDate ? dateConversion(data.fromDate, "YYYY-MM-DD") : "",
             toDate: data.toDate ? dateConversion(data.toDate, "YYYY-MM-DD") : "",
             reason: data?.reason || ""
-
-            
-
         });
+        const branchFilter = {
+            branchId: data?.transferFrom
+        }
+        dispatch(getStaffRequest(branchFilter));
+        const remainingBranchListTo = await deleteData(optionListState.branchList, data?.transferFrom, 'fromDate');
+        setOptionListState({
+            ...optionListState,
+            branchListTo: remainingBranchListTo
+        })
         isEdit = true;
         setSelectedItem(data)
         setSelectedIndex(index)
@@ -258,33 +321,56 @@ function Index() {
             deputationDate: state.deputationDate ? dateConversion(state.deputationDate, "YYYY-MM-DD") : "",
             fromDate: state.fromDate ? dateConversion(state.fromDate, "YYYY-MM-DD") : "",
             toDate: state.toDate ? dateConversion(state.toDate, "YYYY-MM-DD") : "",
-            reason: state?.reason || ""            
-
+            reason: state?.reason || ""
         }
         if (isEdit) {
             dispatch(updateDeputationRequest(submitRequest, selectedItem.deputationId))
         } else {
-            console.log(submitRequest)
             dispatch(createDeputationRequest(submitRequest))
         }
     };
 
-    
+    const onBranchChange = async (option, formName, formUniqueKey, formDisplayKey) => {
+        const branchFilter = {
+            branchId: option[formUniqueKey]
+        }
+        const remainingBranchListTo = await deleteData(optionListState.branchList, option[formUniqueKey], formUniqueKey);
+        setOptionListState({
+            ...optionListState,
+            branchListTo: remainingBranchListTo
+        })
+        setState({
+            ...state,
+            [formName]: option[formUniqueKey]
+        })
+        dispatch(getStaffRequest(branchFilter));
+    }
+
+    const onStatusForm = (data, index, activeChecker) => {
+        const submitRequest = {
+            statusId: activeChecker,
+            isActive: activeChecker == 30 ? 0 : 1,
+        };
+        setSelectedIndex(index);
+        dispatch(updateDeputationRequest(submitRequest, data.deputationId))
+    };
+
+
     return (
         <React.Fragment>
             <NotificationContainer />
-           { isLoading ? <div className='bg-light opacity-0.25'>
-            <div className="d-flex justify-content-center m-5">
-                <Spinner className='mt-5 mb-5' animation="border" />
-            </div>
+            {isLoading ? <div className='bg-light opacity-0.25'>
+                <div className="d-flex justify-content-center m-5">
+                    <Spinner className='mt-5 mb-5' animation="border" />
+                </div>
             </div> :
-            <Table
-                columns={columns}
-                Title={'Deputation List'}
-                data={parentList || []}
-                pageSize={25}
-                toggle={createModel}
-            />}
+                <Table
+                    columns={columns}
+                    Title={'Deputation List'}
+                    data={parentList || []}
+                    pageSize={25}
+                    toggle={createModel}
+                />}
 
             <ModelViewBox
                 modal={modal}
@@ -299,6 +385,7 @@ function Index() {
                     optionListState={optionListState}
                     setState={setState}
                     state={state}
+                    onChangeCallBack={{ "onBranchChange": onBranchChange }}
                     ref={errorHandle}
                     noOfColumns={1}
                     errors={errors}

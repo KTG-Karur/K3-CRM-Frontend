@@ -72,17 +72,46 @@ function Index() {
         {
             Header: 'Tol Salary',
             accessor: 'salaryMonth',
-            sort: true,
+            Cell: ({ row }) => {
+                return (
+                    <div>
+                        {row.original?.monthlyAmount ? row.original?.monthlyAmount : 0}
+                    </div>
+                )
+            },
         },
         {
             Header: 'No.of leave days',
             accessor: 'leaveCount',
-            sort: true,
+            Cell: ({ row }) => {
+                return (
+                    <div>
+                        {row.original?.leaveCount ? row.original?.leaveCount : 0}
+                    </div>
+                )
+            },
         },
         {
             Header: 'Leave sal',
             accessor: 'Leave salary',
-            sort: true,
+            Cell: ({ row }) => {
+                return (
+                    <div>
+                        <Form.Control
+                            type="number"
+                            name={"leavesalary"}
+                            className="mb-1"
+                            placeholder={"0.00"}
+                            value={state.staffSalary[row.index]?.incentiveAmount || ""}
+                            onWheel={(e) => e.target.blur()}
+                            ref={(el) => (incentiveAmountRefs.current[row.index] = el)}
+                            onChange={(e) => {
+                                handleChange(row.original, e.target.value, row.index)
+                            }}
+                        />
+                    </div>
+                )
+            },
         },
         {
             Header: 'Sal after Leave amt',
@@ -101,7 +130,7 @@ function Index() {
         },
         {
             Header: 'Adv amt',
-            accessor: 'Advance amt Pending',
+            accessor: 'advanceAmount',
             sort: true,
         },
         {
