@@ -10,12 +10,14 @@ import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 import _ from 'lodash';
 import moment from 'moment';
+import { useNavigate } from 'react-router-dom';
 
 let isEdit = false;
 
 function Index() {
 
     const { dispatch, appSelector } = useRedux();
+    const navigate = useNavigate();
 
     const { getDeputationSuccess, getDeputationList, getDeputationFailure,
         createDeputationSuccess, createDeputationData, createDeputationFailure,
@@ -137,7 +139,18 @@ function Index() {
                                 </span>
                             </span>
                         )}
-                    </div>
+
+                        {
+                            row.original.statusId == 29 && (
+                                <div>
+                                    <span className="text-success  me-2 cursor-pointer"
+                                        onClick={() => navigate('/deputation-report', { state: row.original })}>
+                                        <i className={'fe-printer'} style={{ fontSize: '19px' }}></i>
+                                    </span>
+                                </div>
+                            )
+                        }
+                    </div >
                 );
             },
         },
@@ -148,6 +161,7 @@ function Index() {
         minmumFrom: moment().format("YYYY-MM-DD"),
         minmumTo: moment().format("YYYY-MM-DD"),
     });
+    
     const [parentList, setParentList] = useState([]);
     const [optionListState, setOptionListState] = useState({
         staffList: [],

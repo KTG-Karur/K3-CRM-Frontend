@@ -43,6 +43,12 @@ function FormComponent(props) {
                     [formName]: e.target.value,
                 }));
                 break;
+            case 'time':
+                setState((prev) => ({
+                    ...prev,
+                    [formName]: e.target.value,
+                }));
+                break;
             case 'select':
                 setState((prev) => ({
                     ...prev,
@@ -317,6 +323,44 @@ function FormComponent(props) {
                                     <p
                                         className="text-danger"
                                         style={{ fontWeight: 'bold' }}>{`* Please Enter ${form?.name}`}</p>
+                                )}
+                            </div>
+                        );
+                    case 'time':
+                        return (
+                            <div key={index} className={`${form?.classStyle || ""} mb-2`}>
+                                {form?.label && (
+                                    <Form.Label>
+                                        <span>
+                                            {form?.label}{' '}
+                                            {form?.require ? (
+                                                <span style={{ fontWeight: 'bold', color: 'red' }}>*</span>
+                                            ) : null}
+                                        </span>
+                                    </Form.Label>
+                                )}
+                                <Form.Control
+                                    type="time"
+                                    name={form?.name}
+                                    className="mb-2"
+                                    key={index}
+                                    placeholder={form?.placeholder}
+                                    required={form?.require}
+                                    value={state[form?.name] || ""}
+                                    disabled={form?.isDisabled}
+                                    onFocus={form?.require ? () => removeHanldeErrors(form?.name) : null}
+                                    onChange={(e) => {
+                                        form.onChange
+                                            ? onChangeCallBack[form.onChange](e, form?.name)
+                                            : handleChange(e, 'time', form?.name);
+                                    }}
+                                    min={form.minmumTime || ""}
+                                    max={form.maximumTime || ""}
+                                />
+                                {errors?.includes(form?.name) && (
+                                    <p className="text-danger" style={{ fontWeight: 'bold' }}>
+                                        {`* Please Enter ${form?.name}`}
+                                    </p>
                                 )}
                             </div>
                         );

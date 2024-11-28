@@ -3,7 +3,7 @@ import { Row, Col, Image } from 'react-bootstrap';
 import K3Logo from '../../assets/images/K3_Logo.png';
 
 function LetterForm(props) {
-    const { children, Header, Address= false, Date=false, Regards=false, Conclusion=false, Footer, permission} = props;
+    const { children, Header, Address = false, Date = false, Regards = false, Conclusion = false, Footer, permission } = props;
 
     return (
         <>
@@ -15,7 +15,7 @@ function LetterForm(props) {
                         <Image src={K3Logo} rounded fluid style={{ maxHeight: '40px' }} alt="Company Logo" />
                     )}
                     <h3 className="mt-2">{Header?.letterName || ""}</h3>
-                    <p style={{color: "black", fontSize: '16px',}}>{Header?.address || ""}</p>
+                    <p style={{ color: "black", fontSize: '16px', }}>{Header?.address || ""}</p>
                 </Col>
             </Row>
             {Address && Date && (
@@ -38,7 +38,7 @@ function LetterForm(props) {
                 )}
                 {Regards && (
                     <Col className="text-end text-black" style={{ fontSize: '16px' }}>
-                        <div>{Regards?.regards  || ""}</div>
+                        <div>{Regards?.regards || ""}</div>
                         <div>{Regards?.sign || ""}</div>
                         <div>{Regards?.to || ""}</div>
                         <div>{Regards?.companyName || ""}</div>
@@ -52,17 +52,17 @@ function LetterForm(props) {
                         <Row>
                             <Col xs={3}><strong>Name</strong></Col>
                             <Col xs={1}><strong>:</strong></Col>
-                            <Col xs={8}>{Footer.msg_received_by_details.name}</Col>
+                            <Col xs={8}>{Footer.msgReceivedByDetails.name}</Col>
                         </Row>
                         <Row>
                             <Col xs={3}><strong>Designation</strong></Col>
                             <Col xs={1}><strong>:</strong></Col>
-                            <Col xs={8}>{Footer.msg_received_by_details.desigination}</Col>
+                            <Col xs={8}>{Footer.msgReceivedByDetails.desigination}</Col>
                         </Row>
                         <Row>
                             <Col xs={3}><strong>Date</strong></Col>
                             <Col xs={1}><strong>:</strong></Col>
-                            <Col xs={8}>{Footer.msg_received_by_details.date}</Col>
+                            <Col xs={8}>{Footer.msgReceivedByDetails.date}</Col>
                         </Row>
                         <Row>
                             <Col xs={3}><strong>Sign</strong></Col>
@@ -81,13 +81,11 @@ function LetterForm(props) {
                             <strong>Copy to:</strong>
                         </div>
                         {Footer.copyTo.map((line, index) => (
-                            <>
-                                <div key={index} style={{ lineHeight: '10px', marginBottom: "40px", marginTop: "20px" }}>
-                                    <p style={{color: "black", fontSize: "16px" }}>{line.desigination}</p>
-                                    <p style={{color: "black", fontSize: "16px" }}>{line.branch}</p>
-                                    <p style={{color: "black", fontSize: "16px" }}>{line.company}</p>
-                                </div>
-                            </>
+                            <div key={index} style={{ lineHeight: '10px', marginBottom: "40px", marginTop: "20px" }}>
+                                <p style={{ color: "black", fontSize: "16px" }}>{line.desigination}</p>
+                                <p style={{ color: "black", fontSize: "16px" }}>{line.branch}</p>
+                                <p style={{ color: "black", fontSize: "16px" }}>{line.company}</p>
+                            </div>
                         ))}
                     </Col>
                 </Row>

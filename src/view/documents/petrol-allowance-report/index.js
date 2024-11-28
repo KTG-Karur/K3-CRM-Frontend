@@ -5,10 +5,10 @@ import Col from 'react-bootstrap/Col';
 import { Link } from 'react-router-dom';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import K3Logo from '../../assets/images/K3_Logo.png';
-import Petrol from '../../assets/images/invoice_petrol.png';
-import Petrol_1 from '../../assets/images/petrol_1.jpeg';
-import Petrol_2 from '../../assets/images/petrol_2.jpeg';
+import K3Logo from '../../../assets/images/K3_Logo.png';
+import Petrol from '../../../assets/images/invoice_petrol.png';
+import Petrol_1 from '../../../assets/images/petrol_1.jpeg';
+import Petrol_2 from '../../../assets/images/petrol_2.jpeg';
 import { size } from 'lodash';
 import { Table } from 'react-bootstrap';
 

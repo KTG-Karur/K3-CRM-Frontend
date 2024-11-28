@@ -30,4 +30,5 @@ export * from './staff-leave/actions';
 export * from './staff-attendance/actions';
 export * from './staff-salary/actions';
 export * from './user-rights/actions';
+export * from './staff-onduty/actions';
 

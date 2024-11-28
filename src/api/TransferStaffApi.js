@@ -17,8 +17,6 @@ export async function getTransferStaff(request) {
 }
 //CREATE---->
 export async function createTransferStaff(request) {
-
-  console.log(request);
   try {
     const response = await apiReturnCallBack("POST", transferStaff, request);
     const data = await response.json();

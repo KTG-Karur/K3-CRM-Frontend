@@ -111,11 +111,12 @@ import {
     StaffLeave,
     Attendance,
     Salary,
-    PermissionReport,
+    PermissionLeaveOdReport,
     PetrolAllowanceReport,
     TransferReport,
     DeputationReport,
     UserRights,
+    StaffOnDuty,
 } from './Route_Menu';
 
 const loading = () => <div className=""></div>;
@@ -222,6 +223,10 @@ const AllRoutes = () => {
                     element: <LoadComponent component={StaffLeave} />,
                 },
                 {
+                    path: 'staff-onduty',
+                    element: <LoadComponent component={StaffOnDuty} />,
+                },
+                {
                     path: 'staff-salary',
                     element: <LoadComponent component={Salary} />,
                 },
@@ -240,7 +245,15 @@ const AllRoutes = () => {
                 },
                 {
                     path: 'permission-report',
-                    element: <LoadComponent component={PermissionReport} />,
+                    element: <LoadComponent component={PermissionLeaveOdReport} />,
+                },
+                {
+                    path: 'leave-slip-report',
+                    element: <LoadComponent component={PermissionLeaveOdReport} />,
+                },
+                {
+                    path: 'on-duty-report',
+                    element: <LoadComponent component={PermissionLeaveOdReport} />,
                 },
                 //end report
                 {

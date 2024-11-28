@@ -4,7 +4,7 @@ import ModelViewBox from '../../components/Atom/ModelViewBox';
 import FormLayout from '../../utils/formLayout';
 import { staffLeaveContainer } from './formFieldData';
 import Table from '../../components/Table';
-import { dateConversion, noOfDayCount, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
+import { dateConversion, deleteData, noOfDayCount, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
 import {
     createStaffLeaveRequest,
     getBranchRequest,
@@ -20,11 +20,13 @@ import {
 import { useRedux } from '../../hooks';
 import { NotificationContainer } from 'react-notifications';
 import moment from 'moment';
+import { useNavigate } from 'react-router-dom';
 
 let isEdit = false;
 
 function Index() {
     const { dispatch, appSelector } = useRedux();
+    const navigate = useNavigate();
 
     const {
         getBranchSuccess, getBranchList, getBranchFailure,
@@ -125,6 +127,19 @@ function Index() {
             Header: 'Actions',
             accessor: 'actions',
             Cell: ({ row }) => {
+                const passData = {
+                    isLeave: true,
+                    staffName: row.original?.staffName || "",
+                    designationName: row.original?.designationName,
+                    typeName: `${row.original?.dayCount || 0} days`,
+                    fromDate: row.original?.fromDate,
+                    toDate: row.original?.toDate,
+
+                    spokenStaffName: row.original?.spokenStaffName,
+                    spokenDesignationName: row.original?.spokenDesignationName,
+                    spokenTime: row.original?.spokenTime,
+                    spokenDate: row.original?.spokenDate,
+                }
                 return (
                     <div>
                         {row.original.statusId === 28 && (
@@ -161,6 +176,17 @@ function Index() {
                                 </span>
                             </span>
                         )}
+
+                        {
+                            row.original.statusId == 29 && (
+                                <div>
+                                    <span className="text-success  me-2 cursor-pointer"
+                                        onClick={() => navigate('/leave-slip-report', { state: passData })}>
+                                        <i className={'fe-printer'} style={{ fontSize: '19px' }}></i>
+                                    </span>
+                                </div>
+                            )
+                        }
                     </div>
                 );
             },
@@ -170,6 +196,8 @@ function Index() {
     const [state, setState] = useState({
         minmumFrom: moment().format("YYYY-MM-DD"),
         minmumTo: moment().format("YYYY-MM-DD"),
+        spokenDate: moment().format("YYYY-MM-DD"),
+        spokenTime: moment().format("HH:mm")
     });
     const [parentList, setParentList] = useState([]);
     const [selectedItem, setSelectedItem] = useState({});
@@ -226,9 +254,11 @@ function Index() {
     useEffect(() => {
         if (getStaffSuccess) {
             setIsLoading(false);
+            const remainingStaffList = deleteData(getStaffList, state?.staffId, "staffId");
             setOptionListState({
                 ...optionListState,
                 staffList: getStaffList,
+                spokenStaffList: remainingStaffList
             });
             dispatch(resetGetStaff());
         } else if (getStaffFailure) {
@@ -296,6 +326,9 @@ function Index() {
             dayCount: '',
             toDate: '',
             reason: '',
+            spokenDate: moment().format("YYYY-MM-DD"),
+            spokenTime: moment().format("HH:mm"),
+            spokenStaffId: '',
         });
     };
 
@@ -315,7 +348,15 @@ function Index() {
             dayCount: data?.dayCount || '',
             toDate: data?.toDate || '',
             reason: data?.reason || '',
+            spokenDate: data.spokenDate ? dateConversion(data.spokenDate, "YYYY-MM-DD") : "",
+            spokenTime: data?.spokenTime || moment().format("HH:mm"),
+            spokenStaffId: data?.spokenStaffId || "",
         });
+
+        const branchFilter = {
+            branchId: data?.branchId
+        }
+        dispatch(getStaffRequest(branchFilter));
         isEdit = true;
         setSelectedItem(data);
         setSelectedIndex(index);
@@ -335,6 +376,9 @@ function Index() {
             dayCount: state?.dayCount || '',
             branchId: state?.branchId || '',
             reason: state?.reason || '',
+            spokenDate: state?.spokenDate ? dateConversion(state.spokenDate, "YYYY-MM-DD") : "",
+            spokenTime: state?.spokenTime || moment().format("HH:mm"),
+            spokenStaffId: state?.spokenStaffId || "",
         };
         if (isEdit) {
             submitRequest.statusId = selectedItem?.statusId;
@@ -362,6 +406,18 @@ function Index() {
         })
 
         dispatch(getStaffRequest(branchFilter));
+    }
+
+    const onStaffChange = async (option, formName, formUniqueKey, formDisplayKey) => {
+        setState({
+            ...state,
+            [formName]: option[formUniqueKey]
+        })
+        const remainingStaffListTo = await deleteData(optionListState.staffList, option[formUniqueKey], formUniqueKey);
+        setOptionListState({
+            ...optionListState,
+            spokenStaffList: remainingStaffListTo
+        })
     }
 
     return (
@@ -396,7 +452,7 @@ function Index() {
                     handleSubmit={onFormSubmit}
                     setState={setState}
                     state={state}
-                    onChangeCallBack={{ "onBranchChange": onBranchChange }}
+                    onChangeCallBack={{ "onBranchChange": onBranchChange, "onStaffChange": onStaffChange }}
                     ref={errorHandle}
                     noOfColumns={1}
                     errors={errors}

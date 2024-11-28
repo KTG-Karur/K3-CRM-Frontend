@@ -44,6 +44,12 @@ const Navigate: NavigateTypes[] = [
         icon: 'mdi mdi-account-check',
         url: '/staff-leave',
     },
+    {
+        label: 'Staff OnDuty',
+        isTitle: false,
+        icon: 'mdi mdi-account-check',
+        url: '/staff-onduty',
+    },
     { label: 'Attendance', isTitle: true },
     {
         label: 'Staff Attendance',
@@ -191,24 +197,24 @@ const Navigate: NavigateTypes[] = [
     },
 
     { label: 'Reports', isTitle: true },
-    {
-        label: 'Deputation Order Report',
-        isTitle: false,
-        icon: 'mdi mdi-account-check',
-        url: '/deputation-report',
-    },
-    {
-        label: 'Transfer Order Report',
-        isTitle: false,
-        icon: 'mdi mdi-account-check',
-        url: '/transfer-report',
-    },
-    {
-        label: 'Permission/ Leave/ OD',
-        isTitle: false,
-        icon: 'mdi mdi-account-check',
-        url: '/permission-report',
-    },
+    // {
+    //     label: 'Deputation Order Report',
+    //     isTitle: false,
+    //     icon: 'mdi mdi-account-check',
+    //     url: '/deputation-report',
+    // },
+    // {
+    //     label: 'Transfer Order Report',
+    //     isTitle: false,
+    //     icon: 'mdi mdi-account-check',
+    //     url: '/transfer-report',
+    // },
+    // {
+    //     label: 'Permission/ Leave/ OD',
+    //     isTitle: false,
+    //     icon: 'mdi mdi-account-check',
+    //     url: '/permission-report',
+    // },
     {
         label: 'Petrol Allowance Report',
         isTitle: false,

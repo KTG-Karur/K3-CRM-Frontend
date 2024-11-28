@@ -2,32 +2,48 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Badge, Spinner } from 'react-bootstrap';
 import ModelViewBox from '../../components/Atom/ModelViewBox';
 import FormLayout from '../../utils/formLayout';
-import { permissionContainer } from './formFieldData';
+import { staffOnDutyContainer } from './formFieldData';
 import Table from '../../components/Table';
-import { dateConversion, deleteData, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
-import { createPermissionRequest, getStaffRequest, getPermissionRequest, resetCreatePermission, resetGetPermission, resetUpdatePermission, resetGetStaff, updatePermissionRequest, resetGetBranch, getBranchRequest } from '../../redux/actions';
-import { useRedux } from '../../hooks'
+import { dateConversion, deleteData, noOfDayCount, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
+import {
+    createStaffOnDutyRequest,
+    getBranchRequest,
+    getStaffOnDutyRequest,
+    getStaffRequest,
+    resetCreateStaffOnDuty,
+    resetGetBranch,
+    resetGetStaff,
+    resetGetStaffOnDuty,
+    resetUpdateStaffOnDuty,
+    updateStaffOnDutyRequest,
+} from '../../redux/actions';
+import { useRedux } from '../../hooks';
 import { NotificationContainer } from 'react-notifications';
-import _ from 'lodash';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
 
 let isEdit = false;
 
 function Index() {
-
     const { dispatch, appSelector } = useRedux();
     const navigate = useNavigate();
 
     const {
         getBranchSuccess, getBranchList, getBranchFailure,
-        getPermissionSuccess, getPermissionList, getPermissionFailure,
-        createPermissionSuccess, createPermissionData, createPermissionFailure,
-        updatePermissionSuccess, updatePermissionData, updatePermissionFailure,
-        errorMessage, getStaffSuccess,
+        getStaffOnDutySuccess,
+        getStaffOnDutyList,
+        getStaffOnDutyFailure,
+        createStaffOnDutySuccess,
+        createStaffOnDutyData,
+        createStaffOnDutyFailure,
+        updateStaffOnDutySuccess,
+        updateStaffOnDutyData,
+        updateStaffOnDutyFailure,
+        errorMessage,
+
+        getStaffSuccess,
         getStaffList,
         getStaffFailure,
-
     } = appSelector((state) => ({
         getBranchSuccess: state.branchReducer.getBranchSuccess,
         getBranchList: state.branchReducer.getBranchList,
@@ -37,23 +53,19 @@ function Index() {
         getStaffList: state.staffReducer.getStaffList,
         getStaffFailure: state.staffReducer.getStaffFailure,
 
-        getPermissionSuccess: state.permissionReducer.getPermissionSuccess,
-        getPermissionList: state.permissionReducer.getPermissionList,
-        getPermissionFailure: state.permissionReducer.getPermissionFailure,
+        getStaffOnDutySuccess: state.staffOnDutyReducer.getStaffOnDutySuccess,
+        getStaffOnDutyList: state.staffOnDutyReducer.getStaffOnDutyList,
+        getStaffOnDutyFailure: state.staffOnDutyReducer.getStaffOnDutyFailure,
 
-        getActivitySuccess: state.activityReducer.getActivitySuccess,
-        getActivityList: state.activityReducer.getActivityList,
-        getActivityFailure: state.activityReducer.getActivityFailure,
+        createStaffOnDutySuccess: state.staffOnDutyReducer.createStaffOnDutySuccess,
+        createStaffOnDutyData: state.staffOnDutyReducer.createStaffOnDutyData,
+        createStaffOnDutyFailure: state.staffOnDutyReducer.createStaffOnDutyFailure,
 
-        createPermissionSuccess: state.permissionReducer.createPermissionSuccess,
-        createPermissionData: state.permissionReducer.createPermissionData,
-        createPermissionFailure: state.permissionReducer.createPermissionFailure,
+        updateStaffOnDutySuccess: state.staffOnDutyReducer.updateStaffOnDutySuccess,
+        updateStaffOnDutyData: state.staffOnDutyReducer.updateStaffOnDutyData,
+        updateStaffOnDutyFailure: state.staffOnDutyReducer.updateStaffOnDutyFailure,
 
-        updatePermissionSuccess: state.permissionReducer.updatePermissionSuccess,
-        updatePermissionData: state.permissionReducer.updatePermissionData,
-        updatePermissionFailure: state.permissionReducer.updatePermissionFailure,
-
-        errorMessage: state.permissionReducer.errorMessage,
+        errorMessage: state.staffOnDutyReducer.errorMessage,
     }));
 
     const columns = [
@@ -63,29 +75,32 @@ function Index() {
             Cell: (row) => <div>{row?.row?.index + 1}</div>,
         },
         {
-            Header: 'Date',
-            accessor: 'permissionDate',
-            Cell: ({ row }) => {
-                return (
-                    <div>
-                        {dateConversion(row.original.permissionDate, "DD-MM-YYYY")}
-                    </div>
-                )
-            },
-        },
-        {
             Header: 'Staff Name',
             accessor: 'staffName',
             sort: true,
         },
         {
-            Header: 'Permission Type',
-            accessor: 'permissionTypeName',
+            Header: 'From Date',
+            accessor: 'fromDate',
+            Cell: ({ row }) => {
+                return <div>{dateConversion(row.original.fromDate, 'DD-MM-YYYY')}</div>;
+            },
+        },
+        {
+            Header: 'To Date',
+            accessor: 'toDate',
+            Cell: ({ row }) => {
+                return <div>{dateConversion(row.original.toDate, 'DD-MM-YYYY')}</div>;
+            },
+        },
+        {
+            Header: 'Reason',
+            accessor: 'reason',
             sort: true,
         },
         {
             Header: 'Status',
-            accessor: 'statusId',
+            accessor: 'status',
             Cell: ({ row }) => (
                 <Badge
                     bg={
@@ -108,12 +123,12 @@ function Index() {
             accessor: 'actions',
             Cell: ({ row }) => {
                 const passData = {
-                    isPermission: true,
+                    isLeave: true,
                     staffName: row.original?.staffName || "",
                     designationName: row.original?.designationName,
-                    typeName: row.original?.permissionTypeName,
-                    fromDate: row.original?.permissionDate,
-                    toDate: false,
+                    typeName: `${row.original?.dayCount || 0} days`,
+                    fromDate: row.original?.fromDate,
+                    toDate: row.original?.toDate,
 
                     spokenStaffName: row.original?.spokenStaffName,
                     spokenDesignationName: row.original?.spokenDesignationName,
@@ -124,9 +139,12 @@ function Index() {
                     <div>
                         {row.original.statusId === 28 && (
                             <span>
-                                <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index)}>
+                                <span
+                                    className="text-primary  me-2 cursor-pointer"
+                                    onClick={() => onEditForm(row.original, row.index)}>
                                     <i className={'fe-edit-1'}></i>
                                 </span>
+
 
 
                                 <span
@@ -158,7 +176,7 @@ function Index() {
                             row.original.statusId == 29 && (
                                 <div>
                                     <span className="text-success  me-2 cursor-pointer"
-                                        onClick={() => navigate('/permission-report', { state: passData })}>
+                                        onClick={() => navigate('/leave-slip-report', { state: passData })}>
                                         <i className={'fe-printer'} style={{ fontSize: '19px' }}></i>
                                     </span>
                                 </div>
@@ -171,33 +189,31 @@ function Index() {
     ];
 
     const [state, setState] = useState({
+        minmumFrom: moment().format("YYYY-MM-DD"),
+        minmumTo: moment().format("YYYY-MM-DD"),
         spokenDate: moment().format("YYYY-MM-DD"),
         spokenTime: moment().format("HH:mm")
     });
     const [parentList, setParentList] = useState([]);
-    const [optionListState, setOptionListState] = useState({
-        staffList: [],
-        spokenStaffList: [],
-        permissionTypeList: [
-            { permissionTypeId: 37, permissionTypeName: '1hr' },
-            { permissionTypeId: 38, permissionTypeName: '2hr' },
-            { permissionTypeId: 39, permissionTypeName: 'Half-Day' },
-        ],
-    })
     const [selectedItem, setSelectedItem] = useState({});
     const [selectedIndex, setSelectedIndex] = useState(false);
     const [modal, setModal] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [optionListState, setOptionListState] = useState({
+        staffList: [],
+        branchList: [],
+    });
     const [errors, setErrors] = useState([]);
 
     const errorHandle = useRef();
 
     useEffect(() => {
-        setIsLoading(true)
-        dispatch(getPermissionRequest());
+        setIsLoading(true);
+        dispatch(getStaffOnDutyRequest());
         // dispatch(getStaffRequest());
         dispatch(getBranchRequest());
     }, []);
+
 
     useEffect(() => {
         if (getBranchSuccess) {
@@ -216,6 +232,15 @@ function Index() {
             dispatch(resetGetBranch())
         }
     }, [getBranchSuccess, getBranchFailure]);
+
+
+    useEffect(() => {
+        setState({
+            ...state,
+            minmumTo: state?.fromDate,
+            dayCount: noOfDayCount(state?.fromDate, state?.toDate)
+        })
+    }, [state?.fromDate, state?.toDate])
 
     useEffect(() => {
         if (getStaffSuccess) {
@@ -238,117 +263,128 @@ function Index() {
     }, [getStaffSuccess, getStaffFailure]);
 
     useEffect(() => {
-        if (getPermissionSuccess) {
-            setIsLoading(false)
-            setParentList(getPermissionList)
-            dispatch(resetGetPermission())
-        } else if (getPermissionFailure) {
-            setIsLoading(false)
-            setParentList([])
-            dispatch(resetGetPermission())
+        if (getStaffOnDutySuccess) {
+            setIsLoading(false);
+            setParentList(getStaffOnDutyList);
+            dispatch(resetGetStaffOnDuty());
+        } else if (getStaffOnDutyFailure) {
+            setIsLoading(false);
+            setParentList([]);
+            dispatch(resetGetStaffOnDuty());
         }
-    }, [getPermissionSuccess, getPermissionFailure]);
+    }, [getStaffOnDutySuccess, getStaffOnDutyFailure]);
 
     useEffect(() => {
-        if (createPermissionSuccess) {
-            const temp_state = [createPermissionData[0], ...parentList];
-            setParentList(temp_state)
+        if (createStaffOnDutySuccess) {
+            const temp_state = [createStaffOnDutyData[0], ...parentList];
+            setParentList(temp_state);
             showMessage('success', 'Created Successfully');
-            closeModel()
-            dispatch(resetCreatePermission())
-        } else if (createPermissionFailure) {
+            closeModel();
+            dispatch(resetCreateStaffOnDuty());
+        } else if (createStaffOnDutyFailure) {
             showMessage('warning', errorMessage);
-            dispatch(resetCreatePermission())
+            dispatch(resetCreateStaffOnDuty());
         }
-    }, [createPermissionSuccess, createPermissionFailure]);
+    }, [createStaffOnDutySuccess, createStaffOnDutyFailure]);
 
     useEffect(() => {
-        if (updatePermissionSuccess) {
+        if (updateStaffOnDutySuccess) {
             const temp_state = [...parentList];
-            temp_state[selectedIndex] = updatePermissionData[0];
-            setParentList(temp_state)
+            temp_state[selectedIndex] = updateStaffOnDutyData[0];
+            setParentList(temp_state);
             isEdit && showMessage('success', 'Updated Successfully');
-            closeModel()
-            dispatch(resetUpdatePermission())
-        } else if (updatePermissionFailure) {
+            closeModel();
+            dispatch(resetUpdateStaffOnDuty());
+        } else if (updateStaffOnDutyFailure) {
             showMessage('warning', errorMessage);
-            dispatch(resetUpdatePermission())
+            dispatch(resetUpdateStaffOnDuty());
         }
-    }, [updatePermissionSuccess, updatePermissionFailure]);
+    }, [updateStaffOnDutySuccess, updateStaffOnDutyFailure]);
 
     const closeModel = () => {
         isEdit = false;
-        onFormClear()
-        setModal(false)
-    }
+        onFormClear();
+        setModal(false);
+    };
 
     const onFormClear = () => {
         setState({
             ...state,
-            permissionDate: '',
             staffId: '',
+            leaveTypeId: '',
+            fromDate: '',
+            branchId: '',
+            dayCount: '',
+            toDate: '',
+            reason: '',
             spokenDate: moment().format("YYYY-MM-DD"),
             spokenTime: moment().format("HH:mm"),
             spokenStaffId: '',
-            branchId: '',
-            permissionTypeId: '',
-            reason: '',
-        });
-        setOptionListState({
-            ...optionListState,
-            staffList: [],
-            spokenStaffList: [],
         });
     };
 
     const createModel = () => {
-        onFormClear()
+        onFormClear();
         isEdit = false;
-        setModal(true)
+        setModal(true);
     };
 
-    const onEditForm = async (data, index) => {
+    const onEditForm = (data, index) => {
         setState({
             ...state,
-            staffId: data?.staffId || "",
-            reason: data?.reason || "",
+            staffId: data?.staffId || '',
+            leaveTypeId: data?.leaveTypeId || '',
+            fromDate: data?.fromDate || '',
+            branchId: data?.branchId || '',
+            dayCount: data?.dayCount || '',
+            toDate: data?.toDate || '',
+            reason: data?.reason || '',
             spokenDate: data.spokenDate ? dateConversion(data.spokenDate, "YYYY-MM-DD") : "",
             spokenTime: data?.spokenTime || moment().format("HH:mm"),
             spokenStaffId: data?.spokenStaffId || "",
-            branchId: data?.staffBranchId || "",
-            permissionTypeId: data?.permissionTypeId || "",
-            permissionDate: data.permissionDate ? dateConversion(data.permissionDate, "YYYY-MM-DD") : ""
         });
+
         const branchFilter = {
-            branchId: data?.staffBranchId
+            branchId: data?.branchId
         }
         dispatch(getStaffRequest(branchFilter));
         isEdit = true;
-        setSelectedItem(data)
-        setSelectedIndex(index)
-        setModal(true)
+        setSelectedItem(data);
+        setSelectedIndex(index);
+        setModal(true);
     };
 
     const handleValidation = () => {
         errorHandle.current.validateFormFields();
-    }
+    };
 
     const onFormSubmit = async () => {
-        const submitRequest = {
-            staffId: state?.staffId || "",
-            reason: state?.reason || "",
+        let submitRequest = {
+            staffId: state?.staffId || '',
+            leaveTypeId: state?.leaveTypeId || '',
+            fromDate: state?.fromDate || '',
+            toDate: state?.toDate || '',
+            dayCount: state?.dayCount || '',
+            branchId: state?.branchId || '',
+            reason: state?.reason || '',
             spokenDate: state?.spokenDate ? dateConversion(state.spokenDate, "YYYY-MM-DD") : "",
             spokenTime: state?.spokenTime || moment().format("HH:mm"),
             spokenStaffId: state?.spokenStaffId || "",
-            permissionTypeId: state?.permissionTypeId || "",
-            permissionStatusId: 28,
-            permissionDate: state.permissionDate ? dateConversion(state.permissionDate, "YYYY-MM-DD") : "",
-        }
+        };
         if (isEdit) {
-            dispatch(updatePermissionRequest(submitRequest, selectedItem.permissionId))
+            submitRequest.statusId = selectedItem?.statusId;
+            dispatch(updateStaffOnDutyRequest(submitRequest, selectedItem.staffOnDutyId));
         } else {
-            dispatch(createPermissionRequest(submitRequest))
+            dispatch(createStaffOnDutyRequest(submitRequest));
         }
+    };
+
+    const onStatusForm = (data, index, activeChecker) => {
+        const submitRequest = {
+            statusId: activeChecker,
+        };
+        setSelectedIndex(index);
+        dispatch(updateStaffOnDutyRequest(submitRequest, data.staffOnDutyId));
     };
 
     const onBranchChange = async (option, formName, formUniqueKey, formDisplayKey) => {
@@ -368,56 +404,50 @@ function Index() {
             ...state,
             [formName]: option[formUniqueKey]
         })
-        const remainingStaffList = await deleteData(optionListState.staffList, option[formUniqueKey], formUniqueKey);
+        const remainingStaffListTo = await deleteData(optionListState.staffList, option[formUniqueKey], formUniqueKey);
         setOptionListState({
             ...optionListState,
-            spokenStaffList: remainingStaffList
+            spokenStaffList: remainingStaffListTo
         })
     }
-
-    const onStatusForm = (data, index, activeChecker) => {
-        const submitRequest = {
-            statusId: activeChecker,
-            isActive: activeChecker == 30 ? 0 : 1,
-        };
-        setSelectedIndex(index);
-        dispatch(updatePermissionRequest(submitRequest, data.permissionId));
-    };
-
 
     return (
         <React.Fragment>
             <NotificationContainer />
-            {isLoading ? <div className='bg-light opacity-0.25'>
-                <div className="d-flex justify-content-center m-5">
-                    <Spinner className='mt-5 mb-5' animation="border" />
+            {isLoading ? (
+                <div className="bg-light opacity-0.25">
+                    <div className="d-flex justify-content-center m-5">
+                        <Spinner className="mt-5 mb-5" animation="border" />
+                    </div>
                 </div>
-            </div> :
+            ) : (
                 <Table
                     columns={columns}
-                    Title={'Permission List'}
+                    Title={'On Duty Apply List'}
                     data={parentList || []}
                     pageSize={25}
                     toggle={createModel}
-                />}
+                />
+            )}
 
             <ModelViewBox
                 modal={modal}
                 setModel={setModal}
-                modelHeader={'Permission'}
+                modelHeader={'On Duty Request'}
                 modelSize={'md'}
                 isEdit={isEdit}
+                modelHead={true}
                 handleSubmit={handleValidation}>
                 <FormLayout
-                    dynamicForm={permissionContainer}
+                    dynamicForm={staffOnDutyContainer}
                     handleSubmit={onFormSubmit}
-                    optionListState={optionListState}
-                    onChangeCallBack={{ "onBranchChange": onBranchChange, "onStaffChange": onStaffChange }}
                     setState={setState}
                     state={state}
+                    onChangeCallBack={{ "onBranchChange": onBranchChange, "onStaffChange": onStaffChange }}
                     ref={errorHandle}
                     noOfColumns={1}
                     errors={errors}
+                    optionListState={optionListState}
                     setErrors={setErrors}
                 />
             </ModelViewBox>

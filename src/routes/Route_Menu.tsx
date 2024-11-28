@@ -19,6 +19,7 @@ export const ClaimTemplate = React.lazy(() => import('../view/claim/approvedTemp
 export const ProofType = React.lazy(() => import('../view/proof-type'));
 export const Holiday = React.lazy(() => import('../view/holiday'));
 export const StaffLeave = React.lazy(() => import('../view/staff-leave'));
+export const StaffOnDuty = React.lazy(() => import('../view/staff-onduty'));
 export const Attendance = React.lazy(() => import('../view/attendance'));
 export const Salary = React.lazy(() => import('../view/salary'));
 
@@ -43,10 +44,10 @@ export const Deputation = React.lazy(() => import('../view/deputation'));
 export const UserRights = React.lazy(() => import('../view/user-rights'));
 
 //report
-export const DeputationReport = React.lazy(() => import('../view/deputaion-report'));
-export const TransferReport = React.lazy(() => import('../view/transfer-report'));
-export const PermissionReport = React.lazy(() => import('../view/permission-report'));
-export const PetrolAllowanceReport = React.lazy(() => import('../view/petrol-allowance-report'));
+export const DeputationReport = React.lazy(() => import('../view/documents/deputaion-report'));
+export const TransferReport = React.lazy(() => import('../view/documents/transfer-report'));
+export const PermissionLeaveOdReport = React.lazy(() => import('../view/documents/permission-leave-od-report'));
+export const PetrolAllowanceReport = React.lazy(() => import('../view/documents/petrol-allowance-report'));
 
 // apps
 export const CalendarApp = React.lazy(() => import('../pages/apps/Calendar'));

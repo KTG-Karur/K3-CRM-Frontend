@@ -1,24 +1,6 @@
-const permissionContainer = [
+const staffOnDutyContainer = [
     {
         formFields: [
-
-            {
-                label: 'Permission Type',
-                name: 'permissionTypeId',
-                inputType: 'select',
-                optionList: 'permissionTypeList',
-                displayKey: 'permissionTypeName',
-                uniqueKey: 'permissionTypeId',
-                require: true,
-                'classStyle': 'col-6'
-            },
-            {
-                'label': "Permission Date",
-                'name': "permissionDate",
-                'inputType': "date",
-                'require': true,
-                'classStyle': 'col-6'
-            },
             {
                 label: 'Branch',
                 name: 'branchId',
@@ -31,7 +13,7 @@ const permissionContainer = [
                 'classStyle': 'col-6'
             },
             {
-                label: 'Permission Staff',
+                label: 'Requested By',
                 name: 'staffId',
                 inputType: 'select',
                 optionList: 'staffList',
@@ -39,6 +21,30 @@ const permissionContainer = [
                 'onChange': 'onStaffChange',
                 uniqueKey: 'staffId',
                 require: true,
+                'classStyle': 'col-6'
+            },
+            {
+                'label': "From Date",
+                'name': "fromDate",
+                'inputType': "date",
+                'require': true,
+                'classStyle': 'col-6',
+                'minmumDate': 'minmumFrom',
+            },
+            {
+                'label': "To Date",
+                'name': "toDate",
+                'inputType': "date",
+                'require': true,
+                'classStyle': 'col-6',
+                'minmumDate': 'minmumTo',
+            },
+            {
+                'label': "No Of Leave Days",
+                'name': "dayCount",
+                'inputType': "number",
+                'placeholder': "0",
+                'isDisabled': true,
                 'classStyle': 'col-6'
             },
             {
@@ -68,18 +74,17 @@ const permissionContainer = [
                 'classStyle': 'col-6'
             },
             {
-                'label': "Reason",
+                'label': "Reason For On-duty",
                 'name': "reason",
                 'inputType': "textarea",
-                'placeholder': "Enter Reason",
-                'require': true,
+                'placeholder': "Enter Reason For On-duty",
+                'require': true,    
                 'classStyle': 'col-6'
             },
-
         ]
     },
 ]
 
 export {
-    permissionContainer
+    staffOnDutyContainer
 }

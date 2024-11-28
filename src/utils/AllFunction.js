@@ -68,6 +68,14 @@ function noOfDayCount(fromDate, toDate) {
     return differenceInDays + 1;
 }
 
+function timerAmPm(time = "") {
+    const [hours, minutes] = time.split(':');
+    const isPM = hours >= 12;
+    const formattedTime = `${((hours % 12) || 12).toString().padStart(2, '0')}:${minutes} ${isPM ? 'PM' : 'AM'
+        }`;
+    return formattedTime;
+}
+
 
 function DateMonthYear(date) {
     const ddmmyyyy = date.split('-');
@@ -303,4 +311,5 @@ export {
     capitalizeFirstLetter,
     objectToKeyValueArray,
     noOfDayCount,
+    timerAmPm,
 };

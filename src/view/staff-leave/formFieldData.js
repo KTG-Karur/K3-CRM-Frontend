@@ -18,6 +18,7 @@ const staffLeaveContainer = [
                 inputType: 'select',
                 optionList: 'staffList',
                 displayKey: 'staffName',
+                'onChange': 'onStaffChange',
                 uniqueKey: 'staffId',
                 require: true,
                 'classStyle': 'col-6'
@@ -30,6 +31,7 @@ const staffLeaveContainer = [
                 displayKey: 'leaveTypeName',
                 uniqueKey: 'leaveTypeId',
                 require: true,
+                'classStyle': 'col-6'
             },
             {
                 'label': "From Date",
@@ -53,13 +55,41 @@ const staffLeaveContainer = [
                 'inputType': "number",
                 'placeholder': "0",
                 'isDisabled': true,
+                'classStyle': 'col-6'
+            },
+            {
+                label: 'Spoken Staff',
+                name: 'spokenStaffId',
+                inputType: 'select',
+                optionList: 'spokenStaffList',
+                displayKey: 'staffName',
+                uniqueKey: 'staffId',
+                require: true,
+                'classStyle': 'col-6'
+            },
+            {
+                label: 'Spoken Time',
+                name: 'spokenTime',
+                inputType: 'time',
+                displayKey: 'staffName',
+                uniqueKey: 'spokenTime',
+                require: true,
+                'classStyle': 'col-6'
+            },
+            {
+                'label': "Spoken Date",
+                'name': "spokenDate",
+                'inputType': "date",
+                'require': true,
+                'classStyle': 'col-6'
             },
             {
                 'label': "Reason For Leave",
                 'name': "reason",
                 'inputType': "textarea",
                 'placeholder': "Enter Reason For Leave",
-                'require': true,
+                'require': true,    
+                'classStyle': 'col-6'
             },
         ]
     },

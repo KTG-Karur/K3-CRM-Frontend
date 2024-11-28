@@ -9,12 +9,15 @@ import { createTransferStaffRequest, getActivityRequest, getStaffRequest, getBra
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 import _ from 'lodash';
+import { useNavigate } from 'react-router-dom';
+import moment from 'moment';
 
 let isEdit = false;
 
 function Index() {
 
     const { dispatch, appSelector } = useRedux();
+    const navigate = useNavigate();
 
     const { getTransferStaffSuccess, getTransferStaffList, getTransferStaffFailure,
         getActivitySuccess, getActivityList, getActivityFailure,
@@ -59,12 +62,23 @@ function Index() {
             Cell: (row) => <div>{row?.row?.index + 1}</div>,
         },
         {
-            Header: 'Date',
-            accessor: 'transferDate',
+            Header: 'Joining Date',
+            accessor: 'joiningDate',
             Cell: ({ row }) => {
                 return (
                     <div>
-                        {dateConversion(row.original.transferDate, "DD-MM-YYYY")}
+                        {dateConversion(row.original.joiningDate, "DD-MM-YYYY")}
+                    </div>
+                )
+            },
+        },
+        {
+            Header: 'Relieving Date',
+            accessor: 'relievingDate',
+            Cell: ({ row }) => {
+                return (
+                    <div>
+                        {dateConversion(row.original.relievingDate, "DD-MM-YYYY")}
                     </div>
                 )
             },
@@ -141,13 +155,27 @@ function Index() {
                                 </span>
                             </span>
                         )}
+
+                        {
+                            row.original.statusId == 29 && (
+                                <div>
+                                    <span className="text-success  me-2 cursor-pointer"
+                                        onClick={() => navigate('/transfer-report', { state: row.original })}>
+                                        <i className={'fe-printer'} style={{ fontSize: '19px' }}></i>
+                                    </span>
+                                </div>
+                            )
+                        }
                     </div>
                 );
             },
         },
     ];
 
-    const [state, setState] = useState({});
+    const [state, setState] = useState({
+        minmum: moment().format("YYYY-MM-DD"),
+        maximum: moment().format("YYYY-MM-DD"),
+    });
     const [parentList, setParentList] = useState([]);
     const [optionListState, setOptionListState] = useState({
         staffList: [],
@@ -161,6 +189,13 @@ function Index() {
     const [errors, setErrors] = useState([]);
 
     const errorHandle = useRef();
+
+    useEffect(() => {
+        setState({
+            ...state,
+            maximum: state?.joiningDate || moment().format("YYYY-MM-DD"),
+        })
+    }, [state?.joiningDate, state?.relievingDate])
 
     useEffect(() => {
         setIsLoading(true)
@@ -252,7 +287,8 @@ function Index() {
     const onFormClear = () => {
         setState({
             ...state,
-            transferDate: '',
+            relievingDate: '',
+            joiningDate: '',
             staffId: '',
             transferFrom: '',
             transferTo: '',
@@ -276,7 +312,8 @@ function Index() {
             staffId: data?.staffId || "",
             transferFrom: data?.transferFrom || "",
             transferTo: data?.transferTo || "",
-            transferDate: data.transferDate ? dateConversion(data.transferDate, "YYYY-MM-DD") : ""
+            joiningDate: data.joiningDate ? dateConversion(data.joiningDate, "YYYY-MM-DD") : "",
+            relievingDate: data.relievingDate ? dateConversion(data.relievingDate, "YYYY-MM-DD") : ""
         });
         const branchFilter = {
             branchId: data?.transferFrom
@@ -302,7 +339,8 @@ function Index() {
             staffId: state?.staffId || "",
             transferFrom: state?.transferFrom || "",
             transferTo: state?.transferTo || "",
-            transferDate: state.transferDate ? dateConversion(state.transferDate, "YYYY-MM-DD") : "",
+            joiningDate: state.joiningDate ? dateConversion(state.joiningDate, "YYYY-MM-DD") : "",
+            relievingDate: state.relievingDate ? dateConversion(state.relievingDate, "YYYY-MM-DD") : "",
         }
         if (isEdit) {
             dispatch(updateTransferStaffRequest(submitRequest, selectedItem.transferStaffId))

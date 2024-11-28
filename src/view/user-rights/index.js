@@ -192,80 +192,14 @@ function Index() {
         }
     }, [getStaffSuccess, getStaffFailure]);
 
-    // useEffect(() => {
-    //     // console.log('getUserRightsSuccess');
-    //     // console.log(getUserRightsSuccess);
-
-    //     if (getUserRightsSuccess) {
-    //         setIsLoading(false);
-    //         console.log('getUserRightsData');
-    //         console.log(getUserRightsData);
-    //         // console.log(JSON.parse(getUserRightsData.master.create));
-    //         const strtoParse = getUserRightsData;
-    //         console.log('data come here', strtoParse);
-    //         console.log(typeof strtoParse, strtoParse);
-    //         const parsedData = JSON.parse(strtoParse);
-
-    //         const arrforUsrrights = parsedData.map(item => {
-    //             const [key, permissions] = Object.entries(item).find(([k]) => k !== "title"); // Find the permissions object dynamically
-    //             return {
-    //               [`${key}_ins`]: permissions.create,
-    //               [`${key}_upd`]: permissions.update,
-    //               [`${key}_del`]: permissions.delete,
-    //             };
-    //           });
-              
-    //         console.log(arrforUsrrights);
-    //         setState({
-    //             ...state,
-    //             user_id: getUserRightsData.user_id,
-    //             userRights: arrforUserRights,
-    //             master_ins: strtoPar?.master_ins,
-    //             master_upd: strtoPar?.master_upd,
-    //             master_upd: strtoPar?.master_upd,
-    //             userright_ins: strtoPar?.userright_ins,
-    //             userright_view: strtoPar?.userright_view,
-    //             outstanding_view: strtoPar?.outstanding_view,
-    //             user_ins: strtoPar?.user_ins,
-    //             user_upd: strtoPar?.user_upd,
-    //             user_upd: strtoPar?.user_upd,
-    //             order_ins: strtoPar?.order_ins,
-    //             order_upd: strtoPar?.order_upd,
-    //             order_del: strtoPar?.order_del,
-    //             collection_ins: strtoPar?.collection_ins,
-    //             collection_upd: strtoPar?.collection_upd,
-    //             collection_del: strtoPar?.collection_del,
-    //             return_ins: strtoPar?.return_ins,
-    //             return_upd: strtoPar?.return_upd,
-    //             return_del: strtoPar?.return_del,
-    //             expenses_ins: strtoPar?.expenses_ins,
-    //             expenses_upd: strtoPar?.expenses_upd,
-    //             expenses_del: strtoPar?.expenses_del,
-    //             draft_del: strtoPar?.draft_del,
-    //             draft_view: strtoPar?.draft_view,
-    //             reports_view: strtoPar?.reports_view,
-    //             settings_upd: strtoPar?.settings_upd,
-    //             settings_view: strtoPar?.settings_view,
-    //         });
-    //         return;
-    //     } else if (getUserRightsFailure) {
-    //         setIsLoading(false);
-    //         dispatch(resetGetUserRights());
-    //     }
-    // }, [getUserRightsSuccess, getUserRightsFailure]);
-
     useEffect(() => {
         if (getUserRightsSuccess) {
             setIsLoading(false);
-    
             try {
-                // Parse the JSON data from API response
                 const parsedData = JSON.parse(getUserRightsData);
-    
-                // Transform parsed data into the required format
                 const transformedRights = parsedData.map((item) => {
                     const [key, permissions] = Object.entries(item).find(([k]) => k !== "title");
-    
+
                     return {
                         title: item.title,
                         [`${key}_view`]: permissions.view || false,
@@ -274,8 +208,7 @@ function Index() {
                         [`${key}_del`]: permissions.delete || false,
                     };
                 });
-    
-                // Update state with transformed rights
+
                 setState((prevState) => ({
                     ...prevState,
                     userRights: transformedRights,
@@ -284,16 +217,14 @@ function Index() {
             } catch (error) {
                 console.error("Error parsing user rights data:", error);
             }
-    
-            // Reset Redux state for user rights
             dispatch(resetGetUserRights());
         } else if (getUserRightsFailure) {
             setIsLoading(false);
             dispatch(resetGetUserRights());
         }
-    }, [getUserRightsSuccess, getUserRightsFailure, getUserRightsData]);
-    
-    
+    }, [getUserRightsSuccess, getUserRightsFailure]);
+
+
     useEffect(() => {
         if (createUserRightsSuccess) {
             setIsLoading(false);
@@ -320,64 +251,71 @@ function Index() {
     };
 
     const onFormSubmit = () => {
-        const submitRequest = [
-            {
-                title: "master",
-                permission: {
-                    create: state?.master_ins || false,
-                    update: state?.master_upd || false,
-                    delete: state?.master_del || false,
-                    view: state?.master_view || false
+        const data = {
+            data: [
+                {
+                    title: "master",
+                    permission: {
+                        create: state?.master_ins || false,
+                        update: state?.master_upd || false,
+                        delete: state?.master_del || false,
+                        view: state?.master_view || false
+                    },
                 },
-            },
-            {
-                title: "staff",
-                permission: {
-                    create: state?.staff_ins || false,
-                    update: state?.staff_upd || false,
-                    delete: state?.staff_del || false,
-                    view: state?.staff_view || false
+                {
+                    title: "staff",
+                    permission: {
+                        create: state?.staff_ins || false,
+                        update: state?.staff_upd || false,
+                        delete: state?.staff_del || false,
+                        view: state?.staff_view || false
+                    },
                 },
-            },
-            {
-                title: "visitEntry",
-                permission: {
-                    create: state?.visitEntry_ins || false,
-                    update: state?.visitEntry_upd || false,
-                    delete: state?.visitEntry_del || false,
-                    view: state?.visitEntry_view || false,
+                {
+                    title: "visitEntry",
+                    permission: {
+                        create: state?.visitEntry_ins || false,
+                        update: state?.visitEntry_upd || false,
+                        delete: state?.visitEntry_del || false,
+                        view: state?.visitEntry_view || false,
+                    },
                 },
-            },
-            {
-                title: "petrolAllowance",
-                permission: {
-                    create: state?.petrolAllowance_ins || false,
-                    update: state?.petrolAllowance_upd || false,
-                    delete: state?.petrolAllowance_del || false,
-                    view: state?.petrolAllowance_view || false,
+                {
+                    title: "petrolAllowance",
+                    permission: {
+                        create: state?.petrolAllowance_ins || false,
+                        update: state?.petrolAllowance_upd || false,
+                        delete: state?.petrolAllowance_del || false,
+                        view: state?.petrolAllowance_view || false,
+                    },
                 },
-            },
-            {
-                title: "salary",
-                permission: {
-                    create: state?.salary_ins || false,
-                    update: state?.salary_upd || false,
-                    delete: state?.salary_del || false,
-                    view: state?.salary_view || false,
+                {
+                    title: "salary",
+                    permission: {
+                        create: state?.salary_ins || false,
+                        update: state?.salary_upd || false,
+                        delete: state?.salary_del || false,
+                        view: state?.salary_view || false,
+                    },
                 },
-            },
-        ];
-    
+            ]
+        }
+        const submitRequest = {
+            staffId: state?.staffId || "",
+            userPermission: JSON.stringify(data)
+        };
+
         console.log("Submitted user rights", submitRequest);
-        return;
-        // dispatch(createUserRightsRequest(submitRequest));
+        // return;
+        dispatch(createUserRightsRequest(submitRequest));
     };
-    
+
 
     const onChangeStaff = (option, name, uniqueKey, displayKey) => {
-        // setIsLoading(true);
-        dispatch(getUserRightsRequest(option?.staffId));
-        // console.log('onChangeStaff');
+        const staffId = {
+            staffId: option?.staffId
+        }
+        dispatch(getUserRightsRequest(staffId));
         setState({
             ...state,
             [name]: option[uniqueKey],

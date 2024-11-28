@@ -3,11 +3,20 @@ const transferStaffContainer = [
         formFields: [
 
             {
-                'label': "Transfer Date",
-                'name': "transferDate",
+                'label': "Joining Date",
+                'name': "joiningDate",
                 'inputType': "date",
                 'require': true,
-                'classStyle': 'col-6'
+                'classStyle': 'col-6',
+                'minmumDate': 'minmum',
+            },
+            {
+                'label': "Relieving Date",
+                'name': "relievingDate",
+                'inputType': "date",
+                'require': true,
+                'classStyle': 'col-6',
+                'maximumDate': 'maximum',
             },
             {
                 label: 'From Place',
