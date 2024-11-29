@@ -1,18 +1,31 @@
-// 
+//
 // card.scss
 //
 
 .card {
     box-shadow: $box-shadow-sm;
     margin-bottom: $grid-gutter-width;
+    background-color: #ffffffc2 !important;
     .card-drop {
-        color: #{map-get($grays, "600")};
+        color: #{map-get($grays, '600')};
         font-size: 20px;
         display: inline-block;
         line-height: 1px;
     }
 }
 
+//done by varsha
+// .card {
+//     position: relative;
+//     display: flex;
+//     flex-direction: column;
+//     min-width: 0;
+//     word-wrap: break-word;
+//     background-color: #fff !important;
+//     background-clip: border-box;
+//     border: 0 solid var(--ct-card-border-color);
+//     border-radius: 0.25rem;
+// }
 
 .card-widgets {
     float: right;
@@ -26,20 +39,18 @@
         &.collapsed {
             i {
                 &:before {
-                    content: "\F0415";
+                    content: '\F0415';
                 }
             }
         }
     }
 }
 
-
 // Card title / Card Header
 .card-title,
 .card-header {
     margin-top: 0;
 }
-
 
 //Card disable loading (Custom Cards)
 .card-disabled {
@@ -51,9 +62,7 @@
     border-radius: $card-border-radius;
     background: $card-overlay-bg;
     cursor: progress;
-
 }
-
 
 .header-title {
     font-size: 1rem;
@@ -66,15 +75,11 @@
     color: $text-muted;
 }
 
-
-
-
-
 // dark mode
-body[data-layout-color="dark"] {
+body[data-layout-color='dark'] {
     .card {
         .card-drop {
-            color: #{map-get($dark-grays, "600")};
+            color: #{map-get($dark-grays, '600')};
         }
     }
 }

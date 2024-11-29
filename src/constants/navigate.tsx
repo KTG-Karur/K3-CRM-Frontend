@@ -50,6 +50,12 @@ const Navigate: NavigateTypes[] = [
         icon: 'mdi mdi-account-check',
         url: '/staff-onduty',
     },
+    {
+        label: 'Staff Training',
+        isTitle: false,
+        icon: 'mdi mdi-account-check',
+        url: '/staff-training',
+    },
     { label: 'Attendance', isTitle: true },
     {
         label: 'Staff Attendance',
@@ -144,6 +150,11 @@ const Navigate: NavigateTypes[] = [
             {
                 label: 'Activity',
                 url: '/view/activity',
+                parentKey: 'Master',
+            },
+            {
+                label: 'Training Type',
+                url: '/view/training-type',
                 parentKey: 'Master',
             },
             {

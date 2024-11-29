@@ -1,21 +1,21 @@
 import { apiReturnCallBack } from './ApiConfig';
 import apiContainer from './apiContainer';
 
-const UserRights = apiContainer.userRights;
+const StaffRights = apiContainer.staffRights;
 
 //CREATE USERRIGHTS---->
-// export async function createUserRights(request) {
+// export async function createStaffRights(request) {
 //   try {
-//       return api.create(`${UserRights}`, request);
+//       return api.create(`${StaffRights}`, request);
 //   } catch (error) {
 //       console.error('Fetch error:', error);
 //       throw error;
 //   }
 // }
 
-export async function getUserRightsApi(request) {
+export async function getStaffRights(request) {
     try {
-        const response = await apiReturnCallBack("GET", UserRights, request);
+        const response = await apiReturnCallBack("GET", StaffRights, request);
         const data = await response.json();
         if (!response.ok) {
             throw new Error(data.message || JSON.stringify(data));
@@ -77,16 +77,33 @@ export async function getUserRightsApi(request) {
         // const data = JSON.stringify(response.data.data);
         // response.data = data;
 
-        return response;
+        return data;
     } catch (error) {
         console.error(error);
         throw error;
     }
 }
 
-export async function createUserRights(request) {
+export async function createStaffRights(request) {
     try {
-        const response = await apiReturnCallBack('GET', UserRights, request);
+        const response = await apiReturnCallBack('POST', StaffRights, request);
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.message || JSON.stringify(data));
+        }
+        console.log("createStaffRights")
+        console.log(data)
+        return data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
+
+//UPDATE---->
+export async function updateStaffRights(request, staffRightsId) {
+    try {
+        const response = await apiReturnCallBack("PUT", StaffRights + `/${staffRightsId}`, request);
         const data = await response.json();
         if (!response.ok) {
             throw new Error(data.message || JSON.stringify(data));
@@ -97,9 +114,10 @@ export async function createUserRights(request) {
         throw error;
     }
 }
-// export async function getUserRightsApi(UserRightsId) {
+
+// export async function updateStaffRights(StaffRightsId) {
 //   try {
-//       return api.get(`${UserRights}/${UserRightsId}`,);
+//       return api.get(`${StaffRights}/${StaffRightsId}`,);
 //   } catch (error) {
 //       console.error('Fetch error:', error);
 //       throw error;

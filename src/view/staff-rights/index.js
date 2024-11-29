@@ -1,19 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Badge, Button, Card, Col, Image, Row, Spinner } from 'react-bootstrap';
-import { formContainer, formContainerUserRights } from './formFieldData';
+import { formContainer, formContainerStaffRights } from './formFieldData';
 import Table from '../../components/Table';
 import { showConfirmationDialog, showMessage } from '../../utils/AllFunction';
 import {
-    createUserRightsRequest,
+    createStaffRightsRequest,
     getStaffRequest,
     getSettingsRequest,
-    getUserRightsRequest,
-    resetCreateUserRights,
+    getStaffRightsRequest,
+    resetCreateStaffRights,
     resetGetStaff,
     resetGetSettings,
-    resetGetUserRights,
+    resetGetStaffRights,
     resetUpdateSettings,
     updateSettingsRequest,
+    updateStaffRightsRequest,
+    resetUpdateStaffRights,
 } from '../../redux/actions';
 import { useRedux } from '../../hooks';
 import { NotificationContainer } from 'react-notifications';
@@ -21,6 +23,7 @@ import FormLayout from '../../utils/formLayout';
 import { Form } from 'react-bootstrap';
 import { isNull } from 'lodash';
 
+let isEdit = false;
 function Index() {
     const { dispatch, appSelector } = useRedux();
 
@@ -29,28 +32,37 @@ function Index() {
         getStaffList,
         getStaffFailure,
 
-        getUserRightsSuccess,
-        getUserRightsData,
-        getUserRightsFailure,
+        getStaffRightsSuccess,
+        getStaffRightsData,
+        getStaffRightsFailure,
 
-        createUserRightsSuccess,
-        createUserRightsData,
-        createUserRightsFailure,
-        getStaffMetaMessage,
+        createStaffRightsSuccess,
+        createStaffRightsData,
+        createStaffRightsFailure,
+
+        updateStaffRightsSuccess,
+        updateStaffRightsData,
+        updateStaffRightsFailure,
+
+        errorMessage,
     } = appSelector((state) => ({
         getStaffSuccess: state.staffReducer.getStaffSuccess,
         getStaffList: state.staffReducer.getStaffList,
         getStaffFailure: state.staffReducer.getStaffFailure,
 
-        getUserRightsSuccess: state.userRightsReducer.getUserRightsSuccess,
-        getUserRightsData: state.userRightsReducer.getUserRightsData,
-        getUserRightsFailure: state.userRightsReducer.getUserRightsFailure,
+        getStaffRightsSuccess: state.staffRightsReducer.getStaffRightsSuccess,
+        getStaffRightsData: state.staffRightsReducer.getStaffRightsData,
+        getStaffRightsFailure: state.staffRightsReducer.getStaffRightsFailure,
 
-        createUserRightsSuccess: state.userRightsReducer.createUserRightsSuccess,
-        createUserRightsData: state.userRightsReducer.createUserRightsData,
-        createUserRightsFailure: state.userRightsReducer.createUserRightsFailure,
+        createStaffRightsSuccess: state.staffRightsReducer.createStaffRightsSuccess,
+        createStaffRightsData: state.staffRightsReducer.createStaffRightsData,
+        createStaffRightsFailure: state.staffRightsReducer.createStaffRightsFailure,
 
-        getStaffMetaMessage: state.staffReducer.getStaffMetaMessage,
+        updateStaffRightsSuccess: state.staffRightsReducer.updateStaffRightsSuccess,
+        updateStaffRightsData: state.staffRightsReducer.updateStaffRightsData,
+        updateStaffRightsFailure: state.staffRightsReducer.updateStaffRightsFailure,
+
+        errorMessage: state.staffRightsReducer.errorMessage,
     }));
 
     const itemList = [
@@ -70,7 +82,7 @@ function Index() {
                                 type="checkbox"
                                 name={row.original?.view}
                                 id={`basic-checkbox-0`}
-                                checked={state.userRights[row.index]?.[row.original?.view]}
+                                checked={state.staffRights[row.index]?.[row.original?.view]}
                                 className={'mb-2 form-check-Primary'}
                                 onChange={(e) => handleChange(e, e.target.name, row.index)}
                             />
@@ -91,7 +103,7 @@ function Index() {
                                 type="checkbox"
                                 name={row.original?.create}
                                 id={`basic-checkbox-0`}
-                                checked={state.userRights[row.index]?.[row.original?.create]}
+                                checked={state.staffRights[row.index]?.[row.original?.create]}
                                 className={'mb-2 form-check-Primary'}
                                 onChange={(e) => handleChange(e, e.target.name, row.index)}
                             />
@@ -112,7 +124,7 @@ function Index() {
                                 type="checkbox"
                                 name={row.original?.update}
                                 id={`basic-checkbox-0`}
-                                checked={state.userRights[row.index]?.[row.original?.update]}
+                                checked={state.staffRights[row.index]?.[row.original?.update]}
                                 className={'mb-2 form-check-Primary'}
                                 onChange={(e) => handleChange(e, e.target.name, row.index)}
                             />
@@ -133,7 +145,7 @@ function Index() {
                                 type="checkbox"
                                 name={row.original?.delete}
                                 id={`basic-checkbox-0`}
-                                checked={state.userRights[row.index]?.[row.original?.delete]}
+                                checked={state.staffRights[row.index]?.[row.original?.delete]}
                                 className={'mb-2 form-check-Primary'}
                                 onChange={(e) => handleChange(e, e.target.name, row.index)}
                             />
@@ -146,16 +158,16 @@ function Index() {
 
     const handleChange = (e, name, index) => {
         setState((prevState) => {
-            const updatedUserRightsList = [...prevState.userRights];
+            const updatedStaffRightsList = [...prevState.staffRights];
 
-            updatedUserRightsList[index] = {
-                ...updatedUserRightsList[index],
+            updatedStaffRightsList[index] = {
+                ...updatedStaffRightsList[index],
                 [name]: e.target.checked,
             };
 
             return {
                 ...prevState,
-                userRights: updatedUserRightsList,
+                staffRights: updatedStaffRightsList,
                 [name]: e.target.checked,
             };
         });
@@ -165,8 +177,9 @@ function Index() {
         staffId: '',
         staffName: '',
         staffCode: '',
-        userRights: [],
+        staffRights: [],
     });
+    const [selectedItem, setSelectedItem] = useState({});
     const [isLoading, setIsLoading] = useState(false);
     const [optionListState, setOptionListState] = useState({
         staff_list: [],
@@ -193,56 +206,83 @@ function Index() {
     }, [getStaffSuccess, getStaffFailure]);
 
     useEffect(() => {
-        if (getUserRightsSuccess) {
+        if (getStaffRightsSuccess) {
             setIsLoading(false);
             try {
-                const parsedData = JSON.parse(getUserRightsData);
-                const transformedRights = parsedData.map((item) => {
-                    const [key, permissions] = Object.entries(item).find(([k]) => k !== "title");
-
-                    return {
-                        title: item.title,
-                        [`${key}_view`]: permissions.view || false,
-                        [`${key}_ins`]: permissions.create || false,
-                        [`${key}_upd`]: permissions.update || false,
-                        [`${key}_del`]: permissions.delete || false,
-                    };
-                });
-
-                setState((prevState) => ({
-                    ...prevState,
-                    userRights: transformedRights,
-                }));
-
+                if (getStaffRightsData.length > 0) {
+                    isEdit = true;
+                    const parsedData = JSON.parse(getStaffRightsData[0]?.staffRightsPermission || "");
+                    setState((prevState) => {
+                        const updatedState = { ...prevState };
+                        const staffRights = parsedData.map((item) => {
+                            const [key, permissions] = Object.entries(item).find(([k]) => k !== "title");
+                            updatedState[`${item.title}_view`] = permissions?.view || false;
+                            updatedState[`${item.title}_ins`] = permissions?.create || false;
+                            updatedState[`${item.title}_upd`] = permissions?.update || false;
+                            updatedState[`${item.title}_del`] = permissions?.delete || false;
+                            return {
+                                title: item.title,
+                                [`${item.title}_view`]: permissions?.view || false,
+                                [`${item.title}_ins`]: permissions?.create || false,
+                                [`${item.title}_upd`]: permissions?.update || false,
+                                [`${item.title}_del`]: permissions?.delete || false,
+                            };
+                        });
+                        return {
+                            ...updatedState,
+                            staffRights,
+                        };
+                    });
+                    setSelectedItem(getStaffRightsData[0]);
+                } else {
+                    setState({
+                        ...state,
+                        staffRights: []
+                    })
+                    isEdit = false;
+                }
             } catch (error) {
-                console.error("Error parsing user rights data:", error);
+                console.error("Error parsing staff rights data:", error);
             }
-            dispatch(resetGetUserRights());
-        } else if (getUserRightsFailure) {
+            dispatch(resetGetStaffRights());
+        } else if (getStaffRightsFailure) {
             setIsLoading(false);
-            dispatch(resetGetUserRights());
+            dispatch(resetGetStaffRights());
         }
-    }, [getUserRightsSuccess, getUserRightsFailure]);
+    }, [getStaffRightsSuccess, getStaffRightsFailure]);
 
 
     useEffect(() => {
-        if (createUserRightsSuccess) {
+        if (createStaffRightsSuccess) {
             setIsLoading(false);
-            showMessage('success', getStaffMetaMessage);
+            showMessage('success', 'Created Successfully');
             onFormClear();
-            dispatch(resetCreateUserRights());
-        } else if (createUserRightsFailure) {
+            dispatch(resetCreateStaffRights());
+        } else if (createStaffRightsFailure) {
             setIsLoading(false);
-            dispatch(resetCreateUserRights());
+            dispatch(resetCreateStaffRights());
         }
-    }, [createUserRightsSuccess, createUserRightsFailure]);
+    }, [createStaffRightsSuccess, createStaffRightsFailure]);
+
+
+    useEffect(() => {
+        if (updateStaffRightsSuccess) {
+            setIsLoading(false);
+            isEdit && showMessage('success', 'Updated Successfully');
+            onFormClear();
+            dispatch(resetUpdateStaffRights());
+        } else if (updateStaffRightsFailure) {
+            setIsLoading(false);
+            dispatch(resetUpdateStaffRights());
+        }
+    }, [updateStaffRightsSuccess, updateStaffRightsFailure]);
 
     const onFormClear = () => {
         setState({
             staffId: '',
             staffName: '',
             staffCode: '',
-            userRights: [],
+            staffRights: [],
         });
     };
 
@@ -251,63 +291,64 @@ function Index() {
     };
 
     const onFormSubmit = () => {
-        const data = {
-            data: [
-                {
-                    title: "master",
-                    permission: {
-                        create: state?.master_ins || false,
-                        update: state?.master_upd || false,
-                        delete: state?.master_del || false,
-                        view: state?.master_view || false
-                    },
+        const data = [
+            {
+                title: "master",
+                permission: {
+                    create: state?.master_ins || false,
+                    update: state?.master_upd || false,
+                    delete: state?.master_del || false,
+                    view: state?.master_view || false
                 },
-                {
-                    title: "staff",
-                    permission: {
-                        create: state?.staff_ins || false,
-                        update: state?.staff_upd || false,
-                        delete: state?.staff_del || false,
-                        view: state?.staff_view || false
-                    },
+            },
+            {
+                title: "staff",
+                permission: {
+                    create: state?.staff_ins || false,
+                    update: state?.staff_upd || false,
+                    delete: state?.staff_del || false,
+                    view: state?.staff_view || false
                 },
-                {
-                    title: "visitEntry",
-                    permission: {
-                        create: state?.visitEntry_ins || false,
-                        update: state?.visitEntry_upd || false,
-                        delete: state?.visitEntry_del || false,
-                        view: state?.visitEntry_view || false,
-                    },
+            },
+            {
+                title: "visitEntry",
+                permission: {
+                    create: state?.visitEntry_ins || false,
+                    update: state?.visitEntry_upd || false,
+                    delete: state?.visitEntry_del || false,
+                    view: state?.visitEntry_view || false,
                 },
-                {
-                    title: "petrolAllowance",
-                    permission: {
-                        create: state?.petrolAllowance_ins || false,
-                        update: state?.petrolAllowance_upd || false,
-                        delete: state?.petrolAllowance_del || false,
-                        view: state?.petrolAllowance_view || false,
-                    },
+            },
+            {
+                title: "petrolAllowance",
+                permission: {
+                    create: state?.petrolAllowance_ins || false,
+                    update: state?.petrolAllowance_upd || false,
+                    delete: state?.petrolAllowance_del || false,
+                    view: state?.petrolAllowance_view || false,
                 },
-                {
-                    title: "salary",
-                    permission: {
-                        create: state?.salary_ins || false,
-                        update: state?.salary_upd || false,
-                        delete: state?.salary_del || false,
-                        view: state?.salary_view || false,
-                    },
+            },
+            {
+                title: "salary",
+                permission: {
+                    create: state?.salary_ins || false,
+                    update: state?.salary_upd || false,
+                    delete: state?.salary_del || false,
+                    view: state?.salary_view || false,
                 },
-            ]
-        }
+            },
+        ]
         const submitRequest = {
             staffId: state?.staffId || "",
-            userPermission: JSON.stringify(data)
+            staffRightsPermission: JSON.stringify(data)
         };
 
-        console.log("Submitted user rights", submitRequest);
-        // return;
-        dispatch(createUserRightsRequest(submitRequest));
+        if (isEdit) {
+            dispatch(updateStaffRightsRequest(submitRequest, selectedItem?.staffRightsId));
+
+        } else {
+            dispatch(createStaffRightsRequest(submitRequest));
+        }
     };
 
 
@@ -315,7 +356,7 @@ function Index() {
         const staffId = {
             staffId: option?.staffId
         }
-        dispatch(getUserRightsRequest(staffId));
+        dispatch(getStaffRightsRequest(staffId));
         setState({
             ...state,
             [name]: option[uniqueKey],
@@ -354,7 +395,7 @@ function Index() {
                                 <Table
                                     columns={itemList}
                                     Title={'User Rights'}
-                                    data={formContainerUserRights || []}
+                                    data={formContainerStaffRights || []}
                                     pagination={false}
                                     isSearchable={false}
                                     setState={setState}
@@ -367,7 +408,7 @@ function Index() {
                                             style={{ background: '#7638FF', borderColor: '#7638FF' }}
                                             className="w-100"
                                             onClick={() => handleValidation()}>
-                                            Submit
+                                            {isEdit ? "Update" : "Submit"}
                                         </Button>
                                     </Col>
                                 </Row>

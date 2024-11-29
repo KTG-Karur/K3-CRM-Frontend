@@ -2,10 +2,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Badge, Spinner } from 'react-bootstrap';
 import ModelViewBox from '../../components/Atom/ModelViewBox';
 import FormLayout from '../../utils/formLayout';
-import { deputationContainer } from './formFieldData';
+import { staffTrainingContainer } from './formFieldData';
 import Table from '../../components/Table';
 import { dateConversion, deleteData, noOfDayCount, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
-import { createDeputationRequest, getDeputationRequest, getStaffRequest, resetCreateDeputation, resetGetDeputation, resetUpdateDeputation, resetGetBranch, resetGetStaff, updateDeputationRequest, getBranchRequest } from '../../redux/actions';
+import { createStaffTrainingRequest, getStaffTrainingRequest, getStaffRequest, resetCreateStaffTraining, resetGetStaffTraining, resetUpdateStaffTraining, resetGetBranch, resetGetStaff, updateStaffTrainingRequest, getBranchRequest } from '../../redux/actions';
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 import _ from 'lodash';
@@ -19,9 +19,9 @@ function Index() {
     const { dispatch, appSelector } = useRedux();
     const navigate = useNavigate();
 
-    const { getDeputationSuccess, getDeputationList, getDeputationFailure,
-        createDeputationSuccess, createDeputationData, createDeputationFailure,
-        updateDeputationSuccess, updateDeputationData, updateDeputationFailure,
+    const { getStaffTrainingSuccess, getStaffTrainingList, getStaffTrainingFailure,
+        createStaffTrainingSuccess, createStaffTrainingData, createStaffTrainingFailure,
+        updateStaffTrainingSuccess, updateStaffTrainingData, updateStaffTrainingFailure,
         errorMessage, getBranchFailure, getBranchList, getBranchSuccess, getStaffSuccess,
         getStaffList,
         getStaffFailure,
@@ -31,23 +31,23 @@ function Index() {
         getStaffList: state.staffReducer.getStaffList,
         getStaffFailure: state.staffReducer.getStaffFailure,
 
-        getDeputationSuccess: state.deputationReducer.getDeputationSuccess,
-        getDeputationList: state.deputationReducer.getDeputationList,
-        getDeputationFailure: state.deputationReducer.getDeputationFailure,
+        getStaffTrainingSuccess: state.staffTrainingReducer.getStaffTrainingSuccess,
+        getStaffTrainingList: state.staffTrainingReducer.getStaffTrainingList,
+        getStaffTrainingFailure: state.staffTrainingReducer.getStaffTrainingFailure,
 
         getBranchSuccess: state.branchReducer.getBranchSuccess,
         getBranchList: state.branchReducer.getBranchList,
         getBranchFailure: state.branchReducer.getBranchFailure,
 
-        createDeputationSuccess: state.deputationReducer.createDeputationSuccess,
-        createDeputationData: state.deputationReducer.createDeputationData,
-        createDeputationFailure: state.deputationReducer.createDeputationFailure,
+        createStaffTrainingSuccess: state.staffTrainingReducer.createStaffTrainingSuccess,
+        createStaffTrainingData: state.staffTrainingReducer.createStaffTrainingData,
+        createStaffTrainingFailure: state.staffTrainingReducer.createStaffTrainingFailure,
 
-        updateDeputationSuccess: state.deputationReducer.updateDeputationSuccess,
-        updateDeputationData: state.deputationReducer.updateDeputationData,
-        updateDeputationFailure: state.deputationReducer.updateDeputationFailure,
+        updateStaffTrainingSuccess: state.staffTrainingReducer.updateStaffTrainingSuccess,
+        updateStaffTrainingData: state.staffTrainingReducer.updateStaffTrainingData,
+        updateStaffTrainingFailure: state.staffTrainingReducer.updateStaffTrainingFailure,
 
-        errorMessage: state.deputationReducer.errorMessage,
+        errorMessage: state.staffTrainingReducer.errorMessage,
     }));
 
     const columns = [
@@ -58,11 +58,11 @@ function Index() {
         },
         {
             Header: 'Date',
-            accessor: 'deputationDate',
+            accessor: 'staffTrainingDate',
             Cell: ({ row }) => {
                 return (
                     <div>
-                        {dateConversion(row.original.deputationDate, "DD-MM-YYYY")}
+                        {dateConversion(row.original.staffTrainingDate, "DD-MM-YYYY")}
                     </div>
                 )
             },
@@ -144,7 +144,7 @@ function Index() {
                             row.original.statusId == 29 && (
                                 <div>
                                     <span className="text-success  me-2 cursor-pointer"
-                                        onClick={() => navigate('/deputation-report', { state: row.original })}>
+                                        onClick={() => navigate('/staffTraining-report', { state: row.original })}>
                                         <i className={'fe-printer'} style={{ fontSize: '19px' }}></i>
                                     </span>
                                 </div>
@@ -157,7 +157,7 @@ function Index() {
     ];
 
     const [state, setState] = useState({
-        deputationDate: moment().format("YYYY-MM-DD"),
+        staffTrainingDate: moment().format("YYYY-MM-DD"),
         minmumFrom: moment().format("YYYY-MM-DD"),
         minmumTo: moment().format("YYYY-MM-DD"),
     });
@@ -179,7 +179,7 @@ function Index() {
     useEffect(() => {
         setIsLoading(true)
         // dispatch(getStaffRequest());
-        dispatch(getDeputationRequest());
+        dispatch(getStaffTrainingRequest());
         dispatch(getBranchRequest());
     }, []);
 
@@ -202,16 +202,16 @@ function Index() {
     }, [getStaffSuccess, getStaffFailure]);
 
     useEffect(() => {
-        if (getDeputationSuccess) {
+        if (getStaffTrainingSuccess) {
             setIsLoading(false)
-            setParentList(getDeputationList)
-            dispatch(resetGetDeputation())
-        } else if (getDeputationFailure) {
+            setParentList(getStaffTrainingList)
+            dispatch(resetGetStaffTraining())
+        } else if (getStaffTrainingFailure) {
             setIsLoading(false)
             setParentList([])
-            dispatch(resetGetDeputation())
+            dispatch(resetGetStaffTraining())
         }
-    }, [getDeputationSuccess, getDeputationFailure]);
+    }, [getStaffTrainingSuccess, getStaffTrainingFailure]);
 
     useEffect(() => {
         if (getBranchSuccess) {
@@ -232,31 +232,31 @@ function Index() {
     }, [getBranchSuccess, getBranchFailure]);
 
     useEffect(() => {
-        if (createDeputationSuccess) {
-            const temp_state = [createDeputationData[0], ...parentList];
+        if (createStaffTrainingSuccess) {
+            const temp_state = [createStaffTrainingData[0], ...parentList];
             setParentList(temp_state)
             showMessage('success', 'Created Successfully');
             closeModel()
-            dispatch(resetCreateDeputation())
-        } else if (createDeputationFailure) {
+            dispatch(resetCreateStaffTraining())
+        } else if (createStaffTrainingFailure) {
             showMessage('warning', errorMessage);
-            dispatch(resetCreateDeputation())
+            dispatch(resetCreateStaffTraining())
         }
-    }, [createDeputationSuccess, createDeputationFailure]);
+    }, [createStaffTrainingSuccess, createStaffTrainingFailure]);
 
     useEffect(() => {
-        if (updateDeputationSuccess) {
+        if (updateStaffTrainingSuccess) {
             const temp_state = [...parentList];
-            temp_state[selectedIndex] = updateDeputationData[0];
+            temp_state[selectedIndex] = updateStaffTrainingData[0];
             setParentList(temp_state)
             isEdit && showMessage('success', 'Updated Successfully');
             closeModel()
-            dispatch(resetUpdateDeputation())
-        } else if (updateDeputationFailure) {
+            dispatch(resetUpdateStaffTraining())
+        } else if (updateStaffTrainingFailure) {
             showMessage('warning', errorMessage);
-            dispatch(resetUpdateDeputation())
+            dispatch(resetUpdateStaffTraining())
         }
-    }, [updateDeputationSuccess, updateDeputationFailure]);
+    }, [updateStaffTrainingSuccess, updateStaffTrainingFailure]);
 
     useEffect(() => {
         setState({
@@ -265,6 +265,7 @@ function Index() {
             dayCount: noOfDayCount(state?.fromDate, state?.toDate)
         })
     }, [state?.fromDate, state?.toDate])
+
 
     const closeModel = () => {
         isEdit = false;
@@ -275,7 +276,7 @@ function Index() {
     const onFormClear = () => {
         setState({
             ...state,
-            deputationDate: moment().format("YYYY-MM-DD"),
+            staffTrainingDate: moment().format("YYYY-MM-DD"),
             staffId: '',
             fromPlace: '',
             toPlace: '',
@@ -302,7 +303,7 @@ function Index() {
             staffId: data?.staffId || "",
             fromPlace: data?.fromPlace || "",
             toPlace: data?.toPlace || "",
-            deputationDate: data.deputationDate ? dateConversion(data.deputationDate, "YYYY-MM-DD") : "",
+            staffTrainingDate: data.staffTrainingDate ? dateConversion(data.staffTrainingDate, "YYYY-MM-DD") : "",
             fromDate: data.fromDate ? dateConversion(data.fromDate, "YYYY-MM-DD") : "",
             toDate: data.toDate ? dateConversion(data.toDate, "YYYY-MM-DD") : "",
             reason: data?.reason || ""
@@ -331,15 +332,15 @@ function Index() {
             staffId: state?.staffId || "",
             fromPlace: state?.fromPlace || "",
             toPlace: state?.toPlace || "",
-            deputationDate: state.deputationDate ? dateConversion(state.deputationDate, "YYYY-MM-DD") : "",
+            staffTrainingDate: state.staffTrainingDate ? dateConversion(state.staffTrainingDate, "YYYY-MM-DD") : "",
             fromDate: state.fromDate ? dateConversion(state.fromDate, "YYYY-MM-DD") : "",
             toDate: state.toDate ? dateConversion(state.toDate, "YYYY-MM-DD") : "",
             reason: state?.reason || ""
         }
         if (isEdit) {
-            dispatch(updateDeputationRequest(submitRequest, selectedItem.deputationId))
+            dispatch(updateStaffTrainingRequest(submitRequest, selectedItem.staffTrainingId))
         } else {
-            dispatch(createDeputationRequest(submitRequest))
+            dispatch(createStaffTrainingRequest(submitRequest))
         }
     };
 
@@ -365,7 +366,7 @@ function Index() {
             isActive: activeChecker == 30 ? 0 : 1,
         };
         setSelectedIndex(index);
-        dispatch(updateDeputationRequest(submitRequest, data.deputationId))
+        dispatch(updateStaffTrainingRequest(submitRequest, data.staffTrainingId))
     };
 
 
@@ -379,7 +380,7 @@ function Index() {
             </div> :
                 <Table
                     columns={columns}
-                    Title={'Deputation List'}
+                    Title={'Staff Training List'}
                     data={parentList || []}
                     pageSize={25}
                     toggle={createModel}
@@ -388,12 +389,12 @@ function Index() {
             <ModelViewBox
                 modal={modal}
                 setModel={setModal}
-                modelHeader={'Deputation Order'}
+                modelHeader={'Staff Training Order'}
                 modelSize={'md'}
                 isEdit={isEdit}
                 handleSubmit={handleValidation}>
                 <FormLayout
-                    dynamicForm={deputationContainer}
+                    dynamicForm={staffTrainingContainer}
                     handleSubmit={onFormSubmit}
                     optionListState={optionListState}
                     setState={setState}

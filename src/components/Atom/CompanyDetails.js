@@ -1,5 +1,5 @@
 import React from 'react'
-import harshiniFincorpLogo from '../../assets/images/K3_Logo.png';
+import k3Logo from '../../assets/images/K3_Logo.png';
 
 function CompanyDetails(props) {
     const { fontSize, imgSize, classStyle } = props;
@@ -7,8 +7,8 @@ function CompanyDetails(props) {
         <div className={classStyle}>
             <h3>
                 <img
-                    src={harshiniFincorpLogo}
-                    alt="harshiniFincorpLogo"
+                    src={k3Logo}
+                    alt="k3Logo"
                     style={{ width: imgSize }}
                 />
             </h3>

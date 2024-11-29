@@ -22,7 +22,7 @@ import ProfileDropdown from '../../components/topbar/ProfileDropdown';
 import { notifications, profileMenus, searchOptions } from './data';
 
 // images
-import logoSm from '../../assets/images/HariniFavIcon.png';
+import logoSm from '../../assets/images/k3Icon.png';
 import avatar1 from '../../assets/images/users/user-1.jpg';
 import logoDark from '../../assets/images/K3_Logo.png';
 import logoLight from '../../assets/images/K3_Logo.png';

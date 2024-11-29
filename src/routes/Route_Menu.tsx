@@ -22,6 +22,8 @@ export const StaffLeave = React.lazy(() => import('../view/staff-leave'));
 export const StaffOnDuty = React.lazy(() => import('../view/staff-onduty'));
 export const Attendance = React.lazy(() => import('../view/attendance'));
 export const Salary = React.lazy(() => import('../view/salary'));
+export const TrainingType = React.lazy(() => import('../view/training-type'));
+export const StaffTraining = React.lazy(() => import('../view/staff-training'));
 
 // master
 export const Department = React.lazy(() => import('../view/department'));
@@ -41,7 +43,7 @@ export const StaffAdvance = React.lazy(() => import('../view/staff-advance'));
 export const Deputation = React.lazy(() => import('../view/deputation'));
 
 // user rights
-export const UserRights = React.lazy(() => import('../view/user-rights'));
+export const UserRights = React.lazy(() => import('../view/staff-rights'));
 
 //report
 export const DeputationReport = React.lazy(() => import('../view/documents/deputaion-report'));

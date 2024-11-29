@@ -7,6 +7,7 @@
 
     span.logo-lg {
         display: block;
+        background-color: #092e4b !important; //done by varsha
     }
 
     span.logo-sm {
@@ -14,7 +15,7 @@
     }
 
     .logo-lg-text-dark {
-        color: #{map-get($grays, "900")};
+        color: #{map-get($grays, '900')};
         font-weight: $font-weight-bold;
         font-size: 22px;
         text-transform: uppercase;
@@ -68,7 +69,7 @@
         }
         .nav-link {
             padding: 0 15px;
-            color: #{map-get($grays, "700")};
+            color: #{map-get($grays, '700')};
             min-width: 32px;
             display: block;
             line-height: $topbar-height;
@@ -78,7 +79,7 @@
     }
     .dropdown.show {
         .nav-link {
-            background-color: #{rgba(map-get($grays, "700"), 0.05)};
+            background-color: #{rgba(map-get($grays, '700'), 0.05)};
         }
     }
 
@@ -93,7 +94,7 @@
         .react-select__placeholder,
         input::placeholder {
             font-size: 0.8125rem;
-            color: #{map-get($grays, "500")};
+            color: #{map-get($grays, '500')};
             margin: 0;
         }
 
@@ -124,7 +125,7 @@
         .btn {
             background-color: $topbar-search-bg;
             border-color: transparent;
-            color: #{map-get($grays, "700")};
+            color: #{map-get($grays, '700')};
             border-radius: 0 30px 30px 0;
             box-shadow: none !important;
         }
@@ -132,7 +133,7 @@
 
     .button-menu-mobile {
         border: none;
-        color: #{map-get($grays, "900")};
+        color: #{map-get($grays, '900')};
         display: inline-block;
         height: $topbar-height;
         line-height: $topbar-height;
@@ -188,7 +189,7 @@
             margin-left: 45px;
             text-overflow: ellipsis;
             white-space: nowrap;
-            color: #{map-get($grays, "800")};
+            color: #{map-get($grays, '800')};
 
             b {
                 font-weight: 500;
@@ -252,9 +253,9 @@
 
 // Full Screen
 .fullscreen-enable {
-    [data-toggle="fullscreen"] {
+    [data-toggle='fullscreen'] {
         .fe-maximize::before {
-            content: "\e88d";
+            content: '\e88d';
         }
     }
 }
@@ -289,10 +290,10 @@
 
 // dark Topbar
 
-body[data-topbar-color="dark"] {
-    &[data-sidebar-color="light"],
-    &[data-sidebar-color="dark"],
-    &[data-sidebar-color="brand"] {
+body[data-topbar-color='dark'] {
+    &[data-sidebar-color='light'],
+    &[data-sidebar-color='dark'],
+    &[data-sidebar-color='brand'] {
         .logo-box {
             background-color: transparent;
         }
@@ -306,7 +307,7 @@ body[data-topbar-color="dark"] {
 
         .topnav-menu {
             .nav-link {
-                color: #{map-get($grays, "400")};
+                color: #{map-get($grays, '400')};
             }
         }
 
@@ -324,7 +325,7 @@ body[data-topbar-color="dark"] {
             margin: 0;
             line-height: 70px;
             padding: 0 30px;
-            color: #{map-get($grays, "100")};
+            color: #{map-get($grays, '100')};
         }
 
         /* Search */
@@ -353,7 +354,7 @@ body[data-topbar-color="dark"] {
     }
 }
 
-body[data-topbar-color="dark"] {
+body[data-topbar-color='dark'] {
     .navbar-custom {
         .page-title-main {
             color: $page-title-color;
@@ -362,7 +363,7 @@ body[data-topbar-color="dark"] {
 }
 
 @include media-breakpoint-down(lg) {
-    body[data-layout-mode="horizontal"] {
+    body[data-layout-mode='horizontal'] {
         // Navbar Button - Horizontal
         .navbar-toggle {
             border: 0;
@@ -383,7 +384,7 @@ body[data-topbar-color="dark"] {
             span {
                 height: 2px;
                 width: 100%;
-                background-color: #{map-get($grays, "400")};
+                background-color: #{map-get($grays, '400')};
                 display: block;
                 margin-bottom: 5px;
                 transition: transform 0.5s ease;
@@ -413,8 +414,8 @@ body[data-topbar-color="dark"] {
     }
 }
 
-body[data-layout-mode="horizontal"] {
-    &[data-topbar-color="light"] {
+body[data-layout-mode='horizontal'] {
+    &[data-topbar-color='light'] {
         .logo-box {
             .logo-dark {
                 display: $logo-auth-dark-display;
@@ -425,7 +426,7 @@ body[data-layout-mode="horizontal"] {
             }
         }
     }
-    &[data-topbar-color="dark"] {
+    &[data-topbar-color='dark'] {
         .logo-box {
             .logo-dark {
                 display: none;
@@ -497,45 +498,45 @@ body[data-layout-mode="horizontal"] {
 // }
 
 // dark mode
-body[data-layout-color="dark"] {
+body[data-layout-color='dark'] {
     .logo {
         .logo-lg-text-dark {
-            color: #{map-get($dark-grays, "900")};
+            color: #{map-get($dark-grays, '900')};
         }
     }
     .navbar-custom {
         background-color: var(--#{$variable-prefix}body-bg);
         .topnav-menu {
             .nav-link {
-                color: #{map-get($dark-grays, "700")};
+                color: #{map-get($dark-grays, '700')};
             }
         }
         .dropdown.show {
             .nav-link {
-                background-color: #{rgba(map-get($dark-grays, "700"), 0.05)};
+                background-color: #{rgba(map-get($dark-grays, '700'), 0.05)};
             }
         }
         .app-search {
             .react-select__placeholder,
             input::placeholder {
-                color: #{map-get($dark-grays, "500")} !important;
+                color: #{map-get($dark-grays, '500')} !important;
             }
 
             .form-control {
-                color: #{map-get($dark-grays, "900")};
+                color: #{map-get($dark-grays, '900')};
             }
             .btn {
-                color: #{map-get($dark-grays, "700")};
+                color: #{map-get($dark-grays, '700')};
             }
         }
         .button-menu-mobile {
-            color: #{map-get($dark-grays, "900")};
+            color: #{map-get($dark-grays, '900')};
         }
     }
     .notification-list {
         .notify-item {
             .notify-details {
-                color: #{map-get($dark-grays, "800")};
+                color: #{map-get($dark-grays, '800')};
             }
         }
     }
@@ -551,7 +552,7 @@ body[data-layout-color="dark"] {
     //         }
     //     }
     // }
-    &[data-layout-mode="horizontal"] {
+    &[data-layout-mode='horizontal'] {
         .logo-box {
             .logo-dark {
                 display: none;
@@ -564,7 +565,7 @@ body[data-layout-color="dark"] {
         @include media-breakpoint-down(lg) {
             .navbar-toggle {
                 span {
-                    background-color: #{map-get($dark-grays, "400")};
+                    background-color: #{map-get($dark-grays, '400')};
                 }
             }
         }

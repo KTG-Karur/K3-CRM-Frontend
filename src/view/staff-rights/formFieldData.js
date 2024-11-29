@@ -42,7 +42,7 @@ const formContainer = [
 ]
 
 
-const formContainerUserRights = [
+const formContainerStaffRights = [
     {
         title: "Master",
         create: "master_ins",
@@ -165,6 +165,6 @@ const formContainerUserRights = [
 ]
 
 export {
-    formContainerUserRights,
+    formContainerStaffRights,
     formContainer
 }

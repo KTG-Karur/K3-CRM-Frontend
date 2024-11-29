@@ -117,6 +117,8 @@ import {
     DeputationReport,
     UserRights,
     StaffOnDuty,
+    TrainingType,
+    StaffTraining,
 } from './Route_Menu';
 
 const loading = () => <div className=""></div>;
@@ -227,6 +229,10 @@ const AllRoutes = () => {
                     element: <LoadComponent component={StaffOnDuty} />,
                 },
                 {
+                    path: 'staff-training',
+                    element: <LoadComponent component={StaffTraining} />,
+                },
+                {
                     path: 'staff-salary',
                     element: <LoadComponent component={Salary} />,
                 },
@@ -282,6 +288,10 @@ const AllRoutes = () => {
                         {
                             path: 'staff',
                             element: <LoadComponent component={Staff} />,
+                        },
+                        {
+                            path: 'training-type',
+                            element: <LoadComponent component={TrainingType} />,
                         },
                         {
                             path: 'claim-type',

@@ -32,8 +32,10 @@ import staffLeaveReducer from './staff-leave/reducers';
 import staffAttendanceReducer from './staff-attendance/reducers';
 import staffsalaryReducer from './staff-salary/reducers';
 import bankAccountReducer from './bank-account/reducers';
-import userRightsReducer from './user-rights/reducers';
+import staffRightsReducer from './staff-rights/reducers';
 import staffOnDutyReducer from './staff-onduty/reducers';
+import trainingTypeReducer from './training-type/reducers';
+import staffTrainingReducer from './staff-training/reducers';
 
 export default combineReducers({
     Auth,
@@ -68,6 +70,8 @@ export default combineReducers({
     staffAttendanceReducer,
     staffsalaryReducer,
     bankAccountReducer,
-    userRightsReducer,
+    staffRightsReducer,
     staffOnDutyReducer,
+    trainingTypeReducer,
+    staffTrainingReducer,
 });

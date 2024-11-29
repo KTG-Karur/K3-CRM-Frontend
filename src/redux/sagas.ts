@@ -31,8 +31,10 @@ import staffLeaveSaga from './staff-leave/saga';
 import StaffAttendanceSaga from './staff-attendance/saga';
 import advancePaymentHistorySaga from './advance-payment-history/saga';
 import staffsalarySaga from './staff-salary/saga';
-import userRightsSaga from './user-rights/saga';
+import staffRightsSaga from './staff-rights/saga';
 import StaffOnDutySaga from './staff-onduty/saga';
+import trainingTypeSaga from './training-type/saga';
+import staffTrainingSaga from './staff-training/saga';
 
 export default function* rootSaga() {
     yield all([
@@ -67,7 +69,9 @@ export default function* rootSaga() {
         staffLeaveSaga(),
         StaffAttendanceSaga(),
         staffsalarySaga(),
-        userRightsSaga(),
+        staffRightsSaga(),
         StaffOnDutySaga(),
+        trainingTypeSaga(),
+        staffTrainingSaga(),
     ]);
 }

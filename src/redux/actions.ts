@@ -29,6 +29,7 @@ export * from './staff-qualification/actions';
 export * from './staff-leave/actions';
 export * from './staff-attendance/actions';
 export * from './staff-salary/actions';
-export * from './user-rights/actions';
+export * from './staff-rights/actions';
 export * from './staff-onduty/actions';
-
+export * from './training-type/actions';
+export * from './staff-training/actions';

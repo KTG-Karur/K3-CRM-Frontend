@@ -33,7 +33,9 @@ const apiContainer = {
   staffAttendance: '/staff-attendance',
   staffSalary: "/staff-salary-history",
   staffOnDuty: "/staff-onduty",
-  userRights: "/user-rights",
+  staffRights: "/staff-rights",
+  trainingType: "/training-type",
+  staffTraining: "/staff-training",
 };
 
 export default apiContainer;
