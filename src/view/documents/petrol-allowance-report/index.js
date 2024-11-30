@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import K3Logo from '../../../assets/images/K3_Logo.png';
@@ -11,9 +11,26 @@ import Petrol_1 from '../../../assets/images/petrol_1.jpeg';
 import Petrol_2 from '../../../assets/images/petrol_2.jpeg';
 import { size } from 'lodash';
 import { Table } from 'react-bootstrap';
+import moment from 'moment';
 
 function Index() {
-    const today = new Date().toLocaleDateString();
+    const baseUrl = process.env?.baseURL || "http://localhost:5059";
+
+
+    const { state } = useLocation();
+
+
+    const [stateVal, setStateVal] = useState({})
+
+    console.log(baseUrl +  stateVal?.billImageName)
+    useEffect(() => {
+        if (state != undefined && state != null) {
+            setStateVal(state || {});
+        }
+    }, [state])
+
+    console.log("stateVal")
+    console.log(stateVal)
 
     const petrolAllowance = {
         header: {
@@ -26,10 +43,10 @@ function Index() {
             body_content:
                 'I hereby declared that I have actually incurred a sum of Rs.1860/- (Rupees one thousand eight hundred sixty only) towards fuel/conveyance expense for the month of SEPTEMBER 24 in respect of the official visits undertaken by me within the limitsof local authorities, while deischarging my official duties. I request that the same may be reimbursed to me. The necessary particulars in this behalf are given below:',
             details: {
-                name: 'TAMIL SELVI . S',
-                desigination: 'ASST BRANCH MANAGER',
-                emply_no: 'K3WF05',
-                place_of_duty: 'Erode',
+                name: `${(stateVal?.staffName || '').toUpperCase()}`,
+                desigination: `${(stateVal?.designationName || '').toUpperCase()}`,
+                emply_no: `${(stateVal?.staffCode || '').toUpperCase()}`,
+                place_of_duty: `${(stateVal?.branchName || '').toUpperCase()}`,
                 maximum_entitlement: '20 L',
                 claimed_for: '18.35 L',
             },
@@ -40,7 +57,7 @@ function Index() {
                 in_words: 'One Thousand eight hundred Sixty',
             },
         },
-        images: [Petrol_1, Petrol, Petrol_2, Petrol, Petrol, Petrol_2, Petrol_1, Petrol_2, Petrol_1, Petrol],
+        images: [`${stateVal?.billImageName}`, Petrol, Petrol_2, Petrol, Petrol, Petrol_2, Petrol_1, Petrol_2, Petrol_1, Petrol],
         petrol_claim: {
             staff_name: 'TAMILSELVAN S',
             for_month: 'SEP 24',
@@ -111,6 +128,7 @@ function Index() {
                 },
             ],
         },
+        today: moment().format("DD-MM-YYYY")
     };
 
     const underlineStyle = (text) => ({
@@ -145,7 +163,7 @@ function Index() {
         }),
         { tkm: 0, amount: 0, bill_no: [] }
     );
-    
+
 
     return (
         <Container className="letter-container my-4 p-4 bg-light" style={{ maxWidth: '800px' }}>
@@ -161,7 +179,7 @@ function Index() {
                         {petrolAllowance.body?.to || ''}
                     </Col>
                     <Col className="text-end mb-2 text-black" style={{ fontSize: '16px', fontWeight: 'bold' }}>
-                        Date: {today}
+                        Date: {petrolAllowance.today}
                     </Col>
                 </Row>
 
@@ -248,7 +266,7 @@ function Index() {
 
                 <Row className="justify-between mt-2">
                     <Col className="text-black" style={{ fontSize: '16px', fontWeight: 'bold' }}>
-                        Date: {today}
+                        Date: {petrolAllowance.today}
                     </Col>
                     <Col className="text-black text-end" style={{ fontSize: '16px', fontWeight: 'bold' }}>
                         Signature
@@ -361,7 +379,7 @@ function Index() {
                         <thead>
                             <tr>
                                 {tableHeaders.slice(0, maxColumns).map((header, index) => (
-                                    <th key={index} style={{color: "black"}}>{header.toUpperCase()}</th>
+                                    <th key={index} style={{ color: "black" }}>{header.toUpperCase()}</th>
                                 ))}
                             </tr>
                         </thead>
@@ -369,12 +387,12 @@ function Index() {
                             {pageData.map((row, rowIndex) => (
                                 <tr key={rowIndex}>
                                     {tableHeaders.slice(0, maxColumns).map((header, colIndex) => (
-                                        <td style={{fontSize: "12px"}} key={colIndex}>{row[header]}</td>
+                                        <td style={{ fontSize: "12px" }} key={colIndex}>{row[header]}</td>
                                     ))}
                                 </tr>
                             ))}
                             <tr>
-                                <td colSpan={4} style={{ textAlign: 'right', fontWeight: 'bold', color:"black" }}>
+                                <td colSpan={4} style={{ textAlign: 'right', fontWeight: 'bold', color: "black" }}>
                                     Total
                                 </td>
                                 <td>{totals.tkm}</td>
@@ -394,7 +412,7 @@ function Index() {
                                             fontSize: '16px',
                                             color: 'black',
                                             fontWeight: 'bold',
-                                            flex: 1, 
+                                            flex: 1,
                                         }}>
                                         {col && <strong>{col}</strong>}
                                     </Col>

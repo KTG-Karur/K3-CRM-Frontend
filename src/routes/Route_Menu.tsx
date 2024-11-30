@@ -21,7 +21,7 @@ export const Holiday = React.lazy(() => import('../view/holiday'));
 export const StaffLeave = React.lazy(() => import('../view/staff-leave'));
 export const StaffOnDuty = React.lazy(() => import('../view/staff-onduty'));
 export const Attendance = React.lazy(() => import('../view/attendance'));
-export const Salary = React.lazy(() => import('../view/salary'));
+export const Salary = React.lazy(() => import('../view/staff-salary'));
 export const TrainingType = React.lazy(() => import('../view/training-type'));
 export const StaffTraining = React.lazy(() => import('../view/staff-training'));
 
@@ -45,11 +45,14 @@ export const Deputation = React.lazy(() => import('../view/deputation'));
 // user rights
 export const UserRights = React.lazy(() => import('../view/staff-rights'));
 
-//report
+//document
 export const DeputationReport = React.lazy(() => import('../view/documents/deputaion-report'));
 export const TransferReport = React.lazy(() => import('../view/documents/transfer-report'));
 export const PermissionLeaveOdReport = React.lazy(() => import('../view/documents/permission-leave-od-report'));
 export const PetrolAllowanceReport = React.lazy(() => import('../view/documents/petrol-allowance-report'));
+
+//report
+export const StaffAttendanceReport = React.lazy(() => import('../view/report/staff-attendance-report'));
 
 // apps
 export const CalendarApp = React.lazy(() => import('../pages/apps/Calendar'));

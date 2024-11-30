@@ -216,16 +216,16 @@ function Index() {
                         const updatedState = { ...prevState };
                         const staffRights = parsedData.map((item) => {
                             const [key, permissions] = Object.entries(item).find(([k]) => k !== "title");
-                            updatedState[`${item.title}_view`] = permissions?.view || false;
-                            updatedState[`${item.title}_ins`] = permissions?.create || false;
-                            updatedState[`${item.title}_upd`] = permissions?.update || false;
-                            updatedState[`${item.title}_del`] = permissions?.delete || false;
+                            updatedState[`${item.title}View`] = permissions?.view || false;
+                            updatedState[`${item.title}Ins`] = permissions?.create || false;
+                            updatedState[`${item.title}Upd`] = permissions?.update || false;
+                            updatedState[`${item.title}Del`] = permissions?.delete || false;
                             return {
                                 title: item.title,
-                                [`${item.title}_view`]: permissions?.view || false,
-                                [`${item.title}_ins`]: permissions?.create || false,
-                                [`${item.title}_upd`]: permissions?.update || false,
-                                [`${item.title}_del`]: permissions?.delete || false,
+                                [`${item.title}View`]: permissions?.view || false,
+                                [`${item.title}Ins`]: permissions?.create || false,
+                                [`${item.title}Upd`]: permissions?.update || false,
+                                [`${item.title}Del`]: permissions?.delete || false,
                             };
                         });
                         return {
@@ -237,7 +237,27 @@ function Index() {
                 } else {
                     setState({
                         ...state,
-                        staffRights: []
+                        staffRights: [],
+                        masterIns: false,
+                        masterUpd: false,
+                        masterDel: false,
+                        masterView: false,
+                        staffIns: false,
+                        staffUpd: false,
+                        staffDel: false,
+                        staffView: false,
+                        visitEntryIns: false,
+                        visitEntryUpd: false,
+                        visitEntryDel: false,
+                        visitEntryView: false,
+                        petrolAllowanceIns: false,
+                        petrolAllowanceUpd: false,
+                        petrolAllowanceDel: false,
+                        petrolAllowanceView: false,
+                        salaryIns: false,
+                        salaryUpd: false,
+                        salaryDel: false,
+                        salaryView: false,
                     })
                     isEdit = false;
                 }
@@ -295,46 +315,46 @@ function Index() {
             {
                 title: "master",
                 permission: {
-                    create: state?.master_ins || false,
-                    update: state?.master_upd || false,
-                    delete: state?.master_del || false,
-                    view: state?.master_view || false
+                    create: state?.masterIns || false,
+                    update: state?.masterUpd || false,
+                    delete: state?.masterDel || false,
+                    view: state?.masterView || false
                 },
             },
             {
                 title: "staff",
                 permission: {
-                    create: state?.staff_ins || false,
-                    update: state?.staff_upd || false,
-                    delete: state?.staff_del || false,
-                    view: state?.staff_view || false
+                    create: state?.staffIns || false,
+                    update: state?.staffUpd || false,
+                    delete: state?.staffDel || false,
+                    view: state?.staffView || false
                 },
             },
             {
                 title: "visitEntry",
                 permission: {
-                    create: state?.visitEntry_ins || false,
-                    update: state?.visitEntry_upd || false,
-                    delete: state?.visitEntry_del || false,
-                    view: state?.visitEntry_view || false,
+                    create: state?.visitEntryIns || false,
+                    update: state?.visitEntryUpd || false,
+                    delete: state?.visitEntryDel || false,
+                    view: state?.visitEntryView || false,
                 },
             },
             {
                 title: "petrolAllowance",
                 permission: {
-                    create: state?.petrolAllowance_ins || false,
-                    update: state?.petrolAllowance_upd || false,
-                    delete: state?.petrolAllowance_del || false,
-                    view: state?.petrolAllowance_view || false,
+                    create: state?.petrolAllowanceIns || false,
+                    update: state?.petrolAllowanceUpd || false,
+                    delete: state?.petrolAllowanceDel || false,
+                    view: state?.petrolAllowanceView || false,
                 },
             },
             {
                 title: "salary",
                 permission: {
-                    create: state?.salary_ins || false,
-                    update: state?.salary_upd || false,
-                    delete: state?.salary_del || false,
-                    view: state?.salary_view || false,
+                    create: state?.salaryIns || false,
+                    update: state?.salaryUpd || false,
+                    delete: state?.salaryDel || false,
+                    view: state?.salaryView || false,
                 },
             },
         ]

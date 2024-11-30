@@ -119,6 +119,7 @@ import {
     StaffOnDuty,
     TrainingType,
     StaffTraining,
+    StaffAttendanceReport,
 } from './Route_Menu';
 
 const loading = () => <div className=""></div>;
@@ -263,6 +264,15 @@ const AllRoutes = () => {
                 },
                 //end report
                 {
+                    path: 'report',
+                    children: [
+                        {
+                            path: 'staff-attendance-report',
+                            element: <LoadComponent component={StaffAttendanceReport} />,
+                        }
+                    ],
+                },
+                {
                     path: 'view',
                     children: [
                         {
@@ -315,7 +325,7 @@ const AllRoutes = () => {
                             element: <LoadComponent component={Permission} />,
                         },
                         {
-                            path: 'user-rights',
+                            path: 'staff-rights',
                             element: <LoadComponent component={UserRights} />,
                         },
                         {

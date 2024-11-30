@@ -282,6 +282,10 @@ function Index() {
             totalKm: data?.totalKm || "",
             allowanceDate: data.allowanceDate ? dateConversion(data.allowanceDate, "YYYY-MM-DD") : ""
         });
+        const branchFilter = {
+            branchId:  data?.branchId
+        }
+        dispatch(getStaffRequest(branchFilter));
         isEdit = true;
         setSelectedItem(data)
         setSelectedIndex(index)

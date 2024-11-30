@@ -9,13 +9,16 @@ import { createPetrolAllowanceRequest, getPetrolAllowanceRequest, getStaffReques
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 import _ from 'lodash';
+import moment from 'moment';
+import { createUploadImagesRequest } from '../../redux/uploads/actions';
+import { useNavigate } from 'react-router-dom';
 
 let isEdit = false;
 
 function Index() {
 
     const { dispatch, appSelector } = useRedux();
-
+    const navigate = useNavigate();
     const { getPetrolAllowanceSuccess, getPetrolAllowanceList, getPetrolAllowanceFailure,
         createPetrolAllowanceSuccess, createPetrolAllowanceData, createPetrolAllowanceFailure,
         updatePetrolAllowanceSuccess, updatePetrolAllowanceData, updatePetrolAllowanceFailure,
@@ -87,7 +90,7 @@ function Index() {
         },
         {
             Header: 'Amount',
-            accessor: 'amount',
+            accessor: 'totalAmount',
             sort: true,
         },
         {
@@ -102,7 +105,11 @@ function Index() {
                         <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index)}>
                             <i className={'fe-check-circle'}></i>
                         </span>
-                        <span
+                        <span className="text-success  me-2 cursor-pointer"
+                            onClick={() => navigate('/petrol-allowance-report', { state: row.original })}>
+                            <i className={'fe-printer'} style={{ fontSize: '16px' }}></i>
+                        </span>
+                        {/* <span
                             className={`${iconColor} cursor-pointer`}
                             onClick={() =>
                                 showConfirmationDialog(
@@ -114,15 +121,15 @@ function Index() {
                             {
                                 row?.original?.isActive ? <i className={'fe-trash-2'}></i> : <i className={'fas fa-recycle'}></i>
                             }
-                        </span>
+                        </span> */}
                     </div>
                 )
             },
         },
     ];
-
     const [state, setState] = useState({
-        dateFilter: "",
+        dateOfPurchase: moment().format("YYYY-MM-DD"),
+        dateFilter: moment().startOf('month').format("YYYY-MM-DD"),
         staffId: "",
     });
     const [parentList, setParentList] = useState([]);
@@ -140,10 +147,7 @@ function Index() {
     useEffect(() => {
         setIsLoading(true)
         dispatch(getStaffRequest());
-        const getReq = {
-            isActive: 1
-        }
-        dispatch(getPetrolAllowanceRequest(getReq));
+        dispatch(getPetrolAllowanceRequest());
     }, []);
 
     useEffect(() => {
@@ -179,6 +183,24 @@ function Index() {
     useEffect(() => {
         if (createPetrolAllowanceSuccess) {
             const temp_state = [createPetrolAllowanceData[0], ...parentList];
+            try {
+                if (state.billImageName.length > 0) {
+                    const formData = new FormData();
+                    const originalFile = state.billImageName[0];
+                    const renamedFile = new File(
+                        [originalFile],
+                        `petrol-allowance-${createPetrolAllowanceData[0]?.petrolAllowanceId}-${createPetrolAllowanceData[0]?.staffCode}-${originalFile.name}`,
+                        {
+                            type: originalFile.type,
+                            lastModified: originalFile.lastModified,
+                        }
+                    );
+                    formData.append('petrolAllowanceProof', renamedFile);
+                    dispatch(createUploadImagesRequest(formData, createPetrolAllowanceData[0]?.petrolAllowanceId))
+                }
+            } catch (error) {
+                console.log(error)
+            }
             setParentList(temp_state)
             showMessage('success', 'Created Successfully');
             closeModel()
@@ -193,6 +215,24 @@ function Index() {
         if (updatePetrolAllowanceSuccess) {
             const temp_state = [...parentList];
             temp_state[selectedIndex] = updatePetrolAllowanceData[0];
+            try {
+                if (state.billImageName.length > 0) {
+                    const formData = new FormData();
+                    const originalFile = state.billImageName[0];
+                    const renamedFile = new File(
+                        [originalFile],
+                        `petrol-allowance-${updatePetrolAllowanceData[0]?.petrolAllowanceId}-${updatePetrolAllowanceData[0]?.staffCode}-${originalFile.name}`,
+                        {
+                            type: originalFile.type,
+                            lastModified: originalFile.lastModified,
+                        }
+                    );
+                    formData.append('petrolAllowanceProof', renamedFile);
+                    dispatch(createUploadImagesRequest(formData, updatePetrolAllowanceData[0]?.petrolAllowanceId))
+                }
+            } catch (error) {
+                console.log(error)
+            }
             setParentList(temp_state)
             isEdit && showMessage('success', 'Allowance Successfully Updated');
             closeModel()
@@ -212,7 +252,16 @@ function Index() {
     const onFormClear = () => {
         setState({
             ...state,
-            petrolAllowanceName: '',
+            dateOfPurchase: moment().format("YYYY-MM-DD"),
+            dateFilter: state?.dateFilter ? state?.dateFilter : moment().startOf('month').format("YYYY-MM-DD"),
+            staffId: "",
+            totalKm: "",
+            totalAmount: "",
+            billNo: "",
+            nameOfDealer: "",
+            qtyPerLitre: "",
+            pricePerLitre: "",
+            dateOfPurchase: "",
         });
     };
 
@@ -225,9 +274,14 @@ function Index() {
     const onEditForm = (data, index) => {
         setState({
             ...state,
+            staffId: data?.staffId || "",
             totalKm: data?.totalKm || "",
-            amount: data?.amount || "",
+            totalAmount: data?.totalAmount || "",
             billNo: data?.billNo || "",
+            nameOfDealer: data?.nameOfDealer || "",
+            qtyPerLitre: data?.qtyPerLitre || "",
+            pricePerLitre: data?.pricePerLitre || "",
+            dateOfPurchase: data?.dateOfPurchase || moment().format("YYYY-MM-DD"),
         });
         setSelectedItem(data)
         setSelectedIndex(index)
@@ -240,9 +294,13 @@ function Index() {
 
     const onFormSubmit = async () => {
         const submitRequest = {
-            totalKm: state?.totalKm || "",
             billNo: state?.billNo || "",
-            amount: state?.amount || "",
+            dateOfPurchase: state?.dateOfPurchase || "",
+            nameOfDealer: state?.nameOfDealer || "",
+            pricePerLitre: state?.pricePerLitre || "",
+            qtyPerLitre: state?.qtyPerLitre || "",
+            // totalKm: state?.totalKm || "",
+            totalAmount: state?.totalAmount || "",
         }
         dispatch(updatePetrolAllowanceRequest(submitRequest, selectedItem.petrolAllowanceId))
     };

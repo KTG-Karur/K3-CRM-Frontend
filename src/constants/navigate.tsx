@@ -178,8 +178,8 @@ const Navigate: NavigateTypes[] = [
                 parentKey: 'Master',
             },
             {
-                label: 'User Rights',
-                url: '/view/user-rights',
+                label: 'Staff Rights',
+                url: '/view/staff-rights',
                 parentKey: 'Master',
             },
         ],
@@ -208,12 +208,12 @@ const Navigate: NavigateTypes[] = [
     },
 
     { label: 'Reports', isTitle: true },
-    // {
-    //     label: 'Deputation Order Report',
-    //     isTitle: false,
-    //     icon: 'mdi mdi-account-check',
-    //     url: '/deputation-report',
-    // },
+    {
+        label: 'Staff Attendance Report',
+        isTitle: false,
+        icon: 'mdi mdi-account-check',
+        url: '/report/staff-attendance-report',
+    },
     // {
     //     label: 'Transfer Order Report',
     //     isTitle: false,

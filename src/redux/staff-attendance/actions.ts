@@ -57,6 +57,29 @@ export const updateStaffAttendanceFailure = (errorMessage: string) => ({
 export const resetUpdateStaffAttendance = () => ({
   type: 'RESET_UPDATE_STAFF_ATTENDANCE',
 });
+
+//Report 
+
+export const getStaffAttendanceReportRequest = (params?: any) => ({
+  type: 'GET_STAFF_ATTENDANCE_REPORT_REQUEST',
+  payload: params,
+});
+
+export const getStaffAttendanceReportSuccess = (data: any) => ({
+  type: 'GET_STAFF_ATTENDANCE_REPORT_SUCCESS',
+  payload: { data },
+});
+
+export const getStaffAttendanceReportFailure = (errorMessage: string) => ({
+  type: 'GET_STAFF_ATTENDANCE_REPORT_FAILURE',
+  errorMessage: { errorMessage },
+});
+
+export const resetGetStaffReportAttendance = () => ({
+  type: 'RESET_GET_STAFF_REPORT_ATTENDANCE',
+});
+
+
 //Delete Reducer Call--->
 // export const deleteStaffAttendanceRequest = ( id: string) => ({
 //   type: 'DELETE_STAFF_ATTENDANCE_REQUEST',

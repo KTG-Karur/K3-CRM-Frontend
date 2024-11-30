@@ -1,10 +1,26 @@
 import { apiReturnCallBack } from './ApiConfig';
 import apiContainer from './apiContainer';
 const StaffAttendance = apiContainer.staffAttendance
+const StaffAttendanceReport = apiContainer.staffAttendanceReport
 //GET--->
 export async function getStaffAttendance(request) {
   try {
     const response = await apiReturnCallBack("GET", StaffAttendance, request);
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || JSON.stringify(data));
+    }
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+//GET--->
+export async function getStaffAttendanceReport(request) {
+  try {
+    const response = await apiReturnCallBack("GET", StaffAttendanceReport, request);
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.message || JSON.stringify(data));

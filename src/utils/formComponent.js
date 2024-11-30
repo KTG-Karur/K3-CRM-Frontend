@@ -298,13 +298,15 @@ function FormComponent(props) {
                                     </Form.Label>
                                 }
                                 <Form.Control
-                                    type="date"
+                                    type={form?.type ? form?.type : "date"}
                                     name={form?.name}
                                     className="mb-2"
                                     key={index}
                                     placeholder={form?.placeholder}
                                     required={form?.require}
-                                    value={state[form?.name] ? dateConversion(state[form?.name], "YYYY-MM-DD") : ""}
+                                    value={form?.type === "month"
+                                        ? state[form?.name] ? dateConversion(state[form?.name], "YYYY-MM") : ""
+                                        : state[form?.name] ? dateConversion(state[form?.name], "YYYY-MM-DD") : ""}
                                     disabled={form?.isDisabled}
                                     onFocus={form?.require ? () => removeHanldeErrors(form?.name) : null}
                                     onChange={(e) => {

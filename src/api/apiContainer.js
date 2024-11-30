@@ -36,6 +36,8 @@ const apiContainer = {
   staffRights: "/staff-rights",
   trainingType: "/training-type",
   staffTraining: "/staff-training",
+  //report
+  staffAttendanceReport: "/staff-attendance-report",
 };
 
 export default apiContainer;

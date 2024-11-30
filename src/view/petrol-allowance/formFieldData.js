@@ -2,26 +2,66 @@ const petrolAllowanceContainer = [
     {
         formFields: [
             {
-                'label': "Total Km",
-                'name': "totalKm",
-                'inputType': "text",
-                'placeholder': "Enter Total Km",
-                'require': true
-            },
-            {
                 'label': "Bill No.",
                 'name': "billNo",
                 'inputType': "text",
                 'placeholder': "Enter Bill Number",
-                'require': true
+                'require': true,
+                'classStyle': 'col-6'
             },
             {
-                'label': "Amount",
-                'name': "amount",
-                'inputType': "text",
-                'placeholder': "Enter Amount",
-                'require': true
+                'label': "Date of purchase",
+                'name': "dateOfPurchase",
+                'inputType': "date",
+                'require': true,
+                'classStyle': 'col-6'
             },
+            {
+                'label': "Name of the Dealer",
+                'name': "nameOfDealer",
+                'inputType': "text",
+                'placeholder': "Enter Dealer",
+                'require': true,
+                'classStyle': 'col-6'
+            },
+            {
+                'label': "Price per litre",
+                'name': "pricePerLitre",
+                'inputType': "text",
+                'placeholder': "Enter Price per litre",
+                'require': true,
+                'classStyle': 'col-6'
+            },
+            {
+                'label': "Quantity per litre",
+                'name': "qtyPerLitre",
+                'inputType': "text",
+                'placeholder': "Enter Qty per litre",
+                'require': true,
+                'classStyle': 'col-6'
+            },
+            {
+                'label': "Total Amount",
+                'name': "totalAmount",
+                'inputType': "text",
+                'placeholder': "Enter Total Amount",
+                'require': true,
+                'classStyle': 'col-6'
+            },
+            {
+                label: 'Upload Recepit',
+                name: 'billImageName',
+                inputType: 'file',
+                'classStyle': 'col-6'
+            },
+            // {
+            //     'label': "Total Km",
+            //     'name': "totalKm",
+            //     'inputType': "text",
+            //     'placeholder': "Enter Total Km",
+            //     'require': true,
+            //     'classStyle': 'col-6'
+            // },
         ]
     },
 ]
@@ -33,6 +73,7 @@ const filterFormContainer = [
                 'label': "Choose Date",
                 'name': "dateFilter",
                 'inputType': "date",
+                'type':'month',
             },
         ]
     },
@@ -53,7 +94,7 @@ const filterFormContainer = [
             {
                 'label': "search",
                 'inputType': "button",
-                'onClick' : 'searchFilter'
+                'onClick': 'searchFilter'
             },
         ]
     },

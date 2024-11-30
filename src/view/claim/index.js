@@ -296,12 +296,6 @@ function Index() {
         if (createClaimSuccess) {
             const temp_state = [createClaimData[0], ...parentList];
             setParentList(temp_state)
-            console.log("createClaimData")
-            console.log(createClaimData)
-            console.log("temp_state")
-            console.log(temp_state)
-            console.log(state?.uploadImage)
-
             if (state.uploadImage > 0) {
                 const formData = new FormData();
                 const originalFile = state.uploadImage[0];
@@ -314,10 +308,8 @@ function Index() {
                             lastModified: originalFile.lastModified,
                         }
                     );
-                    formData.append('claimProof', renamedFile);
-                    formData.append('recordId', createClaimData[0].claimId);
                 }
-                dispatch(createUploadImagesRequest(formData))
+                dispatch(createUploadImagesRequest(formData, createClaimData[0].claimId))
             }
             showMessage('success', 'Created Successfully');
             closeModel()
