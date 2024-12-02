@@ -8,10 +8,10 @@ export async function getProofType(request) {
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.message || JSON.stringify(data));
-    }
+    }    
     return data;
   } catch (error) {
-    console.error('Fetch error:', error);
+    console.error(error);
     throw error;
   }
 }
@@ -25,7 +25,7 @@ export async function createProofType(request) {
     }
     return data;
   } catch (error) {
-    console.error('Fetch error:', error);
+    console.error(error);
     throw error;
   }
 }
@@ -39,7 +39,7 @@ export async function updateProofType(request, proofTypeId) {
     }
     return data;
   } catch (error) {
-    console.error('Fetch error:', error);
+    console.error(error);
     throw error;
   }
 }

@@ -85,12 +85,42 @@ import {
     GoogleMaps,
     VectorMaps,
     Landing,
+    Holiday,
     Designation,
     BankAccount,
     Role,
     LoanReportDashboard,
+    PetrolAllowance,
+    VisitEntry,
+    Staff,
+    Activity,
+    ClaimType,
+    Claim,
+    Branch,
+    ClaimTemplate,
+    ProofType,
+    TransferStaff,
+    SettingLeaveDeduction,
+    Deputation,
+    StaffAdvance,
+    AttendanceIncharge,
+    Permission,
+    Setting,
+    SettingWorkingDay,
+    SettingBenefit,
+    StaffLeave,
+    Attendance,
+    Salary,
+    PermissionLeaveOdReport,
+    PetrolAllowanceReport,
+    TransferReport,
+    DeputationReport,
+    UserRights,
+    StaffOnDuty,
+    TrainingType,
+    StaffTraining,
+    StaffAttendanceReport,
 } from './Route_Menu';
-
 
 const loading = () => <div className=""></div>;
 
@@ -180,8 +210,83 @@ const AllRoutes = () => {
                     element: <LoadComponent component={LoanReportDashboard} />,
                 },
                 {
+                    path: 'claim',
+                    element: <LoadComponent component={Claim} />,
+                },
+                {
+                    path: 'claim-approved',
+                    element: <LoadComponent component={ClaimTemplate} />,
+                },
+                {
+                    path: 'staff-attendance',
+                    element: <LoadComponent component={Attendance} />,
+                },
+                {
+                    path: 'staff-leave',
+                    element: <LoadComponent component={StaffLeave} />,
+                },
+                {
+                    path: 'staff-onduty',
+                    element: <LoadComponent component={StaffOnDuty} />,
+                },
+                {
+                    path: 'staff-training',
+                    element: <LoadComponent component={StaffTraining} />,
+                },
+                {
+                    path: 'staff-salary',
+                    element: <LoadComponent component={Salary} />,
+                },
+                //report
+                {
+                    path: 'deputation-report',
+                    element: <LoadComponent component={DeputationReport} />,
+                },
+                {
+                    path: 'transfer-report',
+                    element: <LoadComponent component={TransferReport} />,
+                },
+                {
+                    path: 'petrol-allowance-report',
+                    element: <LoadComponent component={PetrolAllowanceReport} />,
+                },
+                {
+                    path: 'permission-report',
+                    element: <LoadComponent component={PermissionLeaveOdReport} />,
+                },
+                {
+                    path: 'leave-slip-report',
+                    element: <LoadComponent component={PermissionLeaveOdReport} />,
+                },
+                {
+                    path: 'on-duty-report',
+                    element: <LoadComponent component={PermissionLeaveOdReport} />,
+                },
+                //end report
+                {
+                    path: 'report',
+                    children: [
+                        {
+                            path: 'staff-attendance-report',
+                            element: <LoadComponent component={StaffAttendanceReport} />,
+                        }
+                    ],
+                },
+                {
                     path: 'view',
                     children: [
+                        {
+                            path: 'activity',
+                            element: <LoadComponent component={Activity} />,
+                        },
+                        {
+                            path: 'holiday',
+                            element: <LoadComponent component={Holiday} />,
+                        },
+                        {
+                            path: 'branch',
+                            element: <LoadComponent component={Branch} />,
+                        },
                         {
                             path: 'department',
                             element: <LoadComponent component={Department} />,
@@ -191,12 +296,82 @@ const AllRoutes = () => {
                             element: <LoadComponent component={Designation} />,
                         },
                         {
+                            path: 'staff',
+                            element: <LoadComponent component={Staff} />,
+                        },
+                        {
+                            path: 'training-type',
+                            element: <LoadComponent component={TrainingType} />,
+                        },
+                        {
+                            path: 'claim-type',
+                            element: <LoadComponent component={ClaimType} />,
+                        },
+                        {
                             path: 'bank-account',
                             element: <LoadComponent component={BankAccount} />,
                         },
                         {
+                            path: 'transfer-staff',
+                            element: <LoadComponent component={TransferStaff} />,
+                        },
+                        {
+                            path: 'setting-leave-deduction',
+                            element: <LoadComponent component={SettingLeaveDeduction} />,
+                        },
+
+                        {
+                            path: 'permission',
+                            element: <LoadComponent component={Permission} />,
+                        },
+                        {
+                            path: 'staff-rights',
+                            element: <LoadComponent component={UserRights} />,
+                        },
+                        {
+                            path: 'setting',
+                            element: <LoadComponent component={Setting} />,
+                        },
+                        {
+                            path: 'setting-working-day',
+                            element: <LoadComponent component={SettingWorkingDay} />,
+                        },
+                        {
+                            path: 'setting-benefit',
+                            element: <LoadComponent component={SettingBenefit} />,
+                        },
+                        {
+                            path: 'attendance-incharge',
+                            element: <LoadComponent component={AttendanceIncharge} />,
+                        },
+                        {
+                            path: 'staff-advance',
+                            element: <LoadComponent component={StaffAdvance} />,
+                        },
+                        {
+                            path: 'deputation',
+                            element: <LoadComponent component={Deputation} />,
+                        },
+                        {
                             path: 'role',
                             element: <LoadComponent component={Role} />,
+                        },
+                        {
+                            path: 'proof-type',
+                            element: <LoadComponent component={ProofType} />,
+                        },
+                    ],
+                },
+                {
+                    path: 'allowance',
+                    children: [
+                        {
+                            path: 'visit-entry',
+                            element: <LoadComponent component={VisitEntry} />,
+                        },
+                        {
+                            path: 'petrol-allowance',
+                            element: <LoadComponent component={PetrolAllowance} />,
                         },
                     ],
                 },

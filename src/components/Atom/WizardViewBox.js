@@ -7,7 +7,7 @@ import FormLayout from '../../utils/formLayout';
 import Table from '../../components/Table';
 import { sizePerPageList } from '../../utils/constData';
 import { deleteData, showConfirmationDialog, updateData } from '../../utils/AllFunction';
-import LoanPdf from '../../utils/loanPdf';
+//import LoanPdf from '../../utils/loanPdf';
 
 let submitWizardCall = false;
 let reinsertIndex = 0;
@@ -234,27 +234,10 @@ const WizardWithProgressbar = (props) => {
                                             render={({ next, previous }) => {
                                                 return (
                                                     <Form>
-                                                        {tabList[tabIndex].name == 'applicantInfo' && (
-                                                            <React.Fragment>
-                                                                <Row>
-                                                                    <Col md={6} className="mb-3">
-                                                                        <p>
-                                                                            If a new applicant, simply click to add the
-                                                                            applicant details.
-                                                                        </p>
-                                                                        <Link to={'/view/applicant'}>
-                                                                            <Button variant="success">
-                                                                                New Applicant
-                                                                            </Button>
-                                                                        </Link>
-                                                                    </Col>
-                                                                </Row>
-                                                            </React.Fragment>
-                                                        )}
+                                                        
 
                                                         {
-                                                            tabIndex === tabList.length - 1 && checkIsLoan ?
-                                                                <LoanPdf multiStateValue={multiStateValue} /> : <FormLayout
+                                                           <FormLayout
                                                                     optionListState={optionListState}
                                                                     dynamicForm={tabList[tabIndex]?.children || ''}
                                                                     handleSubmit={
@@ -266,7 +249,7 @@ const WizardWithProgressbar = (props) => {
                                                                     state={state}
                                                                     ref={errorHandle}
                                                                     onChangeCallBack={onChangeCallBack}
-                                                                    noOfColumns={3}
+                                                                    noOfColumns={1}
                                                                     errors={errors}
                                                                     setErrors={setErrors}
                                                                     toggleModal={toggleModal}
@@ -329,18 +312,6 @@ const WizardWithProgressbar = (props) => {
                                                                     </Button>
                                                                 }
                                                             </li>
-
-                                                            {tabIndex === tabList.length - 1 && !isEdit && !checkIsLoan && (
-                                                                <li className="next list-inline-item float-end mx-3">
-                                                                    <Button
-                                                                        onClick={() => {
-                                                                            handleReinsert('');
-                                                                        }}
-                                                                        variant="info">
-                                                                        Reinsert
-                                                                    </Button>
-                                                                </li>
-                                                            )}
                                                         </ul>
                                                     </Form>
                                                 );

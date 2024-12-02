@@ -21,8 +21,15 @@ const showMessage = (type, msg, title = null) => {
     }
 };
 
-const amountFormat = (amount)=>{
-    console.log(amount)
+const findMultiSelectObj = (optionList, uniqueKey, selectedValues) => {
+    if (selectedValues) {
+        return optionList.filter((option) =>
+            selectedValues.includes(option[uniqueKey])
+        );
+    }
+};
+
+const amountFormat = (amount) => {
     let formattedNumber = parseInt(amount).toFixed(2);
     return formattedNumber;
 }
@@ -52,6 +59,24 @@ function formatDate(date) {
     return [year, month, day].join('-');
 }
 
+
+function noOfDayCount(fromDate, toDate) {
+    const from = new Date(fromDate);
+    const to = new Date(toDate);
+    const differenceInTime = to.getTime() - from.getTime();
+    const differenceInDays = differenceInTime / (1000 * 3600 * 24);
+    return differenceInDays + 1;
+}
+
+function timerAmPm(time = "") {
+    const [hours, minutes] = time.split(':');
+    const isPM = hours >= 12;
+    const formattedTime = `${((hours % 12) || 12).toString().padStart(2, '0')}:${minutes} ${isPM ? 'PM' : 'AM'
+        }`;
+    return formattedTime;
+}
+
+
 function DateMonthYear(date) {
     const ddmmyyyy = date.split('-');
     const d = ddmmyyyy[2];
@@ -76,6 +101,13 @@ function deleteData(arr, id, accessKey = null) {
         return item.id !== id;
     });
 }
+
+const removeExistsList = async (allList, existsArrayList, key) => {
+    const list = allList.filter(item =>
+        !existsArrayList.some(existsItem => existsItem[key] === item[key])
+    );
+    return list;
+};
 
 function findObj(optionList = [], accessKey, value = '') {
     const filterData = optionList.filter((item) => item[accessKey] === value);
@@ -136,7 +168,7 @@ const showConfirmationDialog = (
     }).then((result) => {
         if (result.isConfirmed && sucessViewFalse) {
             callback();
-        }else if (result.isConfirmed) {
+        } else if (result.isConfirmed) {
             Swal.fire({
                 title: action,
                 text: successTitle,
@@ -258,6 +290,7 @@ export {
     showConfirmationDialog,
     updateData,
     deleteData,
+    removeExistsList,
     findObj,
     findArrObj,
     percentageVal,
@@ -265,6 +298,7 @@ export {
     dateConversion,
     findLastDate,
     findDueDate,
+    findMultiSelectObj,
     emiCalculation,
     interestForMonth,
     principalRepayment,
@@ -276,4 +310,6 @@ export {
     amountFormat,
     capitalizeFirstLetter,
     objectToKeyValueArray,
+    noOfDayCount,
+    timerAmPm,
 };

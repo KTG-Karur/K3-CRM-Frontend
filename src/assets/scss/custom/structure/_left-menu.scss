@@ -1,12 +1,11 @@
-// 
+//
 // menu.scss
 //
 
-
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 // Wrapper
@@ -28,16 +27,17 @@ input::-webkit-inner-spin-button {
 // Sidemenu
 .left-side-menu {
     width: $leftbar-width;
-    background: $bg-leftbar;
+    // background: $bg-leftbar;
+    background: #092e4b !important; //done by varsha
     bottom: 0;
     padding: 20px 0;
     position: fixed;
-    transition: all .1s ease-out;
+    transition: all 0.1s ease-out;
     top: $topbar-height;
     box-shadow: $box-shadow;
     .user-box {
         display: none;
-        .img-thumbnail{
+        .img-thumbnail {
             background-color: inherit;
             border-color: $left-menu-user-box-border;
         }
@@ -46,21 +46,22 @@ input::-webkit-inner-spin-button {
 
 // Leftbar with user
 
-.user-box{
-    .user-name{
-        color: #{map-get($grays, "700")};
+.user-box {
+    .user-name {
+        color: #{map-get($grays, '700')};
     }
 }
 
 // Sidebar
 #sidebar-menu {
-    >ul {
+    > ul {
         list-style: none;
         padding: 0;
 
-        >li {
-            >a {
-                color: $menu-item;
+        > li {
+            > a {
+                // color: $menu-item;
+                color: #fff; //done by varsha
                 display: block;
                 padding: 12px 20px;
                 position: relative;
@@ -71,11 +72,12 @@ input::-webkit-inner-spin-button {
                 &:hover,
                 &:focus,
                 &:active {
-                    color: $menu-item-hover;
+                    // color: $menu-item-hover;
                     text-decoration: none;
+                    color: #ec1a89 !important; // done by varsha
                 }
 
-                >span {
+                > span {
                     vertical-align: middle;
                 }
 
@@ -105,7 +107,7 @@ input::-webkit-inner-spin-button {
                 }
             }
 
-            >a.mm-active {
+            > a.mm-active {
                 color: $menu-item-active;
             }
 
@@ -126,22 +128,27 @@ input::-webkit-inner-spin-button {
 
     .menu-title {
         padding: 10px 20px;
-        letter-spacing: .05em;
+        letter-spacing: 0.05em;
         pointer-events: none;
         cursor: default;
         font-size: 0.6875rem;
         text-transform: uppercase;
-        color: $menu-item;
+        // color: $menu-item; //done by varsha
+        color: #fff; //done by varsha
         font-weight: $label-font-weight;
     }
 
     .menuitem-active {
         > a {
-            color: $menu-item-active;
+            // color: $menu-item-active;
+            color: #ec1c8a !important; //done by varsha
+            font-weight: bold !important//done by varsha;
         }
 
         .active {
-            color: $menu-item-active;
+            // color: $menu-item-active;
+            color: #ec1c8a !important; //done by varsha
+            font-weight: bold !important//done by varsha;
         }
     }
 }
@@ -150,7 +157,8 @@ input::-webkit-inner-spin-button {
     li {
         a {
             padding: 8px 20px;
-            color: $menu-item;
+            // color: $menu-item;
+            color: #fff; //done by varsha
             display: block;
             position: relative;
             transition: all 0.4s;
@@ -158,20 +166,22 @@ input::-webkit-inner-spin-button {
 
             &:focus,
             &:hover {
-                color: $menu-item-hover;
+                // color: $menu-item-hover;
+                color: #ec1c8a !important; //done by varsha
             }
         }
 
         &.active {
-            >a {
-                color: $menu-item-active;
+            > a {
+                // color: $menu-item-active;
+                color: #ec1c8a !important; //done by varsha
             }
         }
     }
 }
 
 .menu-arrow {
-    transition: transform .15s;
+    transition: transform 0.15s;
     position: absolute;
     right: 20px;
     display: inline-block;
@@ -182,18 +192,18 @@ input::-webkit-inner-spin-button {
     transform: translate(0, 0);
 
     &:before {
-        content: "\F0142";
+        content: '\F0142';
     }
 }
 
-[dir="rtl"] .menu-arrow {
+[dir='rtl'] .menu-arrow {
     &:before {
-        content: "\F0141";
+        content: '\F0141';
     }
 }
 
-li{
-    >a[aria-expanded="true"] {
+li {
+    > a[aria-expanded='true'] {
         > span.menu-arrow {
             transform: rotate(90deg);
         }
@@ -208,8 +218,7 @@ li{
 }
 
 // Enlarge menu
-body[data-leftbar-size="condensed"] {
-
+body[data-leftbar-size='condensed'] {
     .logo-box {
         width: $leftbar-width-condensed !important;
     }
@@ -246,7 +255,6 @@ body[data-leftbar-size="condensed"] {
 
         // Sidebar Menu
         #sidebar-menu {
-
             .menu-title,
             .menu-arrow,
             .label,
@@ -258,12 +266,12 @@ body[data-leftbar-size="condensed"] {
                 height: inherit !important;
             }
 
-            >ul {
-                >li {
+            > ul {
+                > li {
                     position: relative;
                     white-space: nowrap;
 
-                    >a {
+                    > a {
                         padding: 15px 20px;
                         min-height: 54px;
                         transition: none;
@@ -293,11 +301,11 @@ body[data-leftbar-size="condensed"] {
                     }
 
                     &:hover {
-                        >a {
+                        > a {
                             position: relative;
                             width: calc(190px + #{$leftbar-width-condensed});
                             color: $menu-item-active;
-                            background-color: #{map-get($grays, "100")};
+                            background-color: #{map-get($grays, '100')};
 
                             span {
                                 display: inline;
@@ -323,18 +331,18 @@ body[data-leftbar-size="condensed"] {
                                 position: absolute;
                                 width: 190px;
                                 box-shadow: $box-shadow-condensed;
-    
+
                                 ul {
                                     box-shadow: $box-shadow-condensed;
                                 }
-    
+
                                 a {
                                     box-shadow: none;
                                     padding: 8px 20px;
                                     position: relative;
                                     width: 190px;
                                     z-index: 6;
-    
+
                                     &:hover {
                                         color: $menu-item-hover;
                                     }
@@ -352,14 +360,13 @@ body[data-leftbar-size="condensed"] {
 
                     li {
                         &:hover {
-
                             > .collapse,
                             > .collapsing {
                                 display: block !important;
                                 height: auto !important;
                                 transition: none !important;
 
-                                >ul {
+                                > ul {
                                     display: block;
                                     left: 190px;
                                     margin-top: -36px;
@@ -369,7 +376,7 @@ body[data-leftbar-size="condensed"] {
                             }
                         }
 
-                        >a {
+                        > a {
                             span.pull-right {
                                 position: absolute;
                                 right: 20px;
@@ -395,7 +402,6 @@ body[data-leftbar-size="condensed"] {
     }
 
     @include media-breakpoint-up(lg) {
-
         //Footer
         .footer {
             left: $leftbar-width-condensed !important;
@@ -410,7 +416,7 @@ body[data-leftbar-size="condensed"] {
 
 // Body min-height set
 @include media-breakpoint-up(md) {
-    body[data-leftbar-size="condensed"]:not([data-layout="compact"]) {
+    body[data-leftbar-size='condensed']:not([data-layout='compact']) {
         min-height: $body-min-height;
     }
 }
@@ -439,7 +445,7 @@ body[data-leftbar-size="condensed"] {
     }
 
     .content-page,
-    body[data-leftbar-size="condensed"] .content-page {
+    body[data-leftbar-size='condensed'] .content-page {
         margin-left: 0 !important;
         padding: 0 10px;
     }
@@ -454,7 +460,7 @@ body[data-leftbar-size="condensed"] {
   Small Menu
 ============= */
 
-body[data-leftbar-size="compact"]:not([data-leftbar-size="condensed"]){
+body[data-leftbar-size='compact']:not([data-leftbar-size='condensed']) {
     .logo-box {
         width: $leftbar-width-sm !important;
     }
@@ -464,11 +470,10 @@ body[data-leftbar-size="compact"]:not([data-leftbar-size="condensed"]){
         text-align: center;
 
         #sidebar-menu {
-            >ul {
-
-                >li {
-                    >a {
-                        >i {
+            > ul {
+                > li {
+                    > a {
+                        > i {
                             display: block;
                             font-size: 18px;
                             line-height: 24px;
@@ -498,23 +503,22 @@ body[data-leftbar-size="compact"]:not([data-leftbar-size="condensed"]){
             display: none !important;
         }
 
-        &+.content-page {
+        & + .content-page {
             margin-left: $leftbar-width-sm;
         }
 
-        +.content-page .footer {
+        + .content-page .footer {
             left: $leftbar-width-sm;
         }
 
         .menu-title {
-            background-color: #{map-get($grays, "100")};
+            background-color: #{map-get($grays, '100')};
         }
     }
 }
 
-
 // Leftbar-dark
-body[data-leftbar-color="dark"] {
+body[data-leftbar-color='dark'] {
     .logo-box {
         background-color: $bg-leftbar-dark;
 
@@ -531,15 +535,15 @@ body[data-leftbar-color="dark"] {
         background-color: $bg-leftbar-dark;
         box-shadow: none;
         .user-box {
-            .img-thumbnail{
+            .img-thumbnail {
                 border-color: $left-menu-dark-user-box-border;
             }
         }
 
         #sidebar-menu {
-            >ul {
-                >li {
-                    >a {
+            > ul {
+                > li {
+                    > a {
                         color: $menu-item-color-dark;
 
                         &:hover,
@@ -549,7 +553,7 @@ body[data-leftbar-color="dark"] {
                         }
                     }
 
-                    >a.mm-active {
+                    > a.mm-active {
                         color: $menu-item-active-color-dark;
                         // background-color: lighten($bg-leftbar-dark, 2.5%);
                     }
@@ -557,14 +561,14 @@ body[data-leftbar-color="dark"] {
             }
 
             .menu-title {
-                color: #{map-get($grays, "500")};
+                color: #{map-get($grays, '500')};
             }
-            
+
             .menuitem-active {
                 > a {
                     color: $menu-item-active;
                 }
-        
+
                 .active {
                     color: $menu-item-active;
                 }
@@ -585,7 +589,7 @@ body[data-leftbar-color="dark"] {
                 }
 
                 &.active {
-                    >a {
+                    > a {
                         color: $menu-item-active-color-dark;
                     }
                 }
@@ -599,13 +603,13 @@ body[data-leftbar-color="dark"] {
         }
     }
 
-    &[data-leftbar-size="condensed"] {
+    &[data-leftbar-size='condensed'] {
         #wrapper {
             .left-side-menu {
                 #sidebar-menu {
-                    >ul {
-                        >li {
-                            &:hover>a {
+                    > ul {
+                        > li {
+                            &:hover > a {
                                 background-color: $bg-leftbar-dark;
                                 box-shadow: none;
                             }
@@ -622,7 +626,7 @@ body[data-leftbar-color="dark"] {
         }
     }
 
-    &[data-leftbar-size="compact"] {
+    &[data-leftbar-size='compact'] {
         #wrapper {
             .left-side-menu {
                 .menu-title {
@@ -633,10 +637,9 @@ body[data-leftbar-color="dark"] {
     }
 }
 
-
 // Sidebar with brand color
-body[data-leftbar-color="brand"],
-body[data-leftbar-color="gradient"] {
+body[data-leftbar-color='brand'],
+body[data-leftbar-color='gradient'] {
     .logo-box {
         background-color: $bg-leftbar-brand;
 
@@ -657,15 +660,15 @@ body[data-leftbar-color="gradient"] {
         background-color: $bg-leftbar-brand;
         box-shadow: none;
         .user-box {
-            .img-thumbnail{
+            .img-thumbnail {
                 border-color: $left-menu-dark-user-box-border;
             }
         }
 
         #sidebar-menu {
-            >ul {
-                >li {
-                    >a {
+            > ul {
+                > li {
+                    > a {
                         color: rgba($white, 0.7);
 
                         &:hover,
@@ -675,7 +678,7 @@ body[data-leftbar-color="gradient"] {
                         }
                     }
 
-                    >a.mm-active {
+                    > a.mm-active {
                         color: $white;
                         background-color: rgba($white, 0.07);
                     }
@@ -707,7 +710,7 @@ body[data-leftbar-color="gradient"] {
                 }
 
                 &.active {
-                    >a {
+                    > a {
                         color: $menu-item-active-color-dark;
                     }
                 }
@@ -725,13 +728,13 @@ body[data-leftbar-color="gradient"] {
         }
     }
 
-    &[data-leftbar-size="condensed"] {
+    &[data-leftbar-size='condensed'] {
         #wrapper {
             .left-side-menu {
                 #sidebar-menu {
-                    >ul {
-                        >li {
-                            &:hover>a {
+                    > ul {
+                        > li {
+                            &:hover > a {
                                 background-color: $bg-leftbar-brand;
                                 box-shadow: none;
                                 color: $white;
@@ -757,7 +760,7 @@ body[data-leftbar-color="gradient"] {
             }
         }
     }
-    &[data-leftbar-size="compact"] {
+    &[data-leftbar-size='compact'] {
         #wrapper {
             .left-side-menu {
                 .menu-title {
@@ -769,21 +772,20 @@ body[data-leftbar-color="gradient"] {
 }
 
 // Sidebar Gradient
-body[data-leftbar-color="gradient"] {
-
+body[data-leftbar-color='gradient'] {
     .logo-box,
     .left-side-menu {
         background: $bg-leftbar-gradient;
         background-image: linear-gradient(270deg, rgba(64, 149, 216, 2.15), transparent);
     }
 
-    &[data-leftbar-size="condensed"] {
+    &[data-leftbar-size='condensed'] {
         #wrapper {
             .left-side-menu {
                 #sidebar-menu {
-                    >ul {
-                        >li {
-                            &:hover>a {
+                    > ul {
+                        > li {
+                            &:hover > a {
                                 background: $bg-leftbar-gradient;
                             }
                         }
@@ -810,7 +812,7 @@ body[data-leftbar-color="gradient"] {
 }
 
 .user-pro-dropdown {
-    background-color: #{map-get($grays, "100")};
+    background-color: #{map-get($grays, '100')};
     box-shadow: none;
     padding: 15px 5px;
     width: 90%;
@@ -829,8 +831,7 @@ body[data-leftbar-color="gradient"] {
 
 // Detached Left sidebar
 
-body[data-layout-mode="detached"] {
-
+body[data-layout-mode='detached'] {
     @include media-breakpoint-up(lg) {
         .navbar-custom {
             .container-fluid {
@@ -860,18 +861,18 @@ body[data-layout-mode="detached"] {
 }
 
 // Sidebar with User
-body[data-sidebar-user="true"] {
+body[data-sidebar-user='true'] {
     .user-box {
         display: block;
     }
 }
 
 // Two Tones Menu
-body[data-sidebar-icon="twotones"] {
+body[data-sidebar-icon='twotones'] {
     #sidebar-menu {
-        >ul {
-            >li {
-                >a {
+        > ul {
+            > li {
+                > a {
                     i {
                         color: $blue;
                     }
@@ -882,7 +883,6 @@ body[data-sidebar-icon="twotones"] {
                         margin-right: 10px;
                         color: $blue;
                         fill: rgba($blue, 0.2);
-                        ;
                     }
                 }
             }
@@ -890,25 +890,22 @@ body[data-sidebar-icon="twotones"] {
     }
 }
 
-
-
-
 // dark mode
-body[data-layout-color="dark"] {
+body[data-layout-color='dark'] {
     // .user-box{
     //     .user-name{
     //         color: #{map-get($dark-grays, "700")};
     //     }
     // }
-    
-    &[data-leftbar-size="condensed"] {
+
+    &[data-leftbar-size='condensed'] {
         .left-side-menu {
             #sidebar-menu {
-                >ul {
-                    >li {
+                > ul {
+                    > li {
                         &:hover {
-                            >a {
-                                background-color: #{map-get($dark-grays, "100")};
+                            > a {
+                                background-color: #{map-get($dark-grays, '100')};
                             }
                         }
                     }
@@ -916,31 +913,30 @@ body[data-layout-color="dark"] {
             }
         }
     }
-    &[data-leftbar-size="compact"]:not([data-leftbar-size="condensed"]) {
+    &[data-leftbar-size='compact']:not([data-leftbar-size='condensed']) {
         .left-side-menu {
             .menu-title {
-                background-color: #{map-get($dark-grays, "100")};
+                background-color: #{map-get($dark-grays, '100')};
             }
         }
     }
-    &[data-leftbar-color="dark"] {
-        
+    &[data-leftbar-color='dark'] {
         .left-side-menu {
             #sidebar-menu {
                 .menu-title {
-                    color: #{map-get($dark-grays, "500")};
+                    color: #{map-get($dark-grays, '500')};
                 }
             }
         }
     }
-    &[data-leftbar-color="light"] {
-        .user-box{
-            .user-name{
-                color: #{map-get($dark-grays, "300")};
+    &[data-leftbar-color='light'] {
+        .user-box {
+            .user-name {
+                color: #{map-get($dark-grays, '300')};
             }
         }
     }
     .user-pro-dropdown {
-        background-color: #{map-get($dark-grays, "100")};
+        background-color: #{map-get($dark-grays, '100')};
     }
 }

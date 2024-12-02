@@ -16,6 +16,10 @@ const sizePerPageList = [
         value: 25,
     },
     {
+        text: '50',
+        value: 50,
+    },
+    {
         text: 'All',
         value: data.length,
     },

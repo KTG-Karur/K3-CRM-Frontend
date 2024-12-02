@@ -5,7 +5,7 @@ const Footer = () => {
     return (
         <footer className="footer">
             <Container fluid>
-                <Row>
+                {/* <Row>
                     <Col md={6}>
                         {new Date().getFullYear()} &copy; Adminto theme by <Link to="#">Coderthemes</Link>
                     </Col>
@@ -16,7 +16,7 @@ const Footer = () => {
                             <Link to="#">Contact Us</Link>
                         </div>
                     </Col>
-                </Row>
+                </Row> */}
             </Container>
         </footer>
     );

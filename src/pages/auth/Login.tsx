@@ -7,11 +7,11 @@ import { useTranslation } from 'react-i18next';
 import LogoDark from '../../assets/images/K3_Logo.png';
 import { APICore } from '../../helpers/api/apiCore';
 
-// hooks
+//hooks
 import { useRedux } from '../../hooks/';
 
-// actions
-// import { resetAuth, loginUser, getEmployeeLoginRequest, resetGetEmployeeLogin } from '../../redux/actions';
+//actions
+import { resetAuth, loginUser, getEmployeeLoginRequest, resetGetEmployeeLogin } from '../../redux/actions';
 
 // components
 import { VerticalForm, FormInput } from '../../components/form/';
@@ -109,8 +109,8 @@ const Login = () => {
             userName : formData['email'],
             password : formData['password']
         }
-        // setLoading(true)
-        // dispatch(getEmployeeLoginRequest(sumbitReq))
+         setLoading(true)
+         dispatch(getEmployeeLoginRequest(sumbitReq))
 
         setUserLoggedIn(true)
         const getEmployeeLoginList = [
@@ -153,7 +153,7 @@ const Login = () => {
                 <VerticalForm<UserData>
                     onSubmit={onSubmit}
                     resolver={schemaResolver}
-                    defaultValues={{ email: 'suki@harshinifincop.com', password: '123456' }}
+                    defaultValues={{ email: 'suki@k3.com', password: '123456' }}
                 >
                     <FormInput
                         type="email"

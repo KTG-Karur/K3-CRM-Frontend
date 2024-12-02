@@ -9,13 +9,50 @@ export const Logout = React.lazy(() => import('../pages/auth/Logout'));
 
 // dashboards
 export const DashBoard1 = React.lazy(() => import('../pages/dashboards/DashBoard1/'));
+export const PetrolAllowance = React.lazy(() => import('../view/petrol-allowance'));
+export const VisitEntry = React.lazy(() => import('../view/visit-entry'));
+export const Activity = React.lazy(() => import('../view/activity'));
+export const ClaimType = React.lazy(() => import('../view/claim-type'));
+export const Claim = React.lazy(() => import('../view/claim'));
+export const Branch = React.lazy(() => import('../view/branch'));
+export const ClaimTemplate = React.lazy(() => import('../view/claim/approvedTemplate'));
+export const ProofType = React.lazy(() => import('../view/proof-type'));
+export const Holiday = React.lazy(() => import('../view/holiday'));
+export const StaffLeave = React.lazy(() => import('../view/staff-leave'));
+export const StaffOnDuty = React.lazy(() => import('../view/staff-onduty'));
+export const Attendance = React.lazy(() => import('../view/attendance'));
+export const Salary = React.lazy(() => import('../view/staff-salary'));
+export const TrainingType = React.lazy(() => import('../view/training-type'));
+export const StaffTraining = React.lazy(() => import('../view/staff-training'));
 
 // master
 export const Department = React.lazy(() => import('../view/department'));
+export const Permission = React.lazy(() => import('../view/permission'));
+export const Setting = React.lazy(() => import('../view/setting'));
+export const SettingWorkingDay = React.lazy(() => import('../view/setting-working-day'));
 export const Designation = React.lazy(() => import('../view/designation'));
 export const BankAccount = React.lazy(() => import('../view/bank-account'));
 export const Role = React.lazy(() => import('../view/role'));
 export const LoanReportDashboard = React.lazy(() => import('../view/dashboard'));
+export const Staff = React.lazy(() => import('../view/staff'));
+export const TransferStaff = React.lazy(() => import('../view/transfer-staff'));
+export const SettingLeaveDeduction = React.lazy(() => import('../view/setting-leave-deduction'));
+export const SettingBenefit = React.lazy(() => import('../view/setting-benefit'));
+export const AttendanceIncharge = React.lazy(() => import('../view/attendance-incharge'));
+export const StaffAdvance = React.lazy(() => import('../view/staff-advance'));
+export const Deputation = React.lazy(() => import('../view/deputation'));
+
+// user rights
+export const UserRights = React.lazy(() => import('../view/staff-rights'));
+
+//document
+export const DeputationReport = React.lazy(() => import('../view/documents/deputaion-report'));
+export const TransferReport = React.lazy(() => import('../view/documents/transfer-report'));
+export const PermissionLeaveOdReport = React.lazy(() => import('../view/documents/permission-leave-od-report'));
+export const PetrolAllowanceReport = React.lazy(() => import('../view/documents/petrol-allowance-report'));
+
+//report
+export const StaffAttendanceReport = React.lazy(() => import('../view/report/staff-attendance-report'));
 
 // apps
 export const CalendarApp = React.lazy(() => import('../pages/apps/Calendar'));

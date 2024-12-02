@@ -2,11 +2,6 @@ const formContainer = [
     {
         formFields: [
             {
-                'displayLabel' : "Is Company Account",
-                'name': "companyAccount",
-                'inputType': "checkbox",
-            },
-            {
                 'label': "Account Holder Name",
                 'name': "accountHolderName",
                 'inputType': "text",
