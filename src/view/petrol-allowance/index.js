@@ -5,7 +5,7 @@ import FormLayout from '../../utils/formLayout';
 import { filterFormContainer, petrolAllowanceContainer } from './formFieldData';
 import Table from '../../components/Table';
 import { dateConversion, removeNullKeyFromObj, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
-import { createPetrolAllowanceRequest, getPetrolAllowanceRequest, getStaffRequest, resetCreatePetrolAllowance, resetGetPetrolAllowance, resetUpdatePetrolAllowance, resetGetStaff, updatePetrolAllowanceRequest } from '../../redux/actions';
+import { createPetrolAllowanceRequest, getPetrolAllowanceRequest, getStaffRequest, resetCreatePetrolAllowance, resetGetPetrolAllowance, resetUpdatePetrolAllowance, resetGetStaff, updatePetrolAllowanceRequest, getPetrolAllowanceReportRequest, resetGetPetrolAllowanceReport } from '../../redux/actions';
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 import _ from 'lodash';
@@ -26,6 +26,10 @@ function Index() {
         getStaffList,
         getStaffFailure,
 
+        getPetrolAllowanceReportSuccess,
+        getPetrolAllowanceReportData,
+        getPetrolAllowanceReportFailure
+
     } = appSelector((state) => ({
         getStaffSuccess: state.staffReducer.getStaffSuccess,
         getStaffList: state.staffReducer.getStaffList,
@@ -34,6 +38,10 @@ function Index() {
         getPetrolAllowanceSuccess: state.petrolAllowanceReducer.getPetrolAllowanceSuccess,
         getPetrolAllowanceList: state.petrolAllowanceReducer.getPetrolAllowanceList,
         getPetrolAllowanceFailure: state.petrolAllowanceReducer.getPetrolAllowanceFailure,
+
+        getPetrolAllowanceReportSuccess: state.petrolAllowanceReducer.getPetrolAllowanceReportSuccess,
+        getPetrolAllowanceReportData: state.petrolAllowanceReducer.getPetrolAllowanceReportData,
+        getPetrolAllowanceReportFailure: state.petrolAllowanceReducer.getPetrolAllowanceReportFailure,
 
         createPetrolAllowanceSuccess: state.petrolAllowanceReducer.createPetrolAllowanceSuccess,
         createPetrolAllowanceData: state.petrolAllowanceReducer.createPetrolAllowanceData,
@@ -102,13 +110,16 @@ function Index() {
                 const deleteMessage = activeChecker ? "You want to In-Active...?" : "You want to retrive this Data...?";
                 return (
                     <div>
-                        <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index)}>
-                            <i className={'fe-check-circle'}></i>
+                        <span className="text-danger  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index)}>
+                            <i className={'fe-file-text'}></i>
                         </span>
-                        <span className="text-success  me-2 cursor-pointer"
-                            onClick={() => navigate('/petrol-allowance-report', { state: row.original })}>
-                            <i className={'fe-printer'} style={{ fontSize: '16px' }}></i>
-                        </span>
+                        {
+                            row?.original?.billNo &&
+                            <span className="text-success  me-2 cursor-pointer"
+                                onClick={() => onPrintDesign(row.original)}>
+                                <i className={'fe-printer'} style={{ fontSize: '16px' }}></i>
+                            </span>
+                        }
                         {/* <span
                             className={`${iconColor} cursor-pointer`}
                             onClick={() =>
@@ -167,6 +178,19 @@ function Index() {
             dispatch(resetGetStaff());
         }
     }, [getStaffSuccess, getStaffFailure]);
+
+    useEffect(() => {
+        if (getPetrolAllowanceReportSuccess) {
+            setIsLoading(false);
+            if (getPetrolAllowanceReportData.length > 0) {
+                navigate('/petrol-allowance-report', { state: getPetrolAllowanceReportData[0] })
+            }
+            dispatch(resetGetPetrolAllowanceReport());
+        } else if (getPetrolAllowanceReportFailure) {
+            setIsLoading(false);
+            dispatch(resetGetPetrolAllowanceReport());
+        }
+    }, [getPetrolAllowanceReportSuccess, getPetrolAllowanceReportFailure]);
 
     useEffect(() => {
         if (getPetrolAllowanceSuccess) {
@@ -247,6 +271,14 @@ function Index() {
         isEdit = false;
         onFormClear()
         setModal(false)
+    }
+
+    const onPrintDesign = (data) => {
+        const reqReport = {
+            staffId: data?.staffId,
+            dateFilter: state?.dateFilter
+        }
+        dispatch(getPetrolAllowanceReportRequest(reqReport));
     }
 
     const onFormClear = () => {

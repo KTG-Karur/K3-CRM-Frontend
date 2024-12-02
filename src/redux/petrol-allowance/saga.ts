@@ -1,12 +1,14 @@
 // saga.ts
 import { call, put, takeEvery } from 'redux-saga/effects';
-import { createPetrolAllowance, getPetrolAllowance, updatePetrolAllowance } from '../../api/PetrolAllowanceApi'; // Adjust the path as needed
+import { createPetrolAllowance, getPetrolAllowance, getPetrolAllowanceReport, updatePetrolAllowance } from '../../api/PetrolAllowanceApi'; // Adjust the path as needed
 import {
   getPetrolAllowanceSuccess, getPetrolAllowanceFailure,
   createPetrolAllowanceSuccess,
   createPetrolAllowanceFailure,
   updatePetrolAllowanceSuccess,
   updatePetrolAllowanceFailure,
+  getPetrolAllowanceReportFailure,
+  getPetrolAllowanceReportSuccess,
 } from './actions';
 
 // Saga to handle fetching petrolAllowances
@@ -21,6 +23,21 @@ function* fetchPetrolAllowanceSaga(action: any): Generator<any, any, any> {
         ? error.message
         : 'An unexpected error occurred';
     yield put(getPetrolAllowanceFailure(errorMessage));
+  }
+}
+
+// Saga to handle fetching petrolAllowances
+function* fetchPetrolAllowanceReportSaga(action: any): Generator<any, any, any> {
+  try {
+    const data = yield call(getPetrolAllowanceReport, action.payload);
+    yield put(getPetrolAllowanceReportSuccess(data));
+  } catch (error: any) {
+    const errorMessage = error.response && error.response.data && error.response.data.message
+      ? error.response.data.message
+      : error.message
+        ? error.message
+        : 'An unexpected error occurred';
+    yield put(getPetrolAllowanceReportFailure(errorMessage));
   }
 }
 
@@ -67,6 +84,7 @@ function* updatePetrolAllowanceSaga(action: any): Generator<any, any, any> {
 
 export default function* petrolAllowanceSaga() {
   yield takeEvery('GET_PETROL_ALLOWANCE_REQUEST', fetchPetrolAllowanceSaga);
+  yield takeEvery('GET_PETROL_ALLOWANCE_REPORT_REQUEST', fetchPetrolAllowanceReportSaga);
   yield takeEvery('CREATE_PETROL_ALLOWANCE_REQUEST', createPetrolAllowanceSaga);
   yield takeEvery('UPDATE_PETROL_ALLOWANCE_REQUEST', updatePetrolAllowanceSaga);
   // yield takeEvery('DELETE_PETROL_ALLOWANCE_REQUEST', deletePetrolAllowanceSaga);

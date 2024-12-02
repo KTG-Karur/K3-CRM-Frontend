@@ -18,6 +18,26 @@ export const resetGetPetrolAllowance = () => ({
   type: 'RESET_GET_PETROL_ALLOWANCE',
 });
 
+//Get Report Reducer Call--->
+export const getPetrolAllowanceReportRequest = (params?: any) => ({
+  type: 'GET_PETROL_ALLOWANCE_REPORT_REQUEST',
+  payload: params,
+});
+
+export const getPetrolAllowanceReportSuccess = (data: any) => ({
+  type: 'GET_PETROL_ALLOWANCE_REPORT_SUCCESS',
+  payload: { data },
+});
+
+export const getPetrolAllowanceReportFailure = (errorMessage: string) => ({
+  type: 'GET_PETROL_ALLOWANCE_REPORT_FAILURE',
+  errorMessage: { errorMessage },
+});
+
+export const resetGetPetrolAllowanceReport = () => ({
+  type: 'RESET_GET_PETROL_REPORT_ALLOWANCE',
+});
+
 //Create Reducer Call--->
 export const createPetrolAllowanceRequest = (data: any) => ({
   type: 'CREATE_PETROL_ALLOWANCE_REQUEST',

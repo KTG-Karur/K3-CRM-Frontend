@@ -1,12 +1,15 @@
 // employee/reducers.ts
 const initialState = {
   getPetrolAllowanceList: [],
+  getPetrolAllowanceReportData: [],
   createPetrolAllowanceData: null,
   updatePetrolAllowanceData: null,
   isLoading: false,
   errorMessage: null,
   getPetrolAllowanceSuccess: false,
   getPetrolAllowanceFailure: false,
+  getPetrolAllowanceReportSuccess: false,
+  getPetrolAllowanceReportFailure: false,
   createPetrolAllowanceSuccess: false,
   createPetrolAllowanceFailure: false,
   updatePetrolAllowanceSuccess: false,
@@ -39,6 +42,32 @@ export default function petrolAllowanceReducer(state = initialState, action: any
         getPetrolAllowanceSuccess: false,
         getPetrolAllowanceFailure: false,
         getPetrolAllowanceList: [],
+        errorMessage: null,
+      };
+    }
+
+    case "GET_PETROL_ALLOWANCE_REPORT_SUCCESS": {
+      return {
+        ...state,
+        getPetrolAllowanceReportSuccess: true,
+        getPetrolAllowanceReportData: action.payload.data.data,
+        getPetrolAllowanceReportFailure: false,
+      };
+    }
+    case "GET_PETROL_ALLOWANCE_REPORT_FAILURE": {
+      return {
+        ...state,
+        getPetrolAllowanceReportFailure: true,
+        errorMessage: action.errorMessage.errorMessage,
+        getPetrolAllowanceReportSuccess: false,
+      };
+    }
+    case "RESET_GET_PETROL_REPORT_ALLOWANCE": {
+      return {
+        ...state,
+        getPetrolAllowanceReportSuccess: false,
+        getPetrolAllowanceReportFailure: false,
+        getPetrolAllowanceReportData: [],
         errorMessage: null,
       };
     }

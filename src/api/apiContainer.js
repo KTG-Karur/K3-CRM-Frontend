@@ -38,6 +38,7 @@ const apiContainer = {
   staffTraining: "/staff-training",
   //report
   staffAttendanceReport: "/staff-attendance-report",
+  petrolAllowanceReport: "/petrol-allowance-report",
 };
 
 export default apiContainer;

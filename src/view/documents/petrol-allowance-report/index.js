@@ -12,6 +12,8 @@ import Petrol_2 from '../../../assets/images/petrol_2.jpeg';
 import { size } from 'lodash';
 import { Table } from 'react-bootstrap';
 import moment from 'moment';
+import CompanyDetails from '../../../components/Atom/CompanyDetails';
+import { SpainVectorMap } from '../../../components/VectorMap';
 
 function Index() {
     const baseUrl = process.env?.baseURL || "http://localhost:5059";
@@ -20,48 +22,64 @@ function Index() {
     const { state } = useLocation();
 
 
-    const [stateVal, setStateVal] = useState({})
+    const [stateVal, setStateVal] = useState({
+        personalDetails: {},
+        billDetails: [],
+        petrolPurchase: [],
+    })
 
-    console.log(baseUrl +  stateVal?.billImageName)
     useEffect(() => {
         if (state != undefined && state != null) {
-            setStateVal(state || {});
+            setStateVal({
+                personalDetails: state || {},
+                billDetails: JSON.parse(state?.billDetails || "[]"),
+                petrolPurchase: JSON.parse(state?.petrolPurchase || "[]")
+            });
         }
     }, [state])
 
-    console.log("stateVal")
-    console.log(stateVal)
+    console.log(stateVal?.petrolPurchase)
 
     const petrolAllowance = {
         header: {
             logo: K3Logo,
-            branch_name: 'Erode',
+            branchName: 'Erode',
         },
         body: {
             to: 'Head Office, \n K3 Women Foundation \n Karur-06',
             subject: 'Sub: Reimbursement of Fuel/ Conveyance Expenses for the month of SEPTEMBER 24',
-            body_content:
+            bodyContent:
                 'I hereby declared that I have actually incurred a sum of Rs.1860/- (Rupees one thousand eight hundred sixty only) towards fuel/conveyance expense for the month of SEPTEMBER 24 in respect of the official visits undertaken by me within the limitsof local authorities, while deischarging my official duties. I request that the same may be reimbursed to me. The necessary particulars in this behalf are given below:',
             details: {
-                name: `${(stateVal?.staffName || '').toUpperCase()}`,
-                desigination: `${(stateVal?.designationName || '').toUpperCase()}`,
-                emply_no: `${(stateVal?.staffCode || '').toUpperCase()}`,
-                place_of_duty: `${(stateVal?.branchName || '').toUpperCase()}`,
-                maximum_entitlement: '20 L',
-                claimed_for: '18.35 L',
+                name: `${(stateVal.personalDetails?.staffName || '').toUpperCase()}`,
+                desigination: `${(stateVal.personalDetails?.designationName || '').toUpperCase()}`,
+                empNo: `${(stateVal.personalDetails?.staffCode || '').toUpperCase()}`,
+                placeOfDuty: `${(stateVal.personalDetails?.branchName || '').toUpperCase()}`,
+                maximumEntitlement: '20 L',
+                claimedFor: '18.35 L',
             },
             declaration:
                 'I declare that in case the information furnished by me in claim form is found to be incorrect in any manner, I shall be deem to have committed an act of miscount and disciplinary proceedings may be against me',
-            office_use: {
+            officeUse: {
                 rupees: '1860',
-                in_words: 'One Thousand eight hundred Sixty',
+                inWords: 'One Thousand eight hundred Sixty',
             },
         },
-        images: [`${stateVal?.billImageName}`, Petrol, Petrol_2, Petrol, Petrol, Petrol_2, Petrol_1, Petrol_2, Petrol_1, Petrol],
-        petrol_claim: {
-            staff_name: 'TAMILSELVAN S',
-            for_month: 'SEP 24',
-            branch: 'ERODE',
+        images: stateVal.billDetails.map(item => (`${baseUrl}${item?.billImageName}` || '')),
+        billDetails: {
+            table: stateVal?.billDetails.map(item => ({
+                "bill no": item?.billNo,
+                "date Of purchase": item?.dateOfPurchase,
+                "Name of the Dealer": item?.nameOftheDealer,
+                "price per litre": item?.pricePerLitir,
+                "Qty purchased in Litre": item?.qtyPerLitre,
+                "Total amount": item?.totalAmount
+            }))
+        },
+        petrolClaim: {
+            staffName: `${(stateVal.personalDetails?.staffName || '').toUpperCase()}`,
+            forMonth: `${moment(stateVal.personalDetails?.allowanceDate).format('MMM - YY') || ''}`,
+            branch: `${stateVal.personalDetails?.branchName || ''}`,
             table: [
                 {
                     date: '02/09/24',
@@ -70,7 +88,7 @@ function Index() {
                     activity: 'REGULAR COLLECTION',
                     tkm: '50',
                     amount: '860',
-                    bill_no: '5735',
+                    billNo: '5735',
                 },
                 {
                     date: '04/09/24',
@@ -79,7 +97,7 @@ function Index() {
                     activity: 'REGULAR COLLECTION',
                     tkm: '50',
                     amount: '860',
-                    bill_no: '5735',
+                    billNo: '5735',
                 },
                 {
                     date: '05/09/24',
@@ -88,7 +106,7 @@ function Index() {
                     activity: 'REGULAR COLLECTION',
                     tkm: '50',
                     amount: '860',
-                    bill_no: '5735',
+                    billNo: '5735',
                 },
                 {
                     date: '06/09/24',
@@ -97,7 +115,7 @@ function Index() {
                     activity: 'REGULAR COLLECTION',
                     tkm: '50',
                     amount: '860',
-                    bill_no: '5735',
+                    billNo: '5735',
                 },
                 {
                     date: '06/09/24',
@@ -106,7 +124,7 @@ function Index() {
                     activity: 'REGULAR COLLECTION',
                     tkm: '50',
                     amount: '860',
-                    bill_no: '5735',
+                    billNo: '5735',
                 },
                 {
                     date: '06/09/24',
@@ -115,7 +133,7 @@ function Index() {
                     activity: 'REGULAR COLLECTION',
                     tkm: '50',
                     amount: '860',
-                    bill_no: '5735',
+                    billNo: '5735',
                 },
                 {
                     date: '06/09/24',
@@ -124,7 +142,7 @@ function Index() {
                     activity: 'REGULAR COLLECTION',
                     tkm: '50',
                     amount: '860',
-                    bill_no: '5735',
+                    billNo: '5735',
                 },
             ],
         },
@@ -146,28 +164,50 @@ function Index() {
     ];
 
     const maxColumns = 7;
-    const tableHeaders = Object.keys(petrolAllowance.petrol_claim.table[0] || {});
+    const tableHeaders = Object.keys(petrolAllowance.petrolClaim.table[0] || {});
+    const tableBillDetailsHeaders = Object.keys(petrolAllowance.billDetails.table[0] || {});
     const rowsPerPage = 6;
+    const rowsPerPageBill = 6;
 
     const paginatedData = Array.from(
-        { length: Math.ceil(petrolAllowance.petrol_claim.table.length / rowsPerPage) },
+        { length: Math.ceil(petrolAllowance.petrolClaim.table.length / rowsPerPage) },
         (_, pageIndex) =>
-            petrolAllowance.petrol_claim.table.slice(pageIndex * rowsPerPage, (pageIndex + 1) * rowsPerPage)
+            petrolAllowance.petrolClaim.table.slice(pageIndex * rowsPerPage, (pageIndex + 1) * rowsPerPage)
     );
 
-    const totals = petrolAllowance.petrol_claim.table.reduce(
+    const paginatedBillDetailsData = Array.from(
+        { length: Math.ceil(petrolAllowance.billDetails.table.length / rowsPerPageBill) },
+        (_, pageIndex) =>
+            petrolAllowance.billDetails.table.slice(pageIndex * rowsPerPageBill, (pageIndex + 1) * rowsPerPageBill)
+    );
+
+    const totals = petrolAllowance.petrolClaim.table.reduce(
         (acc, row) => ({
             tkm: acc.tkm + parseFloat(row.tkm || 0),
             amount: acc.amount + parseFloat(row.amount || 0),
-            bill_no: acc.bill_no.includes(row.bill_no) ? acc.bill_no : [...acc.bill_no, row.bill_no],
+            billNo: acc.billNo.includes(row.billNo) ? acc.billNo : [...acc.billNo, row.billNo],
         }),
-        { tkm: 0, amount: 0, bill_no: [] }
+        { tkm: 0, amount: 0, billNo: [] }
     );
 
+    const totalBillAmount = petrolAllowance.billDetails.table.reduce(
+        (acc, row) => {
+            const qtyPurVal = row["Qty purchased in Litre"].split("/");
+            const slashbeforeVal = `${qtyPurVal[0]}.${qtyPurVal[1]}`;
+            return ({
+                tolQtyPerLitre: acc.tolQtyPerLitre + parseFloat(slashbeforeVal || 0),
+                tolAmount: acc.tolAmount + parseFloat(row["Total amount"] || 0),
+            })
+        },
+        { tolQtyPerLitre: 0, tolAmount: 0 }
+    );
 
     return (
         <Container className="letter-container my-4 p-4 bg-light" style={{ maxWidth: '800px' }}>
             <Row className="mt-2 mb-4">
+                {/* <CompanyDetails fontSize="12px" imgSize="150px" classStyle="d-flex justify-content-center flex-column align-items-center" />
+                <hr className='mx-3'></hr> */}
+                {/* *********************** page-1 *********************** */}
                 <Row className="text-center">
                     <h4 className="mt-2">SCHEME-1</h4>
                     <h4 style={{ color: 'black' }}>DECLARATION BASIS</h4>
@@ -194,7 +234,7 @@ function Index() {
                     </Row>
                     <Row className="text-justify">
                         <Col style={{ textAlign: 'justify', fontSize: '16px', color: 'black' }}>
-                            {petrolAllowance.body?.body_content || ''}
+                            {petrolAllowance.body?.bodyContent || ''}
                         </Col>
                     </Row>
                 </Row>
@@ -226,7 +266,7 @@ function Index() {
                             <Col xs={1}>
                                 <strong>:</strong>
                             </Col>
-                            <Col xs={7}>{petrolAllowance.body.details?.emply_no || ''}</Col>
+                            <Col xs={7}>{petrolAllowance.body.details?.empNo || ''}</Col>
                         </Row>
                         <Row>
                             <Col xs={4}>
@@ -235,7 +275,7 @@ function Index() {
                             <Col xs={1}>
                                 <strong>:</strong>
                             </Col>
-                            <Col xs={7}>{petrolAllowance.body.details?.place_of_duty || ''}</Col>
+                            <Col xs={7}>{petrolAllowance.body.details?.placeOfDuty || ''}</Col>
                         </Row>
                         <Row>
                             <Col xs={4}>
@@ -244,7 +284,7 @@ function Index() {
                             <Col xs={1}>
                                 <strong>:</strong>
                             </Col>
-                            <Col xs={7}>{petrolAllowance.body.details?.maximum_entitlement || ''}</Col>
+                            <Col xs={7}>{petrolAllowance.body.details?.maximumEntitlement || ''}</Col>
                         </Row>
                         <Row>
                             <Col xs={4}>
@@ -253,7 +293,7 @@ function Index() {
                             <Col xs={1}>
                                 <strong>:</strong>
                             </Col>
-                            <Col xs={7}>{petrolAllowance.body.details?.claimed_for || ''}</Col>
+                            <Col xs={7}>{petrolAllowance.body.details?.claimedFor || ''}</Col>
                         </Row>
                     </Col>
                 </Row>
@@ -287,17 +327,20 @@ function Index() {
                 <Row className="mt-1 mb-2 text-left">
                     <h4 style={{ fontWeight: 'bold', textAlign: 'center', fontSize: '16px' }}>FOR OFFICE USE ONLY</h4>
                     <p style={{ fontSize: '16px', color: 'black' }}>
-                        Passed for Rs. <span style={underlineStyle(petrolAllowance.body?.office_use.rupees)}></span>/_{' '}
+                        Passed for Rs. <span style={underlineStyle(petrolAllowance.body?.officeUse.rupees)}></span>/_{' '}
                         <br />
-                        (Rupees <span style={underlineStyle(petrolAllowance.body?.office_use.in_words)}></span> only)
+                        (Rupees <span style={underlineStyle(petrolAllowance.body?.officeUse.inWords)}></span> only)
                     </p>
                 </Row>
             </Row>
 
-            {petrolAllowance.images && <div className="page-break"></div>}
+            {/* *********************** End page-1 *********************** */}
+            {/* *********************** Start page-2 *********************** */}
+
+            {petrolAllowance?.images && <div className="page-break"></div>}
 
             <Row className="justify-content-center mb-4" style={{ gap: '20px', marginTop: '40px' }}>
-                {petrolAllowance.images.slice(0, 4).map((image, index) => (
+                {petrolAllowance.images.map((image, index) => (
                     <Col
                         key={index}
                         md={5}
@@ -305,42 +348,100 @@ function Index() {
                         style={{ padding: '10px' }}>
                         <img
                             src={image}
+                            crossOrigin="anonymous"
                             alt={`Petrol Image ${index + 1}`}
                             style={{
                                 width: '100%',
                                 height: '400px',
                                 objectFit: 'contain',
-                            }}
-                        />
+                            }} />
+                        {(index + 1) % 4 == 0 && <div className="page-break"></div>}
                     </Col>
                 ))}
             </Row>
 
-            {petrolAllowance.images.length > 4 && <div className="page-break"></div>}
+            {/* *********************** End page-2 *********************** */}
+            {/* *********************** Start page-3 *********************** */}
+            {petrolAllowance.billDetails && <div className="page-break"></div>}
 
-            {petrolAllowance.images.length > 4 && (
-                <Row className="justify-content-center mb-4" style={{ gap: '20px', marginTop: '40px' }}>
-                    {petrolAllowance.images.slice(4).map((image, index) => (
-                        <Col
-                            key={index + 4}
-                            md={5}
-                            className="d-flex justify-content-center align-items-center mb-3"
-                            style={{ padding: '10px' }}>
-                            <img
-                                src={image}
-                                alt={`Petrol Image ${index + 5}`}
-                                style={{
-                                    width: '100%',
-                                    height: '400px',
-                                    objectFit: 'contain',
-                                }}
-                            />
-                        </Col>
-                    ))}
-                </Row>
-            )}
+            {paginatedBillDetailsData.map((pageBillData, pageIndex) => {
+                return (
+                    <div key={pageIndex} className="page-container" style={{ marginBottom: '20px' }}>
+                        <Row className="mt-1 mb-2">
+                            <Row className="text-center mt-2 mb-2">
+                                <h3 style={{ color: 'black' }}>SUMMARY OF BILLS SUBMITTED</h3>
+                            </Row>
+                        </Row>
+                        <Table bordered hover style={{ borderColor: '#000' }}>
+                            <thead>
+                                <tr>
+                                    {tableBillDetailsHeaders.slice(0, maxColumns).map((header, index) => (
+                                        <th key={index} style={{ color: "black" }}>{header.toUpperCase()}</th>
+                                    ))}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {pageBillData.map((row, rowIndex) => (
+                                    <tr key={rowIndex}>
+                                        {tableBillDetailsHeaders.slice(0, maxColumns).map((header, colIndex) => {
+                                            return (
+                                                <td style={{ fontSize: "12px" }} key={colIndex}>{row[header]}</td>
+                                            )
+                                        })}
+                                    </tr>
+                                ))}
+                                <tr>
+                                    <td colSpan={4} style={{ textAlign: 'right', fontWeight: 'bold', color: "black" }}>
+                                        Total
+                                    </td>
+                                    <td>{totalBillAmount.tolQtyPerLitre}</td>
+                                    <td>{totalBillAmount.tolAmount}</td>
+                                </tr>
+                            </tbody>
+                        </Table>
+                    </div>
+                )
+            })}
 
-            {petrolAllowance.petrol_claim && <div className="page-break"></div>}
+            <Row className="text-justify mt-4">
+                <Col style={{ textAlign: 'justify', fontSize: '16px', color: 'black' }}>
+                    {petrolAllowance.body?.declaration || ''}
+                </Col>
+            </Row>
+
+            <Row className="justify-between mt-2">
+                <Col className="text-black" style={{ fontSize: '16px', fontWeight: 'bold' }}>
+                    Date: {petrolAllowance.today}
+                </Col>
+                <Col className="text-black text-end" style={{ fontSize: '16px', fontWeight: 'bold' }}>
+                    Signature
+                </Col>
+            </Row>
+
+            <Row className="mt-4 mb-4">
+                <div
+                    style={{
+                        borderColor: 'black',
+                        borderWidth: '1px',
+                        borderStyle: 'solid',
+                        width: '100%',
+                        boxSizing: 'border-box',
+                    }}></div>
+            </Row>
+
+            <Row className="mt-1 mb-2 text-left">
+                <h4 style={{ fontWeight: 'bold', textAlign: 'center', fontSize: '16px' }}>FOR OFFICE USE ONLY</h4>
+                <p style={{ fontSize: '16px', color: 'black' }}>
+                    Passed for Rs. <span style={underlineStyle(petrolAllowance.body?.officeUse.rupees)}></span>/_{' '}
+                    <br />
+                    (Rupees <span style={underlineStyle(petrolAllowance.body?.officeUse.inWords)}></span> only)
+                </p>
+            </Row>
+
+            {/* *********************** End  page-3 *********************** */}
+            {/* *********************** Start  page-4 *********************** */}
+
+            {petrolAllowance.petrolClaim && <div className="page-break"></div>}
 
             {paginatedData.map((pageData, pageIndex) => (
                 <div key={pageIndex} className="page-container" style={{ marginBottom: '20px' }}>
@@ -358,7 +459,7 @@ function Index() {
                                     <Col xs={1}>
                                         <strong>:</strong>
                                     </Col>
-                                    <Col xs={7}>{petrolAllowance.petrol_claim?.staff_name || ''}</Col>
+                                    <Col xs={7}>{petrolAllowance.petrolClaim?.staffName || ''}</Col>
                                 </Row>
                                 <Row>
                                     <Col xs={4}>
@@ -367,11 +468,11 @@ function Index() {
                                     <Col xs={1}>
                                         <strong>:</strong>
                                     </Col>
-                                    <Col xs={7}>{petrolAllowance.petrol_claim?.for_month || ''}</Col>
+                                    <Col xs={7}>{petrolAllowance.petrolClaim?.forMonth || ''}</Col>
                                 </Row>
                             </Col>
                             <Col className="text-end text-black" style={{ fontSize: '16px', alignSelf: 'end' }}>
-                                <strong>Branch:</strong> {petrolAllowance.petrol_claim?.branch || ''}
+                                <strong>Branch:</strong> {petrolAllowance.petrolClaim?.branch || ''}
                             </Col>
                         </Row>
                     </Row>
@@ -424,6 +525,12 @@ function Index() {
                 </div>
             ))}
 
+            {/* *********************** Start  page-4 *********************** */}
+
+
+
+            {/* *********************** Start pdf download *********************** */}
+
             <Row className="d-print-none mt-4">
                 <Col className="text-end">
                     <Link
@@ -439,6 +546,8 @@ function Index() {
                     </Link>
                 </Col>
             </Row>
+
+            {/* *********************** End pdf download *********************** */}
 
             <style>
                 {`
