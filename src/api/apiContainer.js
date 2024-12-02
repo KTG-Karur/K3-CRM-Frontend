@@ -38,6 +38,7 @@ const apiContainer = {
   staffTraining: "/staff-training",
   //report
   staffAttendanceReport: "/staff-attendance-report",
+  rolePermission: "/role-permission",
 };
 
 export default apiContainer;
