@@ -189,18 +189,27 @@ function Index() {
             roleId : data.roleId
         }
         dispatch(getRolePermissionRequest(req));
-        setSelectedItem(data)
         setSelectedIndex(index)
     }
     const onEditForm = (data) => {
         const pagesListData = JSON.parse(JSON.stringify(pagesList))
         const selectedIds = JSON.parse(data[0].accessIds)
+        
         pagesListData.map((item)=>{
             const selectedId = item.id
-            console.log(selectedId)
-            const page = _.find(selectedIds.access, { selectedId });
-            console.log(page)
+            const page = selectedIds.access.find(p => p.pageId === selectedId);
+            if(page){
+                item.state = 1
+                item.children.map((ele)=>{
+                    if(page.accessPermission.includes(ele.extraKey) ){
+                        ele.state = 1
+                    }
+                })
+            }
         })
+        setCheckboxListData(pagesListData)
+        console.log()
+        setSelectedItem(data)
         setState({
             ...state,
             roleName: data[0]?.roleName || "",
@@ -233,14 +242,15 @@ function Index() {
                 selectedData = [...selectedData, ...filterData];
             }
         })
-
         if(selectedData.length > 0){
             const submitRequest = {
                 roleName: state?.roleName || "",
                 accessIds : JSON.stringify({"access" : selectedData})
             }
             if (isEdit) {
-                dispatch(updateRoleRequest(submitRequest, selectedItem.roleId))
+                submitRequest.roleName === selectedItem.roleName && delete submitRequest.roleName
+                submitRequest.rolePermissionId = selectedItem[0].rolePermissionId
+                dispatch(updateRoleRequest(submitRequest, selectedItem[0].roleId))
             } else {
                 dispatch(createRoleRequest(submitRequest))
             }
