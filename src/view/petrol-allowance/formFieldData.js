@@ -73,31 +73,58 @@ const filterFormContainer = [
                 'label': "Choose Date",
                 'name': "dateFilter",
                 'inputType': "date",
-                'type':'month',
+                'type': 'month',
+                'onChange': 'onDateFilter'
             },
         ]
     },
     {
         formFields: [
             {
-                label: 'Choose Staff',
-                name: 'staffId',
-                inputType: 'select',
-                optionList: 'staffList',
-                displayKey: 'staffName',
-                uniqueKey: 'staffId',
+                'label': 'Branch',
+                'name': 'branchId',
+                'inputType': 'select',
+                'optionList': 'branchList',
+                'displayKey': 'branchName',
+                'uniqueKey': 'branchId',
+                onChange: 'handleBranch',
             },
         ]
     },
     {
         formFields: [
             {
-                'label': "search",
-                'inputType': "button",
-                'onClick': 'searchFilter'
+                'label': 'Department',
+                'name': 'departmentId',
+                'inputType': 'select',
+                'optionList': 'departmentList',
+                'displayKey': 'departmentName',
+                'uniqueKey': 'departmentId',
+                onChange: 'handleDepartment',
             },
         ]
     },
+    // {
+    //     formFields: [
+    //         {
+    //             label: 'Choose Staff',
+    //             name: 'staffId',
+    //             inputType: 'select',
+    //             optionList: 'staffList',
+    //             displayKey: 'staffName',
+    //             uniqueKey: 'staffId',
+    //         },
+    //     ]
+    // },
+    // {
+    //     formFields: [
+    //         {
+    //             'label': "search",
+    //             'inputType': "button",
+    //             'onClick': 'searchFilter'
+    //         },
+    //     ]
+    // },
 ]
 
 export {

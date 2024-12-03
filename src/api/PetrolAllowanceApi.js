@@ -1,10 +1,25 @@
 import { apiReturnCallBack } from './ApiConfig';
 import apiContainer from './apiContainer';
 const petrolAllowance = apiContainer.petrolAllowance
+const petrolAllowanceReport = apiContainer.petrolAllowanceReport
 //GET--->
 export async function getPetrolAllowance(request) {
   try {
     const response = await apiReturnCallBack("GET", petrolAllowance, request);
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || JSON.stringify(data));
+    }
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function getPetrolAllowanceReport(request) {
+  try {
+    const response = await apiReturnCallBack("GET", petrolAllowanceReport, request);
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.message || JSON.stringify(data));
@@ -32,7 +47,7 @@ export async function createPetrolAllowance(request) {
 //UPDATE---->
 export async function updatePetrolAllowance(request, petrolAllowanceId) {
   try {
-    const response = await apiReturnCallBack("PUT", petrolAllowance+`/${petrolAllowanceId}`, request);
+    const response = await apiReturnCallBack("PUT", petrolAllowance + `/${petrolAllowanceId}`, request);
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.message || JSON.stringify(data));

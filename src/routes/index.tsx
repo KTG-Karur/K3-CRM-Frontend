@@ -97,7 +97,7 @@ import {
     ClaimType,
     Claim,
     Branch,
-    ClaimTemplate,
+    // ClaimTemplate,
     ProofType,
     TransferStaff,
     SettingLeaveDeduction,
@@ -120,6 +120,7 @@ import {
     TrainingType,
     StaffTraining,
     StaffAttendanceReport,
+    BirthDayClaimReport,
 } from './Route_Menu';
 
 const loading = () => <div className=""></div>;
@@ -213,10 +214,10 @@ const AllRoutes = () => {
                     path: 'claim',
                     element: <LoadComponent component={Claim} />,
                 },
-                {
-                    path: 'claim-approved',
-                    element: <LoadComponent component={ClaimTemplate} />,
-                },
+                // {
+                //     path: 'claim-approved',
+                //     element: <LoadComponent component={ClaimTemplate} />,
+                // },
                 {
                     path: 'staff-attendance',
                     element: <LoadComponent component={Attendance} />,
@@ -241,6 +242,10 @@ const AllRoutes = () => {
                 {
                     path: 'deputation-report',
                     element: <LoadComponent component={DeputationReport} />,
+                },
+                {
+                    path: 'birthday-claim-report',
+                    element: <LoadComponent component={BirthDayClaimReport} />,
                 },
                 {
                     path: 'transfer-report',
@@ -269,7 +274,7 @@ const AllRoutes = () => {
                         {
                             path: 'staff-attendance-report',
                             element: <LoadComponent component={StaffAttendanceReport} />,
-                        }
+                        },
                     ],
                 },
                 {
