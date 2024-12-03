@@ -1,6 +1,7 @@
 import React, { Children } from 'react';
 import { Row, Col, Image } from 'react-bootstrap';
 import K3Logo from '../../assets/images/K3_Logo.png';
+import CompanyDetails from '../Atom/CompanyDetails';
 
 function LetterForm(props) {
     const { children, Header, Address = false, Date = false, Regards = false, Conclusion = false, Footer, permission } = props;
@@ -9,11 +10,13 @@ function LetterForm(props) {
         <>
             <Row className="mb-4 text-center">
                 <Col>
-                    {permission ? (
-                        ""
-                    ) : (
-                        <Image src={K3Logo} rounded fluid style={{ maxHeight: '40px' }} alt="Company Logo" />
-                    )}
+                    {!permission && <CompanyDetails
+                        fontSize="12px"
+                        imgOnly={true}
+                        imgSize="150px"
+                        classStyle="d-flex justify-content-center flex-column align-items-center"
+                    />
+                    }
                     <h3 className="mt-2">{Header?.letterName || ""}</h3>
                     <p style={{ color: "black", fontSize: '16px', }}>{Header?.address || ""}</p>
                 </Col>

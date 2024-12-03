@@ -19,12 +19,12 @@ const employeeFormContainer = [
                 require: true,
                 'classStyle': 'col-6'
             },
-            {
-                label: 'Upload Recepit',
-                name: 'uploadImage',
-                inputType: 'file',
-                'classStyle': 'col-6'
-            },
+            // {
+            //     label: 'Upload Recepit',
+            //     name: 'uploadImage',
+            //     inputType: 'file',
+            //     'classStyle': 'col-6'
+            // },
             {
                 label: 'Branch',
                 name: 'branchId',

@@ -15,7 +15,7 @@ export const Activity = React.lazy(() => import('../view/activity'));
 export const ClaimType = React.lazy(() => import('../view/claim-type'));
 export const Claim = React.lazy(() => import('../view/claim'));
 export const Branch = React.lazy(() => import('../view/branch'));
-export const ClaimTemplate = React.lazy(() => import('../view/claim/approvedTemplate'));
+// export const ClaimTemplate = React.lazy(() => import('../view/claim/approvedTemplate'));
 export const ProofType = React.lazy(() => import('../view/proof-type'));
 export const Holiday = React.lazy(() => import('../view/holiday'));
 export const StaffLeave = React.lazy(() => import('../view/staff-leave'));
@@ -50,6 +50,7 @@ export const DeputationReport = React.lazy(() => import('../view/documents/deput
 export const TransferReport = React.lazy(() => import('../view/documents/transfer-report'));
 export const PermissionLeaveOdReport = React.lazy(() => import('../view/documents/permission-leave-od-report'));
 export const PetrolAllowanceReport = React.lazy(() => import('../view/documents/petrol-allowance-report'));
+export const BirthDayClaimReport = React.lazy(() => import('../view/documents/birthday-claim-report'));
 
 //report
 export const StaffAttendanceReport = React.lazy(() => import('../view/report/staff-attendance-report'));

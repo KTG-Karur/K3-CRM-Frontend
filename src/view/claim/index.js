@@ -157,8 +157,15 @@ function Index() {
 
                         {
                             row.original.statusId === 29 &&
-                            <span className="text-success  me-2 cursor-pointer" onClick={() => onApprovedClaim(row.original, row.index)}>
-                                <i className={'fe-check-circle'}></i>
+                            <span className="text-danger  me-2 cursor-pointer" onClick={() => onApprovedClaim(row.original, row.index)}>
+                                <i className={'fe-file-text'}></i>
+                            </span>
+                        }
+                        {
+                            row.original.statusId === 29 &&
+                            <span className="text-success  me-2 cursor-pointer"
+                                onClick={() => onPrintDesign(row.original)}>
+                                <i className={'fe-printer'} style={{ fontSize: '16px' }}></i>
                             </span>
                         }
                     </div>
@@ -296,21 +303,21 @@ function Index() {
         if (createClaimSuccess) {
             const temp_state = [createClaimData[0], ...parentList];
             setParentList(temp_state)
-            if (state.uploadImage > 0) {
-                const formData = new FormData();
-                const originalFile = state.uploadImage[0];
-                if (state.uploadImage) {
-                    const renamedFile = new File(
-                        [originalFile],
-                        `Claim-${createClaimData[0].requestedBy}-${createClaimData[0].claimId}-${originalFile.name}`,
-                        {
-                            type: originalFile.type,
-                            lastModified: originalFile.lastModified,
-                        }
-                    );
-                }
-                dispatch(createUploadImagesRequest(formData, createClaimData[0].claimId))
-            }
+            // if (state.uploadImage > 0) {
+            //     const formData = new FormData();
+            //     const originalFile = state.uploadImage[0];
+            //     if (state.uploadImage) {
+            //         const renamedFile = new File(
+            //             [originalFile],
+            //             `Claim-${createClaimData[0].requestedBy}-${createClaimData[0].claimId}-${originalFile.name}`,
+            //             {
+            //                 type: originalFile.type,
+            //                 lastModified: originalFile.lastModified,
+            //             }
+            //         );
+            //     }
+            //     dispatch(createUploadImagesRequest(formData, createClaimData[0].claimId))
+            // }
             showMessage('success', 'Created Successfully');
             closeModel()
             dispatch(resetCreateClaim())
@@ -325,7 +332,6 @@ function Index() {
             const temp_state = [...parentList];
             temp_state[selectedIndex] = updateClaimData[0];
             setParentList(temp_state)
-            approvedModal && navigate('/claim-approved', { state: { data: updateClaimData[0] } });
             isEdit && showMessage('success', 'Updated Successfully');
             closeModel()
             dispatch(resetUpdateClaim())
@@ -342,16 +348,21 @@ function Index() {
         setApprovedModal(false)
     }
 
+    const onPrintDesign = (data) => {
+        console.log("onPrintDesign")
+        console.log(data)
+        navigate('/birthday-claim-report', { state: data });
+    }
+
     const onApprovedClaim = (data, index) => {
         setState({
             ...state,
             approvedDate: moment().format("YYYY-MM-DD"),
-            claimAmount: ""
+            claimAmount: data?.claimAmount || data?.requestedAmount
         })
         setSelectedItem(data)
         setSelectedIndex(index)
         setApprovedModal(true)
-        // navigate('/claim-approved', { state: { data: data } });
     }
 
     const onFormClear = () => {
@@ -364,6 +375,7 @@ function Index() {
             claimTypeId: "",
             requestedAmount: "",
             reason: "",
+            claimAmount:"",
         });
     };
 

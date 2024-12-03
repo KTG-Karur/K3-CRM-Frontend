@@ -220,6 +220,12 @@ const Navigate: NavigateTypes[] = [
         icon: 'mdi mdi-account-check',
         url: '/report/staff-attendance-report',
     },
+    {
+        label: 'Birthday Claim Report',
+        isTitle: false,
+        icon: 'mdi mdi-account-check',
+        url: '/birthday-claim-report',
+    },
     // {
     //     label: 'Transfer Order Report',
     //     isTitle: false,

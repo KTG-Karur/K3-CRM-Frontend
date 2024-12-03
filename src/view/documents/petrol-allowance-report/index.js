@@ -13,32 +13,45 @@ import { size } from 'lodash';
 import { Table } from 'react-bootstrap';
 import moment from 'moment';
 import CompanyDetails from '../../../components/Atom/CompanyDetails';
-import { SpainVectorMap } from '../../../components/VectorMap';
+import { numberToRupeesWords } from '../../../utils/AllFunction';
 
 function Index() {
     const baseUrl = process.env?.baseURL || "http://localhost:5059";
 
-
     const { state } = useLocation();
-
 
     const [stateVal, setStateVal] = useState({
         personalDetails: {},
         billDetails: [],
         petrolPurchase: [],
+        claimedFor: 0,
+        tolBillAmount: 0,
     })
 
     useEffect(() => {
         if (state != undefined && state != null) {
+            const result = JSON.parse(state?.petrolPurchase || "[]").reduce((acc, curr) => {
+                const existing = acc.find(item =>
+                    item.billNo === curr.billNo &&
+                    item.dateOfPurchase === curr.dateOfPurchase &&
+                    item.fromPlace === curr.fromPlace &&
+                    item.toPlace === curr.toPlace
+                );
+                if (existing) {
+                    existing.activityName += ` & ${curr.activityName}`;
+                } else {
+                    acc.push({ ...curr });
+                }
+                return acc;
+            }, []);
             setStateVal({
+                ...stateVal,
                 personalDetails: state || {},
                 billDetails: JSON.parse(state?.billDetails || "[]"),
-                petrolPurchase: JSON.parse(state?.petrolPurchase || "[]")
+                petrolPurchase: result,
             });
         }
     }, [state])
-
-    console.log(stateVal?.petrolPurchase)
 
     const petrolAllowance = {
         header: {
@@ -49,27 +62,27 @@ function Index() {
             to: 'Head Office, \n K3 Women Foundation \n Karur-06',
             subject: 'Sub: Reimbursement of Fuel/ Conveyance Expenses for the month of SEPTEMBER 24',
             bodyContent:
-                'I hereby declared that I have actually incurred a sum of Rs.1860/- (Rupees one thousand eight hundred sixty only) towards fuel/conveyance expense for the month of SEPTEMBER 24 in respect of the official visits undertaken by me within the limitsof local authorities, while deischarging my official duties. I request that the same may be reimbursed to me. The necessary particulars in this behalf are given below:',
+                `I hereby declared that I have actually incurred a sum of Rs. ${stateVal?.tolBillAmount || 0}/- (${numberToRupeesWords(stateVal?.tolBillAmount || 0)} only) towards fuel/conveyance expense for the month of  ${moment(stateVal.personalDetails?.allowanceDate).format('MMMM - YY') || ''} in respect of the official visits undertaken by me within the limitsof local authorities, while deischarging my official duties. I request that the same may be reimbursed to me. The necessary particulars in this behalf are given below:`,
             details: {
                 name: `${(stateVal.personalDetails?.staffName || '').toUpperCase()}`,
                 desigination: `${(stateVal.personalDetails?.designationName || '').toUpperCase()}`,
                 empNo: `${(stateVal.personalDetails?.staffCode || '').toUpperCase()}`,
                 placeOfDuty: `${(stateVal.personalDetails?.branchName || '').toUpperCase()}`,
                 maximumEntitlement: '20 L',
-                claimedFor: '18.35 L',
+                claimedFor: `${stateVal?.claimedFor || 0}L`,
             },
             declaration:
                 'I declare that in case the information furnished by me in claim form is found to be incorrect in any manner, I shall be deem to have committed an act of miscount and disciplinary proceedings may be against me',
             officeUse: {
-                rupees: '1860',
-                inWords: 'One Thousand eight hundred Sixty',
+                rupees: `${stateVal?.tolBillAmount || 0}`,
+                inWords: `${numberToRupeesWords(stateVal?.tolBillAmount || 0)}`,
             },
         },
         images: stateVal.billDetails.map(item => (`${baseUrl}${item?.billImageName}` || '')),
         billDetails: {
             table: stateVal?.billDetails.map(item => ({
                 "bill no": item?.billNo,
-                "date Of purchase": item?.dateOfPurchase,
+                "date Of purchase": moment(item?.dateOfPurchase).format('DD/MM/YYYY'),
                 "Name of the Dealer": item?.nameOftheDealer,
                 "price per litre": item?.pricePerLitir,
                 "Qty purchased in Litre": item?.qtyPerLitre,
@@ -80,71 +93,15 @@ function Index() {
             staffName: `${(stateVal.personalDetails?.staffName || '').toUpperCase()}`,
             forMonth: `${moment(stateVal.personalDetails?.allowanceDate).format('MMM - YY') || ''}`,
             branch: `${stateVal.personalDetails?.branchName || ''}`,
-            table: [
-                {
-                    date: '02/09/24',
-                    from: 'BRANCH',
-                    to: 'SANGUNAGAR SAMPATHNAGAR, MGR NAGAR, VEERAPPANCHITHRAM, AMMAN NAGAR PERIYASEMUR, SINTHAN NAGAR, THIRUNAGAR COLONY, PALLIPALAYAM, MARAPALAM',
-                    activity: 'REGULAR COLLECTION',
-                    tkm: '50',
-                    amount: '860',
-                    billNo: '5735',
-                },
-                {
-                    date: '04/09/24',
-                    from: 'BRANCH',
-                    to: 'SANGUNAGAR SAMPATHNAGAR, MGR NAGAR, VEERAPPANCHITHRAM, AMMAN NAGAR PERIYASEMUR',
-                    activity: 'REGULAR COLLECTION',
-                    tkm: '50',
-                    amount: '860',
-                    billNo: '5735',
-                },
-                {
-                    date: '05/09/24',
-                    from: 'BRANCH',
-                    to: 'VEERAPPANCHITHRAM, AMMAN NAGAR PERIYASEMUR',
-                    activity: 'REGULAR COLLECTION',
-                    tkm: '50',
-                    amount: '860',
-                    billNo: '5735',
-                },
-                {
-                    date: '06/09/24',
-                    from: 'BRANCH',
-                    to: 'SANGUNAGAR SAMPATHNAGAR, MGR NAGAR, VEERAPPANCHITHRAM, AMMAN NAGAR PERIYASEMUR, SINTHAN NAGAR, THIRUNAGAR COLONY, PALLIPALAYAM, MARAPALAM',
-                    activity: 'REGULAR COLLECTION',
-                    tkm: '50',
-                    amount: '860',
-                    billNo: '5735',
-                },
-                {
-                    date: '06/09/24',
-                    from: 'BRANCH',
-                    to: 'SANGUNAGAR SAMPATHNAGAR, MGR NAGAR, VEERAPPANCHITHRAM, AMMAN NAGAR PERIYASEMUR, SINTHAN NAGAR, THIRUNAGAR COLONY, PALLIPALAYAM, MARAPALAM',
-                    activity: 'REGULAR COLLECTION',
-                    tkm: '50',
-                    amount: '860',
-                    billNo: '5735',
-                },
-                {
-                    date: '06/09/24',
-                    from: 'BRANCH',
-                    to: 'SANGUNAGAR SAMPATHNAGAR, MGR NAGAR, VEERAPPANCHITHRAM, AMMAN NAGAR PERIYASEMUR, SINTHAN NAGAR, THIRUNAGAR COLONY, PALLIPALAYAM, MARAPALAM',
-                    activity: 'REGULAR COLLECTION',
-                    tkm: '50',
-                    amount: '860',
-                    billNo: '5735',
-                },
-                {
-                    date: '06/09/24',
-                    from: 'BRANCH',
-                    to: 'SANGUNAGAR SAMPATHNAGAR, MGR NAGAR, VEERAPPANCHITHRAM, AMMAN NAGAR PERIYASEMUR, SINTHAN NAGAR, THIRUNAGAR COLONY, PALLIPALAYAM, MARAPALAM',
-                    activity: 'REGULAR COLLECTION',
-                    tkm: '50',
-                    amount: '860',
-                    billNo: '5735',
-                },
-            ],
+            table: stateVal?.petrolPurchase.map(item => ({
+                "Date": moment(item?.allowanceDate).format('DD/MM/YYYY'),
+                "From.place": item?.fromPlace,
+                "To.place": item?.toPlace,
+                "Activity": item?.activityName,
+                "T.km": item?.totalKm,
+                "T.amount": item?.totalAmount || 0,
+                "billno": item?.billNo || "-",
+            }))
         },
         today: moment().format("DD-MM-YYYY")
     };
@@ -183,11 +140,10 @@ function Index() {
 
     const totals = petrolAllowance.petrolClaim.table.reduce(
         (acc, row) => ({
-            tkm: acc.tkm + parseFloat(row.tkm || 0),
-            amount: acc.amount + parseFloat(row.amount || 0),
-            billNo: acc.billNo.includes(row.billNo) ? acc.billNo : [...acc.billNo, row.billNo],
+            tkm: acc.tkm + parseFloat(row["T.km"] || 0),
+            amount: acc.amount + parseFloat(row["T.amount"] || 0),
         }),
-        { tkm: 0, amount: 0, billNo: [] }
+        { tkm: 0, amount: 0 }
     );
 
     const totalBillAmount = petrolAllowance.billDetails.table.reduce(
@@ -201,6 +157,16 @@ function Index() {
         },
         { tolQtyPerLitre: 0, tolAmount: 0 }
     );
+
+    useEffect(() => {
+        if (totalBillAmount?.tolQtyPerLitre > 0 && stateVal.claimedFor == 0) {
+            setStateVal({
+                ...stateVal,
+                claimedFor: totalBillAmount?.tolQtyPerLitre || 0,
+                tolBillAmount: totalBillAmount?.tolAmount || 0
+            })
+        }
+    }, [totalBillAmount])
 
     return (
         <Container className="letter-container my-4 p-4 bg-light" style={{ maxWidth: '800px' }}>
@@ -327,9 +293,9 @@ function Index() {
                 <Row className="mt-1 mb-2 text-left">
                     <h4 style={{ fontWeight: 'bold', textAlign: 'center', fontSize: '16px' }}>FOR OFFICE USE ONLY</h4>
                     <p style={{ fontSize: '16px', color: 'black' }}>
-                        Passed for Rs. <span style={underlineStyle(petrolAllowance.body?.officeUse.rupees)}></span>/_{' '}
+                        Passed for Rs. <span style={underlineStyle(petrolAllowance.body?.officeUse.rupees)}>{petrolAllowance.body?.officeUse.rupees}</span>/_{' '}
                         <br />
-                        (Rupees <span style={underlineStyle(petrolAllowance.body?.officeUse.inWords)}></span> only)
+                        (Rupees <span style={underlineStyle(petrolAllowance.body?.officeUse.inWords)}>{petrolAllowance.body?.officeUse.inWords}</span> only)
                     </p>
                 </Row>
             </Row>
@@ -394,8 +360,8 @@ function Index() {
                                     <td colSpan={4} style={{ textAlign: 'right', fontWeight: 'bold', color: "black" }}>
                                         Total
                                     </td>
-                                    <td>{totalBillAmount.tolQtyPerLitre}</td>
-                                    <td>{totalBillAmount.tolAmount}</td>
+                                    <td>{totalBillAmount?.tolQtyPerLitre || 0}</td>
+                                    <td>{totalBillAmount?.tolAmount || 0}</td>
                                 </tr>
                             </tbody>
                         </Table>
@@ -432,9 +398,9 @@ function Index() {
             <Row className="mt-1 mb-2 text-left">
                 <h4 style={{ fontWeight: 'bold', textAlign: 'center', fontSize: '16px' }}>FOR OFFICE USE ONLY</h4>
                 <p style={{ fontSize: '16px', color: 'black' }}>
-                    Passed for Rs. <span style={underlineStyle(petrolAllowance.body?.officeUse.rupees)}></span>/_{' '}
+                    Passed for Rs. <span style={underlineStyle(petrolAllowance.body?.officeUse.rupees)}>{petrolAllowance.body?.officeUse.rupees}</span>/_{' '}
                     <br />
-                    (Rupees <span style={underlineStyle(petrolAllowance.body?.officeUse.inWords)}></span> only)
+                    (Rupees <span style={underlineStyle(petrolAllowance.body?.officeUse.inWords)}>{petrolAllowance.body?.officeUse.inWords}</span> only)
                 </p>
             </Row>
 

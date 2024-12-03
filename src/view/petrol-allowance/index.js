@@ -5,7 +5,7 @@ import FormLayout from '../../utils/formLayout';
 import { filterFormContainer, petrolAllowanceContainer } from './formFieldData';
 import Table from '../../components/Table';
 import { dateConversion, removeNullKeyFromObj, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
-import { createPetrolAllowanceRequest, getPetrolAllowanceRequest, getStaffRequest, resetCreatePetrolAllowance, resetGetPetrolAllowance, resetUpdatePetrolAllowance, resetGetStaff, updatePetrolAllowanceRequest, getPetrolAllowanceReportRequest, resetGetPetrolAllowanceReport } from '../../redux/actions';
+import { createPetrolAllowanceRequest, getPetrolAllowanceRequest, getStaffRequest, resetCreatePetrolAllowance, resetGetPetrolAllowance, resetUpdatePetrolAllowance, resetGetStaff, updatePetrolAllowanceRequest, getPetrolAllowanceReportRequest, resetGetPetrolAllowanceReport, getBranchRequest, getDepartmentRequest, resetGetBranch, resetGetDepartment } from '../../redux/actions';
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 import _ from 'lodash';
@@ -28,9 +28,21 @@ function Index() {
 
         getPetrolAllowanceReportSuccess,
         getPetrolAllowanceReportData,
-        getPetrolAllowanceReportFailure
+        getPetrolAllowanceReportFailure,
+
+        getBranchSuccess, getBranchList, getBranchFailure,
+        getDepartmentSuccess, getDepartmentList, getDepartmentFailure,
 
     } = appSelector((state) => ({
+
+        getBranchSuccess: state.branchReducer.getBranchSuccess,
+        getBranchList: state.branchReducer.getBranchList,
+        getBranchFailure: state.branchReducer.getBranchFailure,
+
+        getDepartmentSuccess: state.departmentReducer.getDepartmentSuccess,
+        getDepartmentList: state.departmentReducer.getDepartmentList,
+        getDepartmentFailure: state.departmentReducer.getDepartmentFailure,
+
         getStaffSuccess: state.staffReducer.getStaffSuccess,
         getStaffList: state.staffReducer.getStaffList,
         getStaffFailure: state.staffReducer.getStaffFailure,
@@ -145,7 +157,17 @@ function Index() {
     });
     const [parentList, setParentList] = useState([]);
     const [optionListState, setOptionListState] = useState({
-        staffList: [],
+        // staffList: [],
+        departmentList: [
+            {
+                "departmentId": 0,
+                "departmentName": "All",
+            },
+        ],
+        branchList: [{
+            "branchId": 0,
+            "branchName": "All",
+        }],
     })
     const [selectedItem, setSelectedItem] = useState({});
     const [selectedIndex, setSelectedIndex] = useState(false);
@@ -157,27 +179,70 @@ function Index() {
 
     useEffect(() => {
         setIsLoading(true)
-        dispatch(getStaffRequest());
+        // dispatch(getStaffRequest());
         dispatch(getPetrolAllowanceRequest());
+        dispatch(getBranchRequest());
+        dispatch(getDepartmentRequest());
     }, []);
 
+
     useEffect(() => {
-        if (getStaffSuccess) {
-            setIsLoading(false);
+        if (getBranchSuccess) {
+            setIsLoading(false)
             setOptionListState({
                 ...optionListState,
-                staffList: getStaffList,
-            });
-            dispatch(resetGetStaff());
-        } else if (getStaffFailure) {
-            setIsLoading(false);
+                branchList: [...optionListState.branchList, ...getBranchList],
+            })
+            dispatch(resetGetBranch())
+        } else if (getBranchFailure) {
+            setIsLoading(false)
             setOptionListState({
                 ...optionListState,
-                staffList: [],
-            });
-            dispatch(resetGetStaff());
+                branchList: []
+            })
+            dispatch(resetGetBranch())
         }
-    }, [getStaffSuccess, getStaffFailure]);
+    }, [getBranchSuccess, getBranchFailure]);
+
+
+    useEffect(() => {
+        if (getDepartmentSuccess) {
+            setIsLoading(false)
+            setOptionListState({
+                ...optionListState,
+                departmentList: [...optionListState.departmentList, ...getDepartmentList],
+            })
+            dispatch(resetGetDepartment())
+        } else if (getDepartmentFailure) {
+            setIsLoading(false)
+            setOptionListState({
+                ...optionListState,
+                departmentList: []
+            })
+            dispatch(resetGetDepartment())
+        }
+    }, [getDepartmentSuccess, getDepartmentFailure]);
+
+
+
+
+    // useEffect(() => {
+    //     if (getStaffSuccess) {
+    //         setIsLoading(false);
+    //         setOptionListState({
+    //             ...optionListState,
+    //             staffList: getStaffList,
+    //         });
+    //         dispatch(resetGetStaff());
+    //     } else if (getStaffFailure) {
+    //         setIsLoading(false);
+    //         setOptionListState({
+    //             ...optionListState,
+    //             staffList: [],
+    //         });
+    //         dispatch(resetGetStaff());
+    //     }
+    // }, [getStaffSuccess, getStaffFailure]);
 
     useEffect(() => {
         if (getPetrolAllowanceReportSuccess) {
@@ -360,6 +425,46 @@ function Index() {
         }
     }
 
+    const onDateFilter = (event, name) => {
+        setState({
+            ...state,
+            [name]: event.target.value
+        })
+        const searchReq = {
+            dateFilter: event.target.value
+        }
+        dispatch(getPetrolAllowanceRequest(searchReq));
+    }
+
+    const handleBranch = (option, formName, uniqueKey, displayKey) => {
+        const filterBranch = {
+            branchId: option[uniqueKey] || '',
+            departmentId: state?.departmentId || '',
+            dateFilter: state?.dateFilter || ''
+        }
+        dispatch(getPetrolAllowanceRequest(filterBranch));
+        setIsLoading(true);
+        setState({
+            ...state,
+            [formName]: option[uniqueKey],
+        })
+    }
+
+    const handleDepartment = (option, formName, uniqueKey, displayKey) => {
+        const filterDepartment = {
+            departmentId: option[uniqueKey] || '',
+            branchId: state?.branchId || '',
+            dateFilter: state?.dateFilter || ''
+        }
+        dispatch(getPetrolAllowanceRequest(filterDepartment));
+        setIsLoading(true);
+        setState({
+            ...state,
+            [formName]: option[uniqueKey],
+        })
+    }
+
+
     return (
         <React.Fragment>
             <NotificationContainer />
@@ -379,7 +484,8 @@ function Index() {
                     filterColNo={4}
                     setState={setState}
                     state={state}
-                    onClickCallBack={{ searchFilter: searchFilter }}
+                    // onClickCallBack={{ "searchFilter": searchFilter }}
+                    onChangeCallBack={{ "onDateFilter": onDateFilter, "handleDepartment": handleDepartment, "handleBranch": handleBranch }}
                     optionListState={optionListState}
                 />}
 

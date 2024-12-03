@@ -47,6 +47,18 @@ const getFormFieldName = (dynamicForm) => {
     return arr;
 };
 
+function fiscalYear(inputDate) {
+    const date = moment(inputDate).year();
+    let startYear = date;
+    let endYear = startYear + 1;
+    // if (date.month() < 6) {
+    //     startYear -= 1;
+    //     endYear -= 1;
+    // }
+    const fiscalYear = `${startYear}-${endYear.toString().slice(-2)}`;
+    return fiscalYear;
+}
+
 function formatDate(date) {
     var d = new Date(date),
         month = '' + (d.getMonth() + 1),
@@ -281,6 +293,57 @@ const removeNullKeyFromObj = (obj) => {
     return _.omitBy(obj, (value) => value === null)
 }
 
+function numberToRupeesWords(number) {
+    const ones = [
+        '', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten',
+        'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen',
+        'Eighteen', 'Nineteen'
+    ];
+    const tens = [
+        '', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'
+    ];
+    const thousands = [
+        '', 'Thousand', 'Lakh', 'Crore'
+    ];
+
+    let numStr = number.toString();
+
+    function convertThreeDigits(num) {
+        let str = '';
+        if (num >= 100) {
+            str += ones[Math.floor(num / 100)] + ' Hundred ';
+            num %= 100;
+        }
+        if (num >= 20) {
+            str += tens[Math.floor(num / 10)] + ' ';
+            num %= 10;
+        }
+        if (num > 0) {
+            str += ones[num] + ' ';
+        }
+        return str.trim();
+    }
+
+    if (number === 0) return 'Zero Rupees';
+
+    let words = '';
+    let partCount = 0;
+
+    while (numStr.length > 0) {
+        let part = numStr.slice(-3);
+        numStr = numStr.slice(0, -3);
+
+        if (parseInt(part) > 0) {
+            words = convertThreeDigits(parseInt(part)) + ' ' + thousands[partCount] + ' ' + words;
+        }
+        partCount++;
+    }
+    words = words.trim() + ' Rupees';
+
+    return words;
+}
+
+
 
 export {
     showMessage,
@@ -312,4 +375,6 @@ export {
     objectToKeyValueArray,
     noOfDayCount,
     timerAmPm,
+    numberToRupeesWords,
+    fiscalYear,
 };
