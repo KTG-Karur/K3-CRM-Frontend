@@ -33,3 +33,4 @@ export * from './staff-rights/actions';
 export * from './staff-onduty/actions';
 export * from './training-type/actions';
 export * from './staff-training/actions';
+export * from './role-permission/actions';

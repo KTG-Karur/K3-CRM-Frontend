@@ -5,9 +5,12 @@ import FormLayout from '../../utils/formLayout';
 import { formContainer } from './formFieldData';
 import Table from '../../components/Table';
 import { showConfirmationDialog, showMessage } from '../../utils/AllFunction';
-import { createRoleRequest, getRoleRequest, resetCreateRole, resetGetRole, resetUpdateRole, updateRoleRequest } from '../../redux/actions';
+import { createRoleRequest, getRolePermissionRequest, getRoleRequest, resetCreateRole, resetGetRole, resetGetRolePermission, resetUpdateRole, updateRoleRequest } from '../../redux/actions';
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
+import RoleTreeView from '../../components/Atom/RoleTreeView';
+import { pagesList } from '../../utils/pagesList';
+import _ from 'lodash';
 
 let isEdit = false;
 
@@ -15,7 +18,9 @@ function Index() {
 
     const { dispatch, appSelector } = useRedux();
 
-    const { getRoleSuccess, getRoleList, getRoleFailure,
+    const { 
+        getRoleSuccess, getRoleList, getRoleFailure,
+        getRolePermissionSuccess, getRolePermissionList, getRolePermissionFailure,
         createRoleSuccess, createRoleData, createRoleFailure,
         updateRoleSuccess, updateRoleData, updateRoleFailure,errorMessage
 
@@ -23,6 +28,10 @@ function Index() {
         getRoleSuccess: state.roleReducer.getRoleSuccess,
         getRoleList: state.roleReducer.getRoleList,
         getRoleFailure: state.roleReducer.getRoleFailure,
+
+        getRolePermissionSuccess: state.rolePermissionReducer.getRolePermissionSuccess,
+        getRolePermissionList: state.rolePermissionReducer.getRolePermissionList,
+        getRolePermissionFailure: state.rolePermissionReducer.getRolePermissionFailure,
 
         createRoleSuccess: state.roleReducer.createRoleSuccess,
         createRoleData: state.roleReducer.createRoleData,
@@ -68,7 +77,7 @@ function Index() {
                 const deleteMessage = activeChecker ? "You want to In-Active...?" : "You want to retrive this Data...?";
                 return (
                     <div>
-                        <span className="text-success  me-2 cursor-pointer" onClick={() => onEditForm(row.original, row.index)}>
+                        <span className="text-success  me-2 cursor-pointer" onClick={() => rolePermissionCall(row.original, row.index)}>
                             <i className={'fe-edit-1'}></i>
                         </span>
                         <span
@@ -92,6 +101,7 @@ function Index() {
 
     const [state, setState] = useState({});
     const [parentList, setParentList] = useState([]);
+    const [checkboxListData, setCheckboxListData] = useState(pagesList);
     const [selectedItem, setSelectedItem] = useState({});
     const [selectedIndex, setSelectedIndex] = useState(false);
     const [modal, setModal] = useState(false);
@@ -116,6 +126,16 @@ function Index() {
             dispatch(resetGetRole())
         }
     }, [getRoleSuccess, getRoleFailure]);
+
+    useEffect(() => {
+        if (getRolePermissionSuccess) {
+            onEditForm(getRolePermissionList)
+            dispatch(resetGetRolePermission())
+        } else if (getRolePermissionFailure) {
+            dispatch(resetGetRolePermission())
+            showMessage('warning', 'Something went Wrong...!')
+        }
+    }, [getRolePermissionSuccess, getRolePermissionFailure]);
 
     useEffect(() => {
         if (createRoleSuccess) {
@@ -159,18 +179,33 @@ function Index() {
 
     const createModel = () => {
         onFormClear()
+        setCheckboxListData(JSON.parse(JSON.stringify(pagesList)))
         isEdit = false;
         setModal(true)
     };
 
-    const onEditForm = (data, index) => {
-        setState({
-            ...state,
-            roleName: data?.roleName || "",
-        });
-        isEdit = true;
+    const rolePermissionCall = (data, index)=>{
+        const req={
+            roleId : data.roleId
+        }
+        dispatch(getRolePermissionRequest(req));
         setSelectedItem(data)
         setSelectedIndex(index)
+    }
+    const onEditForm = (data) => {
+        const pagesListData = JSON.parse(JSON.stringify(pagesList))
+        const selectedIds = JSON.parse(data[0].accessIds)
+        pagesListData.map((item)=>{
+            const selectedId = item.id
+            console.log(selectedId)
+            const page = _.find(selectedIds.access, { selectedId });
+            console.log(page)
+        })
+        setState({
+            ...state,
+            roleName: data[0]?.roleName || "",
+        });
+        isEdit = true;
         setModal(true)
     };
 
@@ -179,13 +214,39 @@ function Index() {
     }
 
     const onFormSubmit = async () => {
-        const submitRequest = {
-            roleName: state?.roleName || ""
-        }
-        if (isEdit) {
-            dispatch(updateRoleRequest(submitRequest, selectedItem.roleId))
-        } else {
-            dispatch(createRoleRequest(submitRequest))
+        let selectedData = []
+        checkboxListData.map((item,index)=>{
+            const childrenData = item.children
+            let tempArr = []
+            const accessPermission = childrenData.map((data) => {
+                if(data.state === 1){
+                    tempArr.push(data.extraKey)
+                }
+            });
+            if(tempArr.length > 0){
+                const filterData = [
+                    {
+                        pageId : item.id,
+                        accessPermission : tempArr
+                    }
+                ]
+                selectedData = [...selectedData, ...filterData];
+            }
+        })
+
+        if(selectedData.length > 0){
+            const submitRequest = {
+                roleName: state?.roleName || "",
+                accessIds : JSON.stringify({"access" : selectedData})
+            }
+            if (isEdit) {
+                dispatch(updateRoleRequest(submitRequest, selectedItem.roleId))
+            } else {
+                dispatch(createRoleRequest(submitRequest))
+            }
+        }else{
+            showMessage('warning', 'Please Select Pages or Permission');
+            return false;
         }
     };
 
@@ -205,13 +266,16 @@ function Index() {
                 <Spinner className='mt-5 mb-5' animation="border" />
             </div>
             </div> :
-            <Table
+            <div>
+                <Table
                 columns={columns}
                 Title={'Role List'}
                 data={parentList || []}
                 pageSize={5}
                 toggle={createModel}
-            />}
+            />
+            </div>
+            }
 
             <ModelViewBox
                 modal={modal}
@@ -230,6 +294,7 @@ function Index() {
                     errors={errors}
                     setErrors={setErrors}
                 />
+                <RoleTreeView data={checkboxListData} />
             </ModelViewBox>
         </React.Fragment>
     );

@@ -35,6 +35,7 @@ import staffRightsSaga from './staff-rights/saga';
 import StaffOnDutySaga from './staff-onduty/saga';
 import trainingTypeSaga from './training-type/saga';
 import staffTrainingSaga from './staff-training/saga';
+import rolePermissionSaga from './role-permission/saga';
 
 export default function* rootSaga() {
     yield all([
@@ -73,5 +74,6 @@ export default function* rootSaga() {
         StaffOnDutySaga(),
         trainingTypeSaga(),
         staffTrainingSaga(),
+        rolePermissionSaga(),
     ]);
 }
