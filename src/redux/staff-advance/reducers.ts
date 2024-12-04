@@ -1,12 +1,15 @@
 // employee/reducers.ts
 const initialState = {
   getStaffAdvanceList: [],
+  getStaffAdvanceLedgerData: [],
   createStaffAdvanceData: null,
   updateStaffAdvanceData: null,
   isLoading: false,
   errorMessage: null,
   getStaffAdvanceSuccess: false,
   getStaffAdvanceFailure: false,
+  getStaffAdvanceLedgerSuccess: false,
+  getStaffAdvanceLedgerFailure: false,
   createStaffAdvanceSuccess: false,
   createStaffAdvanceFailure: false,
   updateStaffAdvanceSuccess: false,
@@ -42,6 +45,37 @@ export default function staffAdvanceReducer(state = initialState, action: any) {
         errorMessage: null,
       };
     }
+
+
+
+    case "GET_STAFF_ADVANCE_LEDGER_SUCCESS": {
+      return {
+        ...state,
+        getStaffAdvanceLedgerSuccess: true,
+        getStaffAdvanceLedgerData: action.payload.data.data,
+        getStaffAdvanceLedgerFailure: false,
+      };
+    }
+    case "GET_STAFF_ADVANCE_LEDGER_FAILURE": {
+      return {
+        ...state,
+        getStaffAdvanceLedgerFailure: true,
+        errorMessage: action.errorMessage.errorMessage,
+        getStaffAdvanceLedgerSuccess: false,
+      };
+    }
+    case "RESET_GET_STAFF_ADVANCE_LEDGER": {
+      return {
+        ...state,
+        getStaffAdvanceLedgerSuccess: false,
+        getStaffAdvanceLedgerFailure: false,
+        getStaffAdvanceLedgerData: [],
+        errorMessage: null,
+      };
+    }
+
+
+
 
     case "CREATE_STAFF_ADVANCE_SUCCESS": {
       return {

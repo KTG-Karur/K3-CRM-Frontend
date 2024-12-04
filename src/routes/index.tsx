@@ -123,6 +123,7 @@ import {
     StaffAttendanceReport,
     BirthDayClaimReport,
     ClaimReport,
+    LedgerReport,
 } from './Route_Menu';
 
 const loading = () => <div className=""></div>;
@@ -314,6 +315,10 @@ const AllRoutes = () => {
                 {
                     path: 'leave-slip-report',
                     element: <LoadComponent component={PermissionLeaveOdReport} />,
+                },
+                {
+                    path: 'ledger-report',
+                    element: <LoadComponent component={LedgerReport} />,
                 },
                 {
                     path: 'on-duty-report',

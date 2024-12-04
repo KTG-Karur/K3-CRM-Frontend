@@ -18,6 +18,26 @@ export const resetGetStaffAdvance = () => ({
   type: 'RESET_GET_STAFF_ADVANCE',
 });
 
+//Get Reducer Call--->
+export const getStaffAdvanceLedgerRequest = (params?: any) => ({
+  type: 'GET_STAFF_ADVANCE_LEDGER_REQUEST',
+  payload: params,
+});
+
+export const getStaffAdvanceLedgerSuccess = (data: any) => ({
+  type: 'GET_STAFF_ADVANCE_LEDGER_SUCCESS',
+  payload: { data },
+});
+
+export const getStaffAdvanceLedgerFailure = (errorMessage: string) => ({
+  type: 'GET_STAFF_ADVANCE_LEDGER_FAILURE',
+  errorMessage: { errorMessage },
+});
+
+export const resetGetStaffAdvanceLedger = () => ({
+  type: 'RESET_GET_STAFF_ADVANCE_LEDGER',
+});
+
 //Create Reducer Call--->
 export const createStaffAdvanceRequest = (data: any) => ({
   type: 'CREATE_STAFF_ADVANCE_REQUEST',

@@ -1,10 +1,26 @@
 import { apiReturnCallBack } from './ApiConfig';
 import apiContainer from './apiContainer';
 const staffAdvance = apiContainer.staffAdvance
+const staffAdvanceLedger = apiContainer.staffAdvanceLedger
 //GET--->
 export async function getStaffAdvance(request) {
   try {
     const response = await apiReturnCallBack("GET", staffAdvance, request);
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || JSON.stringify(data));
+    }
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+//GET--->
+export async function getStaffAdvanceLedger(request) {
+  try {
+    const response = await apiReturnCallBack("GET", staffAdvanceLedger, request);
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.message || JSON.stringify(data));
@@ -33,7 +49,7 @@ export async function createStaffAdvance(request) {
 //UPDATE---->
 export async function updateStaffAdvance(request, staffAdvanceId) {
   try {
-    const response = await apiReturnCallBack("PUT", staffAdvance+`/${staffAdvanceId}`, request);
+    const response = await apiReturnCallBack("PUT", staffAdvance + `/${staffAdvanceId}`, request);
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.message || JSON.stringify(data));

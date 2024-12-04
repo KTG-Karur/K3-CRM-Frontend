@@ -5,20 +5,21 @@ import FormLayout from '../../utils/formLayout';
 import { staffAdvanceContainer, staffAdvancePayContainer } from './formFieldData';
 import Table from '../../components/Table';
 import { dateConversion, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
-import { createAdvancePaymentHistoryRequest, createStaffAdvanceRequest, getActivityRequest, getAdvancePaymentHistoryRequest, getStaffAdvanceRequest, getStaffRequest, resetCreateStaffAdvance, resetGetActivity, resetGetAdvancePaymentHistory, resetGetStaffAdvance, resetGetStaff, resetUpdateStaffAdvance, updateAdvancePaymentHistoryRequest, updateStaffAdvanceRequest, getBranchRequest, resetGetBranch, resetCreateAdvancePaymentHistory, resetUpdateAdvancePaymentHistory } from '../../redux/actions';
+import { createAdvancePaymentHistoryRequest, createStaffAdvanceRequest, getActivityRequest, getAdvancePaymentHistoryRequest, getStaffAdvanceRequest, getStaffRequest, resetCreateStaffAdvance, resetGetActivity, resetGetAdvancePaymentHistory, resetGetStaffAdvance, resetGetStaff, resetUpdateStaffAdvance, updateAdvancePaymentHistoryRequest, updateStaffAdvanceRequest, getBranchRequest, resetGetBranch, resetCreateAdvancePaymentHistory, resetUpdateAdvancePaymentHistory, getStaffAdvanceLedgerRequest, resetGetStaffAdvanceLedger } from '../../redux/actions';
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 import _ from 'lodash';
 import moment from 'moment';
+import { useNavigate } from 'react-router-dom';
 
 let isEdit = false;
 let isEditorpayment = 'forEdit';
 function Index() {
 
     const { dispatch, appSelector } = useRedux();
+    const navigate = useNavigate();
 
     const { getStaffAdvanceSuccess, getStaffAdvanceList, getStaffAdvanceFailure,
-        getActivitySuccess, getActivityList, getActivityFailure,
         createStaffAdvanceSuccess, createStaffAdvanceData, createStaffAdvanceFailure,
         updateStaffAdvanceSuccess, updateStaffAdvanceData, updateStaffAdvanceFailure,
         errorMessage, getAdvancePaymentHistorySuccess, getAdvancePaymentHistoryFailure, getAdvancePaymentHistoryList, getStaffSuccess,
@@ -26,7 +27,10 @@ function Index() {
         getStaffFailure,
         getBranchSuccess, getBranchList, getBranchFailure,
         updateAdvancePaymentHistorySuccess, updateAdvancePaymentHistoryData, updateAdvancePaymentHistoryFailure,
-        createAdvancePaymentHistoryFailure, createAdvancePaymentHistoryData, createAdvancePaymentHistorySuccess
+        createAdvancePaymentHistoryFailure, createAdvancePaymentHistoryData, createAdvancePaymentHistorySuccess,
+        getStaffAdvanceLedgerSuccess,
+        getStaffAdvanceLedgerData,
+        getStaffAdvanceLedgerFailure,
     } = appSelector((state) => ({
 
         getBranchSuccess: state.branchReducer.getBranchSuccess,
@@ -41,9 +45,9 @@ function Index() {
         getStaffAdvanceList: state.staffAdvanceReducer.getStaffAdvanceList,
         getStaffAdvanceFailure: state.staffAdvanceReducer.getStaffAdvanceFailure,
 
-        getActivitySuccess: state.activityReducer.getActivitySuccess,
-        getActivityList: state.activityReducer.getActivityList,
-        getActivityFailure: state.activityReducer.getActivityFailure,
+        getStaffAdvanceLedgerSuccess: state.staffAdvanceReducer.getStaffAdvanceLedgerSuccess,
+        getStaffAdvanceLedgerData: state.staffAdvanceReducer.getStaffAdvanceLedgerData,
+        getStaffAdvanceLedgerFailure: state.staffAdvanceReducer.getStaffAdvanceLedgerFailure,
 
         getAdvancePaymentHistorySuccess: state.advancePaymentHistoryReducer.getAdvancePaymentHistorySuccess,
         getAdvancePaymentHistoryList: state.advancePaymentHistoryReducer.getAdvancePaymentHistoryList,
@@ -187,10 +191,19 @@ function Index() {
                             </span>
                         )}
 
+
+
                         {
                             row.original.statusId === 29 &&
-                            <span className="text-primary  me-2 cursor-pointer" onClick={() => onPaymentModal(row.original, row.index, "forPayment")}>
-                                <i className={'fe-info'}></i>
+                            <span>
+                                <span className="text-danger  me-2 cursor-pointer" onClick={() => onPaymentModal(row.original, row.index, "forPayment")}>
+                                    <i className={'fe-file-text'}></i>
+                                    {/* fe-dollar-sign */}
+                                </span>
+                                <span className="text-success  me-2 cursor-pointer"
+                                    onClick={() => onPrintDesign(row.original)}>
+                                    <i className={'fe-printer'} style={{ fontSize: '16px' }}></i>
+                                </span>
                             </span>
                         }
 
@@ -390,10 +403,10 @@ function Index() {
 
     useEffect(() => {
         if (createAdvancePaymentHistorySuccess) {
-            const temp_state = [createAdvancePaymentHistoryData[0], ...parentList];
+            const temp_state = [createAdvancePaymentHistoryData[0], ...parentPaymentList];
             setParentPaymentList(temp_state);
             showMessage('success', 'Created Successfully');
-            closeModel()
+            onFormClear()
             dispatch(resetCreateAdvancePaymentHistory())
         } else if (createAdvancePaymentHistoryFailure) {
             showMessage('warning', errorMessage);
@@ -403,17 +416,36 @@ function Index() {
 
     useEffect(() => {
         if (updateAdvancePaymentHistorySuccess) {
-            const temp_state = [...parentList];
+            const temp_state = [...parentPaymentList];
             temp_state[selectedIndex] = updateAdvancePaymentHistoryData[0];
             setParentPaymentList(temp_state);
             isEdit && showMessage('success', 'Updated Successfully');
-            closeModel()
+            onFormClear()
             dispatch(resetUpdateAdvancePaymentHistory())
         } else if (updateAdvancePaymentHistoryFailure) {
             showMessage('warning', errorMessage);
             dispatch(resetUpdateAdvancePaymentHistory())
         }
     }, [updateAdvancePaymentHistorySuccess, updateAdvancePaymentHistoryFailure]);
+
+    useEffect(() => {
+        if (getStaffAdvanceLedgerSuccess) {
+            setIsLoading(false)
+            navigate('/ledger-report', { state: getStaffAdvanceLedgerData });
+            dispatch(resetGetStaffAdvanceLedger())
+        } else if (getStaffAdvanceLedgerFailure) {
+            setIsLoading(false)
+            dispatch(resetGetStaffAdvanceLedger())
+        }
+    }, [getStaffAdvanceLedgerSuccess, getStaffAdvanceLedgerFailure]);
+
+
+    const onPrintDesign = (data) => {
+        const staffId = {
+            staffId: data?.staffId
+        }
+        dispatch(getStaffAdvanceLedgerRequest(staffId))
+    }
 
     const closeModel = () => {
         isEdit = false;
@@ -502,19 +534,17 @@ function Index() {
         }
     };
 
-
     const onPaymentFormSubmit = () => {
         const submitRequest = {
             staffAdvanceId: state?.staffAdvanceId || "",
             paidAmount: state?.paidAmount || "",
-            paidDate: state.paidDate ? dateConversion(state.paidDate, "YYYY-MM-DD") : "",
+            paidDate: state.paidDate ? dateConversion(state.paidDate, "YYYY-MM-DD") : ""
         }
         if (isEdit) {
             dispatch(updateAdvancePaymentHistoryRequest(submitRequest, selectedItem.advancePaymentHistoryId))
         } else {
             dispatch(createAdvancePaymentHistoryRequest(submitRequest))
         }
-
     }
 
     const onBranchChange = (option, formName, formUniqueKey, formDisplayKey) => {
@@ -549,6 +579,9 @@ function Index() {
             statusId: statusId,
             isActive: statusId == 30 ? 0 : 1
         };
+        if (statusId == 29) {
+            submitRequest.approvedDate = moment().format('YYYY-MM-DD')
+        }
         setSelectedIndex(index);
         dispatch(updateStaffAdvanceRequest(submitRequest, data.staffAdvanceId))
     };
