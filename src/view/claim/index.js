@@ -79,8 +79,8 @@ function Index() {
             },
         },
         {
-            Header: 'Branch Name',
-            accessor: 'branchName',
+            Header: 'Staff Code',
+            accessor: 'staffCode',
             sort: true,
         },
         {
@@ -162,7 +162,7 @@ function Index() {
                             </span>
                         }
                         {
-                            row.original.statusId === 29 &&
+                            row.original.statusId !== 28 &&
                             <span className="text-success  me-2 cursor-pointer"
                                 onClick={() => onPrintDesign(row.original)}>
                                 <i className={'fe-printer'} style={{ fontSize: '16px' }}></i>
@@ -303,21 +303,22 @@ function Index() {
         if (createClaimSuccess) {
             const temp_state = [createClaimData[0], ...parentList];
             setParentList(temp_state)
-            // if (state.uploadImage > 0) {
-            //     const formData = new FormData();
-            //     const originalFile = state.uploadImage[0];
-            //     if (state.uploadImage) {
-            //         const renamedFile = new File(
-            //             [originalFile],
-            //             `Claim-${createClaimData[0].requestedBy}-${createClaimData[0].claimId}-${originalFile.name}`,
-            //             {
-            //                 type: originalFile.type,
-            //                 lastModified: originalFile.lastModified,
-            //             }
-            //         );
-            //     }
-            //     dispatch(createUploadImagesRequest(formData, createClaimData[0].claimId))
-            // }
+            console.log("state.uploadImage")
+            console.log(state.uploadImage)
+            if (state.uploadImage.length > 0) {
+                const formData = new FormData();
+                const originalFile = state.uploadImage[0];
+                const renamedFile = new File(
+                    [originalFile],
+                    `Claim-${createClaimData[0].requestedBy}-${createClaimData[0].claimId}-${originalFile.name}`,
+                    {
+                        type: originalFile.type,
+                        lastModified: originalFile.lastModified,
+                    }
+                );
+                formData.append('claimProof', renamedFile);
+                dispatch(createUploadImagesRequest(formData, createClaimData[0].claimId))
+            }
             showMessage('success', 'Created Successfully');
             closeModel()
             dispatch(resetCreateClaim())
@@ -349,16 +350,18 @@ function Index() {
     }
 
     const onPrintDesign = (data) => {
-        console.log("onPrintDesign")
-        console.log(data)
         navigate('/birthday-claim-report', { state: data });
     }
 
     const onApprovedClaim = (data, index) => {
+        console.log("onApprovedClaim")
+        console.log(data)
         setState({
             ...state,
             approvedDate: moment().format("YYYY-MM-DD"),
-            claimAmount: data?.claimAmount || data?.requestedAmount
+            claimAmount: data?.claimAmount || data?.requestedAmount,
+            claimTypeName: data?.claimTypeName,
+            eligibleAmount: data?.eligibleAmount,
         })
         setSelectedItem(data)
         setSelectedIndex(index)
@@ -375,7 +378,7 @@ function Index() {
             claimTypeId: "",
             requestedAmount: "",
             reason: "",
-            claimAmount:"",
+            claimAmount: "",
         });
     };
 

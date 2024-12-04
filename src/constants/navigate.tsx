@@ -31,50 +31,92 @@ const Navigate: NavigateTypes[] = [
     //         },
     //     ]
     // },
-    { label: 'Claim', isTitle: true },
-    {
-        label: 'Claim',
-        isTitle: false,
-        icon: 'mdi mdi-account-check',
-        url: '/claim',
-    },
-    {
-        label: 'Staff Leave',
-        isTitle: false,
-        icon: 'mdi mdi-account-check',
-        url: '/staff-leave',
-    },
-    {
-        label: 'Staff OnDuty',
-        isTitle: false,
-        icon: 'mdi mdi-account-check',
-        url: '/staff-onduty',
-    },
-    {
-        label: 'Staff Training',
-        isTitle: false,
-        icon: 'mdi mdi-account-check',
-        url: '/staff-training',
-    },
+    // ATTENDANCE
     { label: 'Attendance', isTitle: true },
     {
         label: 'Staff Attendance',
         isTitle: false,
-        icon: 'mdi mdi-account-check',
-        url: '/staff-attendance',
+        icon: 'fe-calendar',
+        url: '/attendance/staff-attendance',
     },
+    // ALLOWANCE
     { label: 'Allowance', isTitle: true },
     {
         label: 'Visit Entry',
         isTitle: false,
-        icon: 'mdi mdi-account-check',
+        icon: 'mdi mdi-18px mdi-motorbike',
         url: '/allowance/visit-entry',
     },
     {
         label: 'Petrol Allowance',
         isTitle: false,
-        icon: 'mdi mdi-account-check',
+        icon: 'fe-droplet',
         url: '/allowance/petrol-allowance',
+    },
+    // CLAIM
+    { label: 'Claim', isTitle: true },
+    {
+        label: 'Claim',
+        isTitle: false,
+        icon: 'fe-award',
+        // fe-file-text
+        //mdi mdi-file-document-multiple
+        url: '/claim/claim-list',
+    },
+    // STAFF
+    { label: 'Staff', isTitle: true },
+    {
+        label: 'Staff Leave',
+        isTitle: false,
+        icon: 'fe-log-out',
+        url: '/staff/staff-leave',
+    },
+    {
+        label: 'Staff Transfer',
+        icon: 'mdi mdi-18px mdi-transit-transfer',
+        url: '/staff/transfer-staff',
+        isTitle: false,
+    },
+    {
+        label: 'Staff OnDuty',
+        isTitle: false,
+        icon: 'fe-check-square',
+        //  mdi-border-outside
+        url: '/staff/staff-onduty',
+    },
+    {
+        label: 'Staff Training',
+        isTitle: false,
+        icon: 'mdi mdi-transit-connection-variant',
+        url: '/staff/staff-training',
+    },
+    {
+        label: 'Staff Deputation',
+        url: '/staff/staff-deputation',
+        icon: 'fe-refresh-cw',
+        // icon: 'mdi mdi-18px mdi-transit-detour',
+        parentKey: 'Master',
+    },
+    {
+        label: 'Staff',
+        isTitle: false,
+        icon: 'fe-user',
+        url: '/staff/staff-list',
+    },
+
+    { label: 'Salary', isTitle: true },
+    {
+        label: 'Salary',
+        isTitle: false,
+        icon: 'fe-dollar-sign',
+        // fas fa-rupee-sign
+        url: '/salary/staff-salary',
+    },
+    {
+        label: 'Staff Advance',
+        isTitle: false,
+        icon: 'fe-bookmark',
+        url: '/salary/staff-advance',
     },
 
     { label: 'Master', isTitle: true },
@@ -91,27 +133,15 @@ const Navigate: NavigateTypes[] = [
     //     url: '/view/monthly-reciept',
     // },
     {
-        label: 'Salary',
-        isTitle: false,
-        icon: 'mdi mdi-account-cash',
-        url: 'staff-salary',
-    },
-    {
-        label: 'Holiday',
-        isTitle: false,
-        icon: 'mdi mdi-account-cash',
-        url: '/view/holiday',
-    },
-    {
         label: 'Role',
         isTitle: false,
-        icon: 'mdi mdi-account-cash',
+        icon: 'fe-shield',
         url: '/view/role',
     },
     {
         label: 'Master',
         isTitle: false,
-        icon: 'mdi mdi-chart-donut-variant',
+        icon: 'fe-grid',
         children: [
             {
                 label: 'Branch',
@@ -121,11 +151,6 @@ const Navigate: NavigateTypes[] = [
             {
                 label: 'Bank Account',
                 url: '/view/bank-account',
-                parentKey: 'Master',
-            },
-            {
-                label: 'Transfer Staff',
-                url: '/view/transfer-staff',
                 parentKey: 'Master',
             },
             {
@@ -139,18 +164,13 @@ const Navigate: NavigateTypes[] = [
                 parentKey: 'Master',
             },
             {
-                label: 'Staff Advance',
-                url: '/view/staff-advance',
-                parentKey: 'Master',
-            },
-            {
-                label: 'Deputation',
-                url: '/view/deputation',
-                parentKey: 'Master',
-            },
-            {
                 label: 'Department',
                 url: '/view/department',
+                parentKey: 'Master',
+            },
+            {
+                label: 'Designation',
+                url: '/view/designation',
                 parentKey: 'Master',
             },
             {
@@ -169,31 +189,26 @@ const Navigate: NavigateTypes[] = [
                 parentKey: 'Master',
             },
             {
-                label: 'Designation',
-                url: '/view/designation',
-                parentKey: 'Master',
-            },
-            {
-                label: 'Staff',
-                url: '/view/staff',
-                parentKey: 'Master',
-            },
-            {
                 label: 'Proof Type',
                 url: '/view/proof-type',
                 parentKey: 'Master',
             },
             {
-                label: 'Staff Rights',
-                url: '/view/staff-rights',
+                label: 'Holiday',
+                url: '/view/holiday',
                 parentKey: 'Master',
             },
+            // {
+            //     label: 'Staff Rights',
+            //     url: '/view/staff-rights',
+            //     parentKey: 'Master',
+            // },
         ],
     },
     {
         label: 'Setting',
         isTitle: false,
-        icon: 'mdi mdi-chart-donut-variant',
+        icon: 'fe-settings',
         children: [
             {
                 label: 'Working Day',
@@ -217,14 +232,20 @@ const Navigate: NavigateTypes[] = [
     {
         label: 'Staff Attendance Report',
         isTitle: false,
-        icon: 'mdi mdi-account-check',
+        icon: 'fe-calendar',
         url: '/report/staff-attendance-report',
     },
     {
-        label: 'Birthday Claim Report',
+        label: 'Claim Report',
         isTitle: false,
-        icon: 'mdi mdi-account-check',
-        url: '/birthday-claim-report',
+        icon: 'fe-award',
+        url: '/report/claim-report',
+    },
+    {
+        label: 'Petrol Allowance Report',
+        isTitle: false,
+        icon: 'fe-droplet',
+        url: '/report/petrol-allowance-report',
     },
     // {
     //     label: 'Transfer Order Report',
@@ -238,13 +259,6 @@ const Navigate: NavigateTypes[] = [
     //     icon: 'mdi mdi-account-check',
     //     url: '/permission-report',
     // },
-    {
-        label: 'Petrol Allowance Report',
-        isTitle: false,
-        icon: 'mdi mdi-account-check',
-        url: '/petrol-allowance-report',
-    },
-
     // { label: 'Apps', isTitle: true },
     // {
     //     label: 'Calendar',

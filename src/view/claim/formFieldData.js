@@ -19,12 +19,12 @@ const employeeFormContainer = [
                 require: true,
                 'classStyle': 'col-6'
             },
-            // {
-            //     label: 'Upload Recepit',
-            //     name: 'uploadImage',
-            //     inputType: 'file',
-            //     'classStyle': 'col-6'
-            // },
+            {
+                label: 'Upload Recepit',
+                name: 'uploadImage',
+                inputType: 'file',
+                'classStyle': 'col-6'
+            },
             {
                 label: 'Branch',
                 name: 'branchId',
@@ -37,7 +37,7 @@ const employeeFormContainer = [
                 'classStyle': 'col-6'
             },
             {
-                label: 'Requested By',
+                label: 'Requested Staff',
                 name: 'requestedBy',
                 inputType: 'select',
                 optionList: 'staffList',
@@ -57,7 +57,7 @@ const employeeFormContainer = [
                 'classStyle': 'col-6'
             },
             {
-                'label': "Requested Amount",
+                'label': "Bill Amount",
                 'name': "requestedAmount",
                 'inputType': "text",
                 'placeholder': "Enter Requested Amount",
@@ -83,7 +83,21 @@ const approvedFormContainer = [
                 'name': "approvedDate",
                 'inputType': "date",
                 'require': true,
-                'classStyle': 'col-12'
+                'classStyle': 'col-6'
+            },
+            {
+                'label': "Claim Type",
+                'name': "claimTypeName",
+                'inputType': "text",
+                'classStyle': 'col-6',
+                'isDisabled': true,
+            },
+            {
+                'label': "Eligible Amount",
+                'name': "eligibleAmount",
+                'inputType': "text",
+                'classStyle': 'col-6',
+                'isDisabled': true,
             },
             {
                 'label': "Claim Amount",
@@ -91,7 +105,7 @@ const approvedFormContainer = [
                 'inputType': "text",
                 'placeholder': "Enter Claim Amount",
                 'require': true,
-                'classStyle': 'col-12'
+                'classStyle': 'col-6'
             },
         ]
     },

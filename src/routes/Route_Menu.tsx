@@ -49,11 +49,13 @@ export const UserRights = React.lazy(() => import('../view/staff-rights'));
 export const DeputationReport = React.lazy(() => import('../view/documents/deputaion-report'));
 export const TransferReport = React.lazy(() => import('../view/documents/transfer-report'));
 export const PermissionLeaveOdReport = React.lazy(() => import('../view/documents/permission-leave-od-report'));
-export const PetrolAllowanceReport = React.lazy(() => import('../view/documents/petrol-allowance-report'));
+export const PetrolAllowanceReportDoc = React.lazy(() => import('../view/documents/petrol-allowance-report'));
 export const BirthDayClaimReport = React.lazy(() => import('../view/documents/birthday-claim-report'));
 
 //report
 export const StaffAttendanceReport = React.lazy(() => import('../view/report/staff-attendance-report'));
+export const ClaimReport = React.lazy(() => import('../view/report/claim-report'));
+export const PetrolAllowanceReport = React.lazy(() => import('../view/report/petrol-allowance-report'));
 
 // apps
 export const CalendarApp = React.lazy(() => import('../pages/apps/Calendar'));

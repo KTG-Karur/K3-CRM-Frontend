@@ -1,32 +1,32 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Badge, Button, Form, Spinner } from 'react-bootstrap';
 import { reportFilterFormContainer, staffSalaryBtn } from './formFieldData';
 import Table from '../../../components/Table';
-import { showConfirmationDialog, showMessage } from '../../../utils/AllFunction';
+import { dateConversion, showConfirmationDialog, showMessage } from '../../../utils/AllFunction';
 import { useRedux } from '../../../hooks'
 import { NotificationContainer } from 'react-notifications';
-import { getBranchRequest, getDepartmentRequest, getStaffAttendanceReportRequest, resetGetBranch, resetGetDepartment, resetGetStaffReportAttendance } from '../../../redux/actions';
+import { getBranchRequest, getClaimRequest, getDepartmentRequest, getPetrolAllowanceReportRequest, getPetrolAllowanceRequest, resetGetBranch, resetGetClaim, resetGetDepartment, resetGetPetrolAllowance, resetGetPetrolAllowanceReport } from '../../../redux/actions';
 import moment from 'moment';
 import * as XLSX from "xlsx";
+import { useNavigate } from 'react-router-dom';
 
 function Index() {
 
     const { dispatch, appSelector } = useRedux();
 
-    const incentiveAmountRefs = useRef([]);
+    const navigate = useNavigate();
 
     const {
+        getPetrolAllowanceSuccess, getPetrolAllowanceList, getPetrolAllowanceFailure,
         getBranchSuccess, getBranchList, getBranchFailure,
         getDepartmentSuccess, getDepartmentList, getDepartmentFailure,
-        getStaffAttendanceReportSuccess,
-        getStaffAttendanceReportList,
-        getStaffAttendanceReportFailure,
+
+        getPetrolAllowanceReportSuccess,
+        getPetrolAllowanceReportData,
+        getPetrolAllowanceReportFailure,
+
         errorMessage,
     } = appSelector((state) => ({
-
-        getStaffAttendanceReportSuccess: state.staffAttendanceReducer.getStaffAttendanceReportSuccess,
-        getStaffAttendanceReportList: state.staffAttendanceReducer.getStaffAttendanceReportList,
-        getStaffAttendanceReportFailure: state.staffAttendanceReducer.getStaffAttendanceReportFailure,
 
         getBranchSuccess: state.branchReducer.getBranchSuccess,
         getBranchList: state.branchReducer.getBranchList,
@@ -36,7 +36,15 @@ function Index() {
         getDepartmentList: state.departmentReducer.getDepartmentList,
         getDepartmentFailure: state.departmentReducer.getDepartmentFailure,
 
-        errorMessage: state.staffsalaryReducer.errorMessage,
+        getPetrolAllowanceSuccess: state.petrolAllowanceReducer.getPetrolAllowanceSuccess,
+        getPetrolAllowanceList: state.petrolAllowanceReducer.getPetrolAllowanceList,
+        getPetrolAllowanceFailure: state.petrolAllowanceReducer.getPetrolAllowanceFailure,
+
+        getPetrolAllowanceReportSuccess: state.petrolAllowanceReducer.getPetrolAllowanceReportSuccess,
+        getPetrolAllowanceReportData: state.petrolAllowanceReducer.getPetrolAllowanceReportData,
+        getPetrolAllowanceReportFailure: state.petrolAllowanceReducer.getPetrolAllowanceReportFailure,
+
+        errorMessage: state.petrolAllowanceReducer.errorMessage,
     }));
 
     const columns = [
@@ -46,46 +54,67 @@ function Index() {
             Cell: (row) => <div>{row?.row?.index + 1}</div>,
         },
         {
-            Header: 'Name',
+            Header: 'Date',
+            accessor: 'allowanceDate',
+            Cell: ({ row }) => {
+                return (
+                    <div>
+                        {dateConversion(row.original.allowanceDate, "DD-MM-YYYY")}
+                    </div>
+                )
+            },
+        },
+        {
+            Header: 'Staff Name',
             accessor: 'staffName',
             sort: true,
         },
         {
-            Header: 'Days',
-            accessor: 'dayCount',
+            Header: 'From',
+            accessor: 'fromPlace',
+            sort: true,
+        },
+        {
+            Header: 'To',
+            accessor: 'toPlace',
+            sort: true,
+        },
+        {
+            Header: 'Activity',
+            accessor: 'activityName',
+            sort: true,
+        },
+        {
+            Header: 'Total Km',
+            accessor: 'totalKm',
+            sort: true,
+        },
+        {
+            Header: 'Amount',
+            accessor: 'totalAmount',
+            sort: true,
+        },
+        {
+            Header: 'Actions',
+            accessor: 'actions',
             Cell: ({ row }) => {
-                const { absentDays, presentDays, halfDays } = row?.original;
-
                 return (
                     <div>
-                        {Number(absentDays) + Number(presentDays) + parseFloat(halfDays / 2)}
+                        {
+                            row?.original?.billNo &&
+                            <span className="text-success  me-2 cursor-pointer"
+                                onClick={() => onPrintDesign(row.original)}>
+                                <i className={'fe-printer'} style={{ fontSize: '16px' }}></i>
+                            </span>
+                        }
                     </div>
                 )
             },
-        },
-        {
-            Header: 'Full Days',
-            accessor: 'presentDays'
-        },
-        {
-            Header: 'Absent Days',
-            accessor: 'absentDays',
-            Cell: ({ row }) => {
-                return (
-                    <div>
-                        {row.original?.absentDays ? row.original?.absentDays : 0}
-                    </div>
-                )
-            },
-        },
-        {
-            Header: 'Half Days',
-            accessor: 'halfDays',
         },
     ];
 
     const [state, setState] = useState({
-        attendanceDate: moment().format('YYYY-MM-DD'),
+        allowanceDate: moment().format('YYYY-MM-DD'),
         durationId: 0
     });
     const [optionListState, setOptionListState] = useState({
@@ -102,14 +131,10 @@ function Index() {
         durationList: [
             {
                 "durationId": 0,
-                "durationName": "Day",
-            },
-            {
-                "durationId": 1,
                 "durationName": "Month",
             },
             {
-                "durationId": 2,
+                "durationId": 1,
                 "durationName": "Year",
             },
         ]
@@ -121,23 +146,13 @@ function Index() {
         setIsLoading(true)
         dispatch(getBranchRequest());
         dispatch(getDepartmentRequest());
-        const attendanceDate = {
-            attendanceDate: state?.attendanceDate,
+        const searchReq = {
+            allowanceDate: state?.allowanceDate,
             durationId: state.durationId,
         }
-        dispatch(getStaffAttendanceReportRequest(attendanceDate));
+        dispatch(getPetrolAllowanceRequest(searchReq));
     }, []);
 
-    useEffect(() => {
-        if (getStaffAttendanceReportSuccess) {
-            setIsLoading(false);
-            setParentList(getStaffAttendanceReportList)
-            dispatch(resetGetStaffReportAttendance());
-        } else if (getStaffAttendanceReportFailure) {
-            setIsLoading(false);
-            dispatch(resetGetStaffReportAttendance());
-        }
-    }, [getStaffAttendanceReportSuccess, getStaffAttendanceReportFailure]);
 
     useEffect(() => {
         if (getBranchSuccess) {
@@ -175,25 +190,51 @@ function Index() {
         }
     }, [getDepartmentSuccess, getDepartmentFailure]);
 
-    const onFormClear = () => {
-        setState({
-            ...state,
-            attendanceDate: moment().format('YYYY-MM-DD'),
-            durationId: 0
-        });
-    };
+
+    useEffect(() => {
+        if (getPetrolAllowanceSuccess) {
+            setIsLoading(false)
+            setParentList(getPetrolAllowanceList)
+            dispatch(resetGetPetrolAllowance())
+        } else if (getPetrolAllowanceFailure) {
+            setIsLoading(false)
+            setParentList([])
+            dispatch(resetGetPetrolAllowance())
+        }
+    }, [getPetrolAllowanceSuccess, getPetrolAllowanceFailure]);
 
 
-    const onDateFilter = (event, formName) => {
+    useEffect(() => {
+        if (getPetrolAllowanceReportSuccess) {
+            setIsLoading(false);
+            if (getPetrolAllowanceReportData.length > 0) {
+                navigate('/petrol-allowance-report', { state: getPetrolAllowanceReportData[0] })
+            }
+            dispatch(resetGetPetrolAllowanceReport());
+        } else if (getPetrolAllowanceReportFailure) {
+            setIsLoading(false);
+            dispatch(resetGetPetrolAllowanceReport());
+        }
+    }, [getPetrolAllowanceReportSuccess, getPetrolAllowanceReportFailure]);
+
+    const onPrintDesign = (data) => {
+        const reqReport = {
+            staffId: data?.staffId,
+            DateFilter: state?.allowanceDate
+        }
+        dispatch(getPetrolAllowanceReportRequest(reqReport));
+    }
+
+    const onAllowanceDate = (event, formName) => {
         setState({
             ...state,
             [formName]: event.target.value
         })
         const filterDate = {
-            attendanceDate: event.target.value,
+            allowanceDate: event.target.value,
             durationId: state.durationId,
         }
-        dispatch(getStaffAttendanceReportRequest(filterDate));
+        dispatch(getPetrolAllowanceRequest(filterDate));
     }
 
     const onDurationFilter = (item, formName) => {
@@ -203,9 +244,9 @@ function Index() {
         })
         const filterDuration = {
             durationId: item.durationId,
-            attendanceDate: state?.attendanceDate
+            allowanceDate: state?.allowanceDate
         }
-        dispatch(getStaffAttendanceReportRequest(filterDuration));
+        dispatch(getPetrolAllowanceRequest(filterDuration));
     }
 
 
@@ -213,10 +254,10 @@ function Index() {
         const filterDepartment = {
             departmentId: option[uniqueKey] || '',
             branchId: state?.branchId || '',
-            attendanceDate: state?.attendanceDate,
+            allowanceDate: state?.allowanceDate,
             durationId: state.durationId,
         }
-        dispatch(getStaffAttendanceReportRequest(filterDepartment));
+        dispatch(getPetrolAllowanceRequest(filterDepartment));
         setIsLoading(true);
         setState({
             ...state,
@@ -228,10 +269,10 @@ function Index() {
         const filterBranch = {
             branchId: option[uniqueKey] || '',
             departmentId: state?.departmentId || '',
-            attendanceDate: state?.attendanceDate,
+            allowanceDate: state?.allowanceDate,
             durationId: state.durationId,
         }
-        dispatch(getStaffAttendanceReportRequest(filterBranch));
+        dispatch(getPetrolAllowanceRequest(filterBranch));
         setIsLoading(true);
         setState({
             ...state,
@@ -240,8 +281,8 @@ function Index() {
     }
 
     const onDownload = () => {
-        const yearMonth = moment(state?.attendanceDate).format("MMMM YYYY");
-        const additionalDetails = `Attendance Report for ${yearMonth}`;
+        const yearMonth = moment(state?.allowanceDate).format("MMMM YYYY");
+        const additionalDetails = `Petrol Allowance Report for ${yearMonth}`;
         const reportGeneratedDate = `Report Generated On: ${moment().format("DD-MM-YYYY")}`;
         const data = parentList.map((item, i) => ({
             ["s.no"]: i + 1,
@@ -249,47 +290,55 @@ function Index() {
             staffName: item.staffName,
             branchName: item.branchName,
             departmentName: item.departmentName,
-            totalDays: Number(item.absentDays) + Number(item.presentDays) + Number(item.halfDays / 2),
-            absentDays: item.absentDays,
-            halfDays: item.halfDays,
-            presentDays: item.presentDays
+            designationName: item.designationName,
+            allowanceDate: moment(item.allowanceDate).format("DD-MM-YYYY"),
+            fromPlace: item.fromPlace,
+            toPlace: item.toPlace,
+            totalKm: item.totalKm,
+            activityName: item.activityName,
         }));
         const header = [
             [additionalDetails],
             [reportGeneratedDate],
             [],
-            ["S.no", "Staff Code", "Staff Name", "Branch Name", "Department Name", "Total Days", "Absent Days", "Half Days", "Present Days"]
+            ["S.no", "Staff Code", "Staff Name", "Branch Name", "Department Name", "Designation Name", "Allowance Date", "From Place", "To Place", "Total Km", "Activities"]
         ];
         const rows = [
             ...header,
             ...data.map(item => [
+                item["s.no"],
                 item.staffCode,
                 item.staffName,
                 item.branchName,
                 item.departmentName,
-                item.totalDays,
-                item.absentDays,
-                item.halfDays,
-                item.presentDays
+                item.designationName,
+                item.allowanceDate,
+                item.fromPlace,
+                item.toPlace,
+                item.totalKm,
+                item.activityName,
             ])
         ];
         const worksheet = XLSX.utils.aoa_to_sheet(rows);
 
         worksheet["!cols"] = [
-            { wch: 30 },
+            { wch: 10 },
+            { wch: 20 },
             { wch: 20 },
             { wch: 15 },
-            { wch: 20 },
+            { wch: 15 },
             { wch: 12 },
             { wch: 12 },
             { wch: 10 },
-            { wch: 12 }
+            { wch: 12 },
+            { wch: 12 },
+            { wch: 12 },
         ];
 
         const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Attendance Report");
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Petrol Allowance Report");
 
-        XLSX.writeFile(workbook, `K3-Staff-Attendance-Report-${yearMonth}.xlsx`);
+        XLSX.writeFile(workbook, `K3-Petrol-Allowance-Report-${yearMonth}.xlsx`);
     };
 
 
@@ -303,7 +352,7 @@ function Index() {
             </div> :
                 <Table
                     columns={columns}
-                    Title={'Staff Attendance Report List'}
+                    Title={'Petrol Allowance Report List'}
                     data={parentList || []}
                     pageSize={5}
                     toggle={false}
@@ -311,7 +360,7 @@ function Index() {
                     filterTbl={true}
                     footerTbl={true}
                     filterFormContainer={reportFilterFormContainer}
-                    onChangeCallBack={{ "onDateFilter": onDateFilter, "onDepartmentFilter": onDepartmentFilter, "onBranchFilter": onBranchFilter, "onDurationFilter": onDurationFilter }}
+                    onChangeCallBack={{ "onAllowanceDate": onAllowanceDate, "onDepartmentFilter": onDepartmentFilter, "onBranchFilter": onBranchFilter, "onDurationFilter": onDurationFilter }}
                     onClickCallBack={{ "onDownload": onDownload }}
                     optionListState={optionListState}
                     setState={setState}

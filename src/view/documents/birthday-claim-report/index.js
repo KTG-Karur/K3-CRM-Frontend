@@ -10,13 +10,12 @@ import { fiscalYear } from '../../../utils/AllFunction';
 import moment from 'moment';
 
 function Index() {
+    const baseUrl = process.env?.baseURL || "http://localhost:5059";
+
     const today = moment().format('DD-MM-YYYY');
     const { state } = useLocation();
 
     const [stateVal, setStateVal] = useState({})
-
-    console.log("stateVal from birthday claim")
-    console.log(stateVal)
 
     const birthdayClaim = {
         header: {
@@ -35,7 +34,7 @@ performance of the branches and to motivate them to put in their fullest efforts
 the set targets for the year end.`,
             birthdayClaimBody: `Reimbursement of Birthday gift is one such benefit which is 
             introduced to benefit all categories of staff members equally. Now the limit for 
-            “Reimbursement of Birthday Gift” is announced Rs.750/- for all category of employees 
+            “Reimbursement of Birthday Gift” is announced Rs.${stateVal?.claimAmount}.00/- for all category of employees 
             and enclosed herewith format for applying staff birthday claim format and forward 
             through branch head for sanctioning process.`,
             acknowlegement: 'Receipt of the circular shall be acknowledged.',
@@ -63,32 +62,33 @@ the set targets for the year end.`,
             date: ` ${moment(stateVal?.applyDate).format("DD-MM-YYYY")}`,
             staffName: ` ${stateVal?.requestedBy}`,
             staffDesigination: ` ${stateVal?.designationName}`,
-            staffCadre: ` ${stateVal?.designationName} (role name )`,
+            staffCadre: ` ${stateVal?.roleName}`,
             staffDateOfBirth: ` ${moment(stateVal?.dob).format('DD-MM-YYYY')}`,
             staffDateOfJoining: ` ${moment(stateVal?.dateOfJoining).format('DD-MM-YYYY')}`,
-            purposeofClaim: `${stateVal?.claimTypeName}`,
-            purchaseBillValue: `Rs. ${stateVal?.claimAmount}.00`,
-            purchaseBillDate: ` ${moment(stateVal?.approvedDate).format('DD-MM-YYYY')}`,
-            birthdayClaimAmount: `Rs. ${stateVal?.requestedAmount}.00`,
-            modeOfPayment: ` ${stateVal?.paymentModeName}`,
+            purposeofClaim: `${stateVal?.claimTypeName || ''}`,
+            purchaseBillValue: `Rs. ${stateVal?.requestedAmount}.00`,
+            purchaseBillDate: ` ${moment(stateVal?.applyDate).format('DD-MM-YYYY')}`,
+            birthdayClaimAmount: `Rs. ${stateVal?.eligibleAmount || 0}.00`,
+            modeOfPayment: ` ${stateVal?.paymentModeName  || "Cash"}`,
         },
         branchRecommendation: {
-            rupees: `Rs. ${stateVal?.claimAmount}.00`,
-            to:  ` ${stateVal?.requestedBy}`,
+            rupees: `${stateVal?.claimAmount}.00`,
+            to: ` ${stateVal?.requestedBy}`,
             on: ` ${moment(stateVal?.dob).format('DD-MM-YYYY')}`,
         },
         officeUse: {
             admin: {
-                dateOfBirth: '24/10/2001',
-                foundStatus: 'correct',
-                claimStatus: 'Sanctioned',
+                dateOfBirth: ` ${moment(stateVal?.dob).format('DD-MM-YYYY')}`,
+                foundStatus: `${stateVal?.statusId == 29 ? 'correct' : 'incorrect'}`,
+                claimStatus: `${stateVal?.statusId == 29 ? 'Sanctioned' : 'Rejected'}`,
             },
             accounts: {
-                originalReceiptAmount: '1800.00',
-                eligibleAmount: '1800.00',
-                passedForPayment: '1800.00',
+                originalReceiptAmount: `${stateVal?.requestedAmount || 0}.00`,
+                eligibleAmount: `${stateVal?.eligibleAmount || 0}.00`,
+                passedForPayment: `${stateVal?.claimAmount || 0}.00`,
             },
         },
+        receiptImage: `${baseUrl}${stateVal?.recepitImageName}` || false
     };
 
     const downloadPDF = () => {
@@ -130,10 +130,14 @@ the set targets for the year end.`,
         }
     }, [state])
 
+    const footerFields = [
+        ['Clerical', 'Officer', "MD", "SD Chairman"],
+    ];
 
     return (
         <Container className="letter-container my-4 p-4 bg-white" style={{ maxWidth: '800px' }}>
             {/* <Row className="mb-3"> */}
+            {/* ******************************** Page - 1 ******************************** */}
             <LetterForm
                 Header={birthdayClaim.header}
                 Address={birthdayClaim.address}
@@ -173,8 +177,35 @@ the set targets for the year end.`,
                     </Col>
                 </Row>
             </LetterForm>
+            {/* ******************************** End Page - 1 ******************************** */}
+
+            {/* ******************************** Page - 2 ******************************** */}
+            {birthdayClaim.receiptImage && <div className="page-break"></div>}
+            {
+                birthdayClaim.receiptImage &&
+                <Row className="justify-content-center mb-4" style={{ gap: '20px', marginTop: '40px' }}>
+                    <Col
+                        md={5}
+                        className="d-flex justify-content-center align-items-center mb-3 mt-6"
+                        style={{ padding: '10px' }}>
+                        <img
+                            src={birthdayClaim.receiptImage}
+                            crossOrigin="anonymous"
+                            alt={`birthdayClaim receipt image`}
+                            style={{
+                                width: '100%',
+                                height: '400px',
+                                objectFit: 'contain',
+                            }} />
+                    </Col>
+                </Row>
+            }
+
+            {/* ******************************** End Page - 2 ******************************** */}
+
+            {/* ******************************** Page - 3 ******************************** */}
             {birthdayClaim.note && <div className="page-break"></div>}
-            <Row style={{ marginTop: '60px' }}>
+            <Row style={{ marginTop: '10px' }}>
                 <Row className="text-left">
                     <Col>
                         <p style={{ fontSize: '16px', color: '#000' }}>
@@ -330,13 +361,13 @@ the set targets for the year end.`,
                     </Row>
                 </Row>
                 <Row className="text-left">
-                    <p style={{ fontSize: '16px', color: '#000', fontWeight: 'bold', marginTop: '20px' }}>
+                    <p style={{ fontSize: '16px', color: '#000', fontWeight: 'bold', marginTop: '10px' }}>
                         Branch Recommendation:
                     </p>
-                    <span style={{ fontWeight: 'bold', fontSize: '16px', color: '#000', marginTop: '10px' }}>
+                    <span style={{ fontWeight: 'bold', fontSize: '16px', color: '#000'}}>
                         We recommend to sanction Staff birthday claim of Rs.{' '}
                         <span style={underlineStyle(birthdayClaim.branchRecommendation?.rupees || '')}>
-                            {birthdayClaim.branchRecommendation?.rupees || ''}{' '}
+                            {birthdayClaim.branchRecommendation?.rupees || ''}{'/- '}
                         </span>
                         to{' '}
                         <span style={underlineStyle(birthdayClaim.branchRecommendation?.to || '')}>
@@ -348,14 +379,14 @@ the set targets for the year end.`,
                         </span>
                     </span>
                 </Row>
-                <Row style={{ marginTop: '80px' }}>
+                <Row style={{ marginTop: '50px' }}>
                     <Col className="text-end">
                         <p style={{ fontSize: '16px', color: '#000', fontWeight: 'bold' }}>
                             Signature of the Branch Head
                         </p>
                     </Col>
                 </Row>
-                <Row className="mt-1 mb-2 text-left">
+                <Row className="mt-1 text-left">
                     <h4 style={{ fontWeight: 'bold', textAlign: 'center', fontSize: '16px', color: '#000' }}>
                         FOR OFFICE USE ONLY
                     </h4>
@@ -383,7 +414,6 @@ the set targets for the year end.`,
                             fontWeight: 'bold',
                             textAlign: 'center',
                             fontSize: '16px',
-                            marginTop: '10px',
                             color: '#000',
                         }}>
                         ACCOUNTS
@@ -409,18 +439,38 @@ the set targets for the year end.`,
                                 Rs.{' '}
                                 <span style={underlineStyle(birthdayClaim.officeUse.accounts?.eligibleAmount || '')}>
                                     {' '}
-                                    {birthdayClaim.officeUse.accounts?.originalReceiptAmount || ''}
+                                    {birthdayClaim.officeUse.accounts?.eligibleAmount || ''}
                                 </span>
                                 /_ <br />
                                 Rs.{' '}
                                 <span style={underlineStyle(birthdayClaim.officeUse.accounts?.passedForPayment || '')}>
-                                    {birthdayClaim.officeUse.accounts?.originalReceiptAmount || ''}
+                                    {birthdayClaim.officeUse.accounts?.passedForPayment || ''}
                                 </span>
                                 /_{' '}
                             </p>
                         </Col>
                     </Row>
                 </Row>
+
+                <div style={{ marginTop: '40px', padding: '10px' }}>
+                    {footerFields.map((row, rowIndex) => (
+                        <Row key={rowIndex} className="justify-between">
+                            {row.map((col, colIndex) => (
+                                <Col
+                                    key={colIndex}
+                                    className="text-center"
+                                    style={{
+                                        fontSize: '16px',
+                                        color: 'black',
+                                        fontWeight: 'bold',
+                                        flex: 1,
+                                    }}>
+                                    {col && <strong>{col}</strong>}
+                                </Col>
+                            ))}
+                        </Row>
+                    ))}
+                </div>
             </Row>
 
             {/* </Row> */}

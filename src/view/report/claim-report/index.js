@@ -2,31 +2,27 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Badge, Button, Form, Spinner } from 'react-bootstrap';
 import { reportFilterFormContainer, staffSalaryBtn } from './formFieldData';
 import Table from '../../../components/Table';
-import { showConfirmationDialog, showMessage } from '../../../utils/AllFunction';
+import { dateConversion, showConfirmationDialog, showMessage } from '../../../utils/AllFunction';
 import { useRedux } from '../../../hooks'
 import { NotificationContainer } from 'react-notifications';
-import { getBranchRequest, getDepartmentRequest, getStaffAttendanceReportRequest, resetGetBranch, resetGetDepartment, resetGetStaffReportAttendance } from '../../../redux/actions';
+import { getBranchRequest, getClaimRequest, getDepartmentRequest, resetGetBranch, resetGetClaim, resetGetDepartment } from '../../../redux/actions';
 import moment from 'moment';
 import * as XLSX from "xlsx";
+import { useNavigate } from 'react-router-dom';
 
 function Index() {
 
     const { dispatch, appSelector } = useRedux();
 
     const incentiveAmountRefs = useRef([]);
+    const navigate = useNavigate();
 
     const {
         getBranchSuccess, getBranchList, getBranchFailure,
         getDepartmentSuccess, getDepartmentList, getDepartmentFailure,
-        getStaffAttendanceReportSuccess,
-        getStaffAttendanceReportList,
-        getStaffAttendanceReportFailure,
+        getClaimSuccess, getClaimList, getClaimFailure,
         errorMessage,
     } = appSelector((state) => ({
-
-        getStaffAttendanceReportSuccess: state.staffAttendanceReducer.getStaffAttendanceReportSuccess,
-        getStaffAttendanceReportList: state.staffAttendanceReducer.getStaffAttendanceReportList,
-        getStaffAttendanceReportFailure: state.staffAttendanceReducer.getStaffAttendanceReportFailure,
 
         getBranchSuccess: state.branchReducer.getBranchSuccess,
         getBranchList: state.branchReducer.getBranchList,
@@ -36,7 +32,12 @@ function Index() {
         getDepartmentList: state.departmentReducer.getDepartmentList,
         getDepartmentFailure: state.departmentReducer.getDepartmentFailure,
 
-        errorMessage: state.staffsalaryReducer.errorMessage,
+
+        getClaimSuccess: state.claimReducer.getClaimSuccess,
+        getClaimList: state.claimReducer.getClaimList,
+        getClaimFailure: state.claimReducer.getClaimFailure,
+
+        errorMessage: state.claimReducer.errorMessage,
     }));
 
     const columns = [
@@ -46,46 +47,78 @@ function Index() {
             Cell: (row) => <div>{row?.row?.index + 1}</div>,
         },
         {
-            Header: 'Name',
-            accessor: 'staffName',
+            Header: 'Apply Date',
+            accessor: 'applyDate',
+            Cell: ({ row }) => {
+                return (
+                    <div>
+                        {dateConversion(row.original.applyDate, "DD-MM-YYYY")}
+                    </div>
+                )
+            },
+        },
+        {
+            Header: 'Staff Code',
+            accessor: 'staffCode',
             sort: true,
         },
         {
-            Header: 'Days',
-            accessor: 'dayCount',
+            Header: 'Req By',
+            accessor: 'requestedBy',
+            sort: true,
+        },
+        {
+            Header: 'Claim Type',
+            accessor: 'claimTypeName',
+            sort: true,
+        },
+        {
+            Header: 'Req Amt',
+            accessor: 'requestedAmount',
+            sort: true,
+        },
+        {
+            Header: 'Status',
+            accessor: 'statusId',
+            Cell: ({ row }) => (
+                <Badge
+                    bg={
+                        row.original.statusId === 30
+                            ? 'danger'
+                            : row.original.statusId === 28
+                                ? 'primary'
+                                : 'success'
+                    }>
+                    {row.original.statusId === 30
+                        ? 'Cancelled'
+                        : row.original.statusId === 28
+                            ? 'Request'
+                            : 'Approved'}
+                </Badge>
+            ),
+        },
+        {
+            Header: 'Actions',
+            accessor: 'actions',
             Cell: ({ row }) => {
-                const { absentDays, presentDays, halfDays } = row?.original;
+                return (
+                    <div>
+                        {
+                            row.original.statusId !== 28 &&
+                            <span className="text-success  me-2 cursor-pointer"
+                                onClick={() => onPrintDesign(row.original)}>
+                                <i className={'fe-printer'} style={{ fontSize: '16px' }}></i>
+                            </span>
+                        }
+                    </div>
 
-                return (
-                    <div>
-                        {Number(absentDays) + Number(presentDays) + parseFloat(halfDays / 2)}
-                    </div>
                 )
             },
-        },
-        {
-            Header: 'Full Days',
-            accessor: 'presentDays'
-        },
-        {
-            Header: 'Absent Days',
-            accessor: 'absentDays',
-            Cell: ({ row }) => {
-                return (
-                    <div>
-                        {row.original?.absentDays ? row.original?.absentDays : 0}
-                    </div>
-                )
-            },
-        },
-        {
-            Header: 'Half Days',
-            accessor: 'halfDays',
         },
     ];
 
     const [state, setState] = useState({
-        attendanceDate: moment().format('YYYY-MM-DD'),
+        applyDate: moment().format('YYYY-MM-DD'),
         durationId: 0
     });
     const [optionListState, setOptionListState] = useState({
@@ -102,14 +135,10 @@ function Index() {
         durationList: [
             {
                 "durationId": 0,
-                "durationName": "Day",
-            },
-            {
-                "durationId": 1,
                 "durationName": "Month",
             },
             {
-                "durationId": 2,
+                "durationId": 1,
                 "durationName": "Year",
             },
         ]
@@ -121,23 +150,13 @@ function Index() {
         setIsLoading(true)
         dispatch(getBranchRequest());
         dispatch(getDepartmentRequest());
-        const attendanceDate = {
-            attendanceDate: state?.attendanceDate,
+        const searchReq = {
+            applyDate: state?.applyDate,
             durationId: state.durationId,
         }
-        dispatch(getStaffAttendanceReportRequest(attendanceDate));
+        dispatch(getClaimRequest(searchReq));
     }, []);
 
-    useEffect(() => {
-        if (getStaffAttendanceReportSuccess) {
-            setIsLoading(false);
-            setParentList(getStaffAttendanceReportList)
-            dispatch(resetGetStaffReportAttendance());
-        } else if (getStaffAttendanceReportFailure) {
-            setIsLoading(false);
-            dispatch(resetGetStaffReportAttendance());
-        }
-    }, [getStaffAttendanceReportSuccess, getStaffAttendanceReportFailure]);
 
     useEffect(() => {
         if (getBranchSuccess) {
@@ -175,14 +194,22 @@ function Index() {
         }
     }, [getDepartmentSuccess, getDepartmentFailure]);
 
-    const onFormClear = () => {
-        setState({
-            ...state,
-            attendanceDate: moment().format('YYYY-MM-DD'),
-            durationId: 0
-        });
-    };
 
+    useEffect(() => {
+        if (getClaimSuccess) {
+            setIsLoading(false)
+            setParentList(getClaimList)
+            dispatch(resetGetClaim())
+        } else if (getClaimFailure) {
+            setIsLoading(false)
+            setParentList([])
+            dispatch(resetGetClaim())
+        }
+    }, [getClaimSuccess, getClaimFailure]);
+
+    const onPrintDesign = (data) => {
+        navigate('/birthday-claim-report', { state: data });
+    }
 
     const onDateFilter = (event, formName) => {
         setState({
@@ -190,10 +217,10 @@ function Index() {
             [formName]: event.target.value
         })
         const filterDate = {
-            attendanceDate: event.target.value,
+            applyDate: event.target.value,
             durationId: state.durationId,
         }
-        dispatch(getStaffAttendanceReportRequest(filterDate));
+        dispatch(getClaimRequest(filterDate));
     }
 
     const onDurationFilter = (item, formName) => {
@@ -203,9 +230,9 @@ function Index() {
         })
         const filterDuration = {
             durationId: item.durationId,
-            attendanceDate: state?.attendanceDate
+            applyDate: state?.applyDate
         }
-        dispatch(getStaffAttendanceReportRequest(filterDuration));
+        dispatch(getClaimRequest(filterDuration));
     }
 
 
@@ -213,10 +240,10 @@ function Index() {
         const filterDepartment = {
             departmentId: option[uniqueKey] || '',
             branchId: state?.branchId || '',
-            attendanceDate: state?.attendanceDate,
+            applyDate: state?.applyDate,
             durationId: state.durationId,
         }
-        dispatch(getStaffAttendanceReportRequest(filterDepartment));
+        dispatch(getClaimRequest(filterDepartment));
         setIsLoading(true);
         setState({
             ...state,
@@ -228,10 +255,10 @@ function Index() {
         const filterBranch = {
             branchId: option[uniqueKey] || '',
             departmentId: state?.departmentId || '',
-            attendanceDate: state?.attendanceDate,
+            applyDate: state?.applyDate,
             durationId: state.durationId,
         }
-        dispatch(getStaffAttendanceReportRequest(filterBranch));
+        dispatch(getClaimRequest(filterBranch));
         setIsLoading(true);
         setState({
             ...state,
@@ -240,56 +267,69 @@ function Index() {
     }
 
     const onDownload = () => {
-        const yearMonth = moment(state?.attendanceDate).format("MMMM YYYY");
-        const additionalDetails = `Attendance Report for ${yearMonth}`;
+        const yearMonth = moment(state?.applyDate).format("MMMM YYYY");
+        const additionalDetails = `Claim Report for ${yearMonth}`;
         const reportGeneratedDate = `Report Generated On: ${moment().format("DD-MM-YYYY")}`;
+        // console.log(parentList)
+        // return;
         const data = parentList.map((item, i) => ({
             ["s.no"]: i + 1,
             staffCode: item.staffCode,
-            staffName: item.staffName,
+            requestedBy: item.requestedBy,
+            dob: moment(item.dob).format("DD-MM-YYYY"),
             branchName: item.branchName,
-            departmentName: item.departmentName,
-            totalDays: Number(item.absentDays) + Number(item.presentDays) + Number(item.halfDays / 2),
-            absentDays: item.absentDays,
-            halfDays: item.halfDays,
-            presentDays: item.presentDays
+            designationName: item.designationName,
+            applyDate: moment(item.applyDate).format("DD-MM-YYYY"),
+            requestedAmount: item.requestedAmount,
+            claimType: item.claimTypeName,
+            claimAmount: item?.claimAmount || "0",
+            statusName: item?.statusName || "",
+            paymentModeName: item.paymentModeName,
         }));
         const header = [
             [additionalDetails],
             [reportGeneratedDate],
             [],
-            ["S.no", "Staff Code", "Staff Name", "Branch Name", "Department Name", "Total Days", "Absent Days", "Half Days", "Present Days"]
+            ["S.no", "Staff Code", "Staff Name", "Date of birth", "Branch Name", "Designation Name", "Apply Date", "Bill Amount", "Claim type", "Claim Amount", "Payment Mode", "Status"]
         ];
         const rows = [
             ...header,
             ...data.map(item => [
+                item["s.no"],
                 item.staffCode,
-                item.staffName,
+                item.requestedBy,
+                item.dob,
                 item.branchName,
-                item.departmentName,
-                item.totalDays,
-                item.absentDays,
-                item.halfDays,
-                item.presentDays
+                item.designationName,
+                item.applyDate,
+                item.requestedAmount,
+                item.claimType,
+                item.claimAmount,
+                item.paymentModeName,
+                item.statusName,
             ])
         ];
         const worksheet = XLSX.utils.aoa_to_sheet(rows);
 
         worksheet["!cols"] = [
-            { wch: 30 },
+            { wch: 10 },
+            { wch: 20 },
             { wch: 20 },
             { wch: 15 },
-            { wch: 20 },
+            { wch: 15 },
             { wch: 12 },
             { wch: 12 },
             { wch: 10 },
-            { wch: 12 }
+            { wch: 12 },
+            { wch: 12 },
+            { wch: 12 },
+            { wch: 12 },
         ];
 
         const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Attendance Report");
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Claim Report");
 
-        XLSX.writeFile(workbook, `K3-Staff-Attendance-Report-${yearMonth}.xlsx`);
+        XLSX.writeFile(workbook, `K3-Claim-Report-${yearMonth}.xlsx`);
     };
 
 
@@ -303,7 +343,7 @@ function Index() {
             </div> :
                 <Table
                     columns={columns}
-                    Title={'Staff Attendance Report List'}
+                    Title={'Claim Report List'}
                     data={parentList || []}
                     pageSize={5}
                     toggle={false}

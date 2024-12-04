@@ -47,6 +47,11 @@ function Index() {
             sort: true,
         },
         {
+            Header: 'Eligible Claim Amount',
+            accessor: 'eligibleAmount',
+            sort: true,
+        },
+        {
             Header: 'Status',
             accessor: 'isActive',
             Cell: ({ row }) => (
@@ -167,6 +172,7 @@ function Index() {
         setState({
             ...state,
             claimTypeName: data?.claimTypeName || "",
+            eligibleAmount: data?.eligibleAmount || "",
         });
         isEdit = true;
         setSelectedItem(data)
@@ -180,7 +186,8 @@ function Index() {
 
     const onFormSubmit = async () => {
         const submitRequest = {
-            claimTypeName: state?.claimTypeName || ""
+            claimTypeName: state?.claimTypeName || "",
+            eligibleAmount: state?.eligibleAmount || ""
         }
         if (isEdit) {
             dispatch(updateClaimTypeRequest(submitRequest, selectedItem.claimTypeId))
