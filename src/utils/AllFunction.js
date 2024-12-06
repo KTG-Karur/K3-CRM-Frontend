@@ -126,8 +126,8 @@ function findObj(optionList = [], accessKey, value = '') {
     return filterData.length > 0 ? filterData[0] : '';
 }
 
-function findArrObj(arr, id) {
-    return arr.filter((item) => item.id === id);
+function findArrObj(arr, accessKey, id) {
+    return arr.filter((item) => item[accessKey] === id);
 }
 
 function percentageVal(amount, percentage) {

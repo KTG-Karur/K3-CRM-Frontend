@@ -16,7 +16,7 @@ const staffTabs = [
                         displayKey: 'surname',
                         uniqueKey: 'surnameId',
                         // require: true,
-                        classStyle: 'col-2'
+                        classStyle: 'col-1'
                     },
                     {
                         label: 'First Name',
@@ -24,7 +24,7 @@ const staffTabs = [
                         inputType: 'text',
                         placeholder: 'Enter First Name',
                         // require: true,
-                        classStyle: 'col-5'
+                        classStyle: 'col-4'
                     },
                     {
                         label: 'Last Name',
@@ -32,7 +32,13 @@ const staffTabs = [
                         inputType: 'text',
                         placeholder: 'Enter Last Name',
                         // require: true,
-                        classStyle: 'col-5'
+                        classStyle: 'col-4'
+                    },
+                    {
+                        label: 'Staff Proof',
+                        name: 'staffProfileImageName',
+                        inputType: 'file',
+                        'classStyle': 'col-3'
                     },
                 ],
             },
@@ -128,7 +134,84 @@ const staffTabs = [
                     },
                 ],
             },
-
+            {
+                formFields: [
+                    {
+                        title: 'additional Information',
+                        inputType: 'title',
+                    },
+                ],
+            },
+            {
+                formFields: [
+                    {
+                        'label': 'Expected Salary',
+                        'name': 'expectedSalary',
+                        'inputType': 'number',
+                        'placeholder': "Enter Expected Salary",
+                        'classStyle': 'col-3',
+                    },
+                    {
+                        'label': 'Time needed to join(Days), if Selected',
+                        'name': 'timeToJoinId',
+                        'inputType': 'select',
+                        'optionList': 'timeToJoinList',
+                        'displayKey': 'timeToJoinName',
+                        'uniqueKey': 'timetoJoinId',
+                        'classStyle': 'col-3'
+                    },
+                    {
+                        'label': 'Preferred work Location',
+                        'name': 'preferredLocationId',
+                        'inputType': 'multiSelect',
+                        'optionList': 'branchList',
+                        'displayKey': 'branchName',
+                        'uniqueKey': 'branchId',
+                        'classStyle': 'col-3'
+                    },
+                    {
+                        label: 'References',
+                        name: 'referencesBy',
+                        inputType: 'multiSelect',
+                        optionList: 'staffList',
+                        displayKey: 'staffName',
+                        uniqueKey: 'staffId',
+                        'classStyle': 'col-3'
+                    },
+                ],
+            },
+            {
+                formFields: [
+                    {
+                        'label': 'Whether Repatriate?',
+                        'name': 'repatriate',
+                        'inputType': 'radio',
+                        'optionList': 'repatriateList',
+                        'displayKey': 'repatriateName',
+                        'uniqueKey': 'repatriateId',
+                        'classStyle': 'col-3'
+                    },
+                    {
+                        label: 'Whether you are known/related to anybody working in any Repco Institution (if yes, give details):',
+                        name: 'workingAtRepcoInstitution',
+                        inputType: 'checkbox',
+                        // onChange: "onHandleRepcoInstitution",
+                        'classStyle': 'col-5'
+                    },
+                ],
+            },
+            {
+                formFields: [
+                    {
+                        'label': 'Any Other Information',
+                        'name': 'otherInformation',
+                        'inputType': 'textarea',
+                        'placeholder': "Enter other informations",
+                        'classStyle': 'col-4',
+                        // require: true,
+                    },
+                ],
+            },
         ],
     },
     {
@@ -157,7 +240,7 @@ const staffTabs = [
                         label: 'User Credential',
                         name: 'userId',
                         inputType: 'checkbox',
-                        onChange: "onHandleUserCreditial",
+                        // onChange: "onHandleUserCreditial",
                         'classStyle': 'col-3'
                     },
                 ],
@@ -174,19 +257,6 @@ const staffTabs = [
                         'classStyle': 'col-3'
                     },
                     {
-                        'label': 'Role',
-                        'name': 'roleId',
-                        'inputType': 'select',
-                        'optionList': 'roleList',
-                        'displayKey': 'roleName',
-                        'uniqueKey': 'roleId',
-                        'classStyle': 'col-3'
-                    },
-                ],
-            },
-            {
-                formFields: [
-                    {
                         'label': 'Department',
                         'name': 'departmentId',
                         'inputType': 'select',
@@ -202,6 +272,15 @@ const staffTabs = [
                         'optionList': 'designationList',
                         'displayKey': 'designationName',
                         'uniqueKey': 'designationId',
+                        'classStyle': 'col-3'
+                    },
+                    {
+                        'label': 'Role',
+                        'name': 'roleId',
+                        'inputType': 'select',
+                        'optionList': 'roleList',
+                        'displayKey': 'roleName',
+                        'uniqueKey': 'roleId',
                         'classStyle': 'col-3'
                     },
                 ],
@@ -224,7 +303,7 @@ const staffTabs = [
                         'placeholder': "Enter Monthly Salary",
                         'classStyle': 'col-3',
                         'isDisabled': true
-                    },
+                    }
                 ],
             },
             {
@@ -531,6 +610,44 @@ const staffTabs = [
             },
         ],
     },
+    {
+        label: 'Achievements',
+        name: 'achievements',
+        icon: 'mdi mdi-home',
+        children: [
+            {
+                formFields: [
+                    {
+                        label: 'Achievement At',
+                        name: 'achievementAtId',
+                        inputType: 'select',
+                        optionList: 'achievementAtList',
+                        displayKey: 'achievementAtName',
+                        uniqueKey: 'achievementAtId',
+                        onChange: "onHandleProofType",
+                        'classStyle': 'col-4'
+                    },
+                    {
+                        label: 'Achievement Title',
+                        name: 'achievementTitleId',
+                        inputType: 'select',
+                        optionList: 'achievementTitleList',
+                        displayKey: 'achievementTitleName',
+                        uniqueKey: 'achievementTitleId',
+                        onChange: "onHandleProofType",
+                        'classStyle': 'col-4'
+                    },
+                    {
+                        label: 'Achievement Details',
+                        name: 'achievementDetails',
+                        inputType: 'textarea',
+                        placeholder: 'Enter achievement details',
+                        'classStyle': 'col-4'
+                    },
+                ],
+            },
+        ],
+    },
 ];
 
 
@@ -545,7 +662,6 @@ const modalFields = {
                     'placeholder': "Enter Branch Name",
                     'require': true,
                     'classStyle': 'col-6',
-
                 },
                 {
                     label: 'Contact No',

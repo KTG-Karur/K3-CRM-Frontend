@@ -94,8 +94,8 @@ const Navigate: NavigateTypes[] = [
         label: 'Staff Deputation',
         url: '/staff/staff-deputation',
         icon: 'fe-refresh-cw',
-        // icon: 'mdi mdi-18px mdi-transit-detour',
-        parentKey: 'Master',
+        isTitle: false,
+        // icon: 'mdi mdi-18px mdi-transit-detour',,
     },
     {
         label: 'Staff',

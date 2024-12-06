@@ -29,9 +29,6 @@ function Index() {
         }
     }, [state])
 
-    console.log("stateVal")
-    console.log(stateVal)
-
     const staffLedger = {
         ledger: {
             staffName: `${stateVal[0]?.staffName}`,

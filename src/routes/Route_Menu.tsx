@@ -52,7 +52,7 @@ export const PermissionLeaveOdReport = React.lazy(() => import('../view/document
 export const PetrolAllowanceReportDoc = React.lazy(() => import('../view/documents/petrol-allowance-report'));
 export const BirthDayClaimReport = React.lazy(() => import('../view/documents/birthday-claim-report'));
 export const LedgerReport = React.lazy(() => import('../view/documents/ledger-report'));
-
+export const StaffBiodataReport = React.lazy(() => import('../view/documents/staff-biodata-report'));
 //report
 export const StaffAttendanceReport = React.lazy(() => import('../view/report/staff-attendance-report'));
 export const ClaimReport = React.lazy(() => import('../view/report/claim-report'));

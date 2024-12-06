@@ -11,12 +11,13 @@ import { NotificationContainer } from 'react-notifications';
 import _ from 'lodash';
 import { Form } from 'react-bootstrap';
 import Select from 'react-select';
-import { createBranchRequest, createDepartmentRequest, createDesignationRequest, createStaffRequest, deleteStaffProofRequest, deleteStaffQualificationRequest, deleteStaffRequest, deleteUpdateStaff, getBranchRequest, getDepartmentRequest, getDesignationRequest, getProofTypeRequest, getStaffDetailsRequest, getStaffRequest, resetCreateBranch, resetCreateDepartment, resetCreateDesignation, resetCreateStaff, resetGetBranch, resetGetDepartment, resetGetDesignation, resetGetDetailsStaff, resetGetProofType, resetGetStaff, resetUpdateStaff, updateStaffRequest } from '../../redux/actions';
+import { createBranchRequest, createDepartmentRequest, createDesignationRequest, createStaffRequest, deleteStaffProofRequest, deleteStaffQualificationRequest, deleteStaffRequest, deleteUpdateStaff, getBranchRequest, getDepartmentRequest, getDesignationRequest, getProofTypeRequest, getRoleRequest, getStaffDetailsRequest, getStaffRequest, resetCreateBranch, resetCreateDepartment, resetCreateDesignation, resetCreateStaff, resetGetBranch, resetGetDepartment, resetGetDesignation, resetGetDetailsStaff, resetGetProofType, resetGetRole, resetGetStaff, resetUpdateStaff, updateStaffRequest } from '../../redux/actions';
 import moment from 'moment';
 import { deleteStaffWorkExperienceRequest } from '../../redux/staff-work-experience/actions';
 import { deleteStaffLanguageRequest } from '../../redux/staff-language/actions';
 import { deleteStaffRelationRequest } from '../../redux/staff-relation/actions';
 import { createUploadImagesRequest } from '../../redux/uploads/actions';
+import { useNavigate } from 'react-router-dom';
 
 let uploadImages = false;
 
@@ -82,13 +83,57 @@ let optionList = {
         { languageId: 9, languageName: 'Tamil' },
         { languageId: 10, languageName: 'English' },
         { languageId: 11, languageName: 'Hindi' },
+    ],
+    timeToJoinList: [
+        { timetoJoinId: 43, timeToJoinName: 'Immediately' },
+        { timetoJoinId: 44, timeToJoinName: '< 15days' },
+        { timetoJoinId: 45, timeToJoinName: '1 Month' },
+        { timetoJoinId: 46, timeToJoinName: '2 Months' },
+        { timetoJoinId: 47, timeToJoinName: '3 Months' },
+    ],
+    achievementTitleList: [
+        {
+            achievementTitleName: 'Award/Certificate/Scholarship Won',
+            achievementTitleId: 52
+        },
+        {
+            achievementTitleName: 'Proficiency in Games/Sports',
+            achievementTitleId: 53
+        },
+        {
+            achievementTitleName: 'Proficiency in literary work / art / culture',
+            achievementTitleId: 54
+        },
+    ],
+    achievementAtList: [
+        {
+            achievementAtName: 'School',
+            achievementAtId: 48
+        },
+        {
+            achievementAtName: 'College',
+            achievementAtId: 49
+        },
+        {
+            achievementAtName: 'University',
+            achievementAtId: 50
+        },
+        {
+            achievementAtName: 'Professional Course',
+            achievementAtId: 51
+        },
     ]
 }
+
+let isPrint = false;
 function Index() {
 
     const { dispatch, appSelector } = useRedux();
+    const navigate = useNavigate();
 
     const {
+
+        getRoleSuccess, getRoleList, getRoleFailure,
         getStaffSuccess, getStaffList, getStaffFailure,
         getStaffDetailsSuccess, getStaffDetailsList, getStaffDetailsFailure,
         getBranchSuccess, getBranchList, getBranchFailure,
@@ -102,6 +147,11 @@ function Index() {
         deleteStaffData, deleteStaffFailure,
 
     } = appSelector((state) => ({
+
+        getRoleSuccess: state.roleReducer.getRoleSuccess,
+        getRoleList: state.roleReducer.getRoleList,
+        getRoleFailure: state.roleReducer.getRoleFailure,
+
         getStaffSuccess: state.staffReducer.getStaffSuccess,
         getStaffList: state.staffReducer.getStaffList,
         getStaffFailure: state.staffReducer.getStaffFailure,
@@ -210,7 +260,7 @@ function Index() {
                             <i className={'fe-edit-1'}></i>
                         </span>
                         <span
-                            className={`${iconColor} cursor-pointer`}
+                            className={`${iconColor} me-2 cursor-pointer`}
                             onClick={() =>
                                 showConfirmationDialog(
                                     deleteMessage,
@@ -221,6 +271,10 @@ function Index() {
                             {
                                 row?.original?.isActive ? <i className={'fe-trash-2'}></i> : <i className={'fas fa-recycle'}></i>
                             }
+                        </span>
+                        <span className="text-success  me-2 cursor-pointer"
+                            onClick={() => onPrintDesign(row.original)}>
+                            <i className={'fe-printer'} style={{ fontSize: '16px' }}></i>
                         </span>
                     </div>
                 )
@@ -287,7 +341,6 @@ function Index() {
                 ),
             },
         ],
-
         staffQualification: [
             {
                 Header: 'S.No',
@@ -346,7 +399,6 @@ function Index() {
                 },
             },
         ],
-
         language: [
             {
                 Header: 'S.No',
@@ -497,10 +549,54 @@ function Index() {
                 },
             },
         ],
+        achievements: [
+            {
+                Header: 'S.No',
+                accessor: 'id',
+                Cell: (row) => <div>{row?.row?.index + 1}</div>,
+            },
+            {
+                Header: 'Achievement At',
+                accessor: 'achievementAtName',
+                sort: true,
+            },
+            {
+                Header: 'Achievement Title',
+                accessor: 'achievementTitleName',
+                sort: true,
+            },
+            {
+                Header: 'Actions',
+                accessor: 'actions',
+                Cell: ({ row }) => {
+                    return (
+                        <div>
+                            <span
+                                className="text-success  me-2 cursor-pointer"
+                                onClick={() => handleEditTabTable(row?.original, row?.index, "workExperience")}>
+                                <i className={'fe-edit-1'}></i> Edit
+                            </span>
+                            <span
+                                className="text-danger cursor-pointer"
+                                onClick={() => {
+                                    showConfirmationDialog(
+                                        "You won't be able to revert this!",
+                                        () => handleDeleteTabTable(row?.original, row?.index, "idProof"),
+                                        'Yes, Delete it!'
+                                    );
+                                }}>
+                                <i className={'fe-trash-2'}></i> Delete
+                            </span>
+                        </div>
+                    )
+                },
+            },
+        ],
     };
 
     const [state, setState] = useState({
-        maximumDOB: moment().format("YYYY-MM-DD")
+        maximumDOB: moment().format("YYYY-MM-DD"),
+        dateOfJoining: moment().format("YYYY-MM-DD"),
     });
     const [parentList, setParentList] = useState([]);
     const [selectedItem, setSelectedItem] = useState({});
@@ -539,10 +635,35 @@ function Index() {
             { casteTypeId: 24, casteTypeName: 'SC' },
             { casteTypeId: 25, casteTypeName: 'ST' },
         ],
+        timeToJoinList: optionList?.timeToJoinList || [],
         proofTypeList: [],
         branchList: [],
         departmentList: [],
         designationList: [],
+        repatriateList: [
+            {
+                repatriateName: 'Yes',
+                repatriateId: '1'
+            },
+            {
+                repatriateName: 'No',
+                repatriateId: '0'
+            },
+        ],
+        workingAtRepcoInstitutionList: [
+            {
+                workingAtRepcoInstitutionName: 'Yes',
+                workingAtRepcoInstitutionId: '1'
+            },
+            {
+                workingAtRepcoInstitutionName: 'No',
+                workingAtRepcoInstitutionId: '0'
+            },
+        ],
+        achievementTitleList: optionList?.achievementTitleList || [],
+        achievementAtList: optionList?.achievementAtList || [],
+        staffList: [],
+        roleList: [],
     })
 
     const [wizardModel, setWizardModel] = useState(false);
@@ -551,9 +672,9 @@ function Index() {
     const [tab, setTab] = useState('personalInfo');
     const [multiStateValue, setMultiStateValue] = useState([{}]);
     const [IsEditArrVal, setIsEditArrVal] = useState(false);
-    const showSelectmodel = ['branchId', 'departmentId', 'designationId', 'bankAccountId'];
+    const showSelectmodel = ['branchId', 'departmentId', 'bankAccountId'];
     const [stored, setStored] = useState([{ id: 1 }, { id: 2 }]);
-    const showMultiAdd = ['staffDetails', 'qualification', 'language', 'workExperience', 'idProof', 'workExperience', 'staffQualification'];
+    const showMultiAdd = ['staffDetails', 'qualification', 'language', 'workExperience', 'idProof', 'workExperience', 'staffQualification', 'achievements'];
     const [isEdit, setIsEdit] = useState(false);
     const [tabList, setTabList] = useState(staffTabs);
     const [modal, setModal] = useState(false);
@@ -570,6 +691,7 @@ function Index() {
     useEffect(() => {
         setIsLoading(true)
         dispatch(getStaffRequest());
+        dispatch(getRoleRequest());
         const req = {
             isActive: 1
         }
@@ -583,6 +705,10 @@ function Index() {
         if (getStaffSuccess) {
             setIsLoading(false)
             setParentList(getStaffList)
+            setOptionListState({
+                ...optionListState,
+                staffList: getStaffList,
+            });
             dispatch(resetGetStaff())
         } else if (getStaffFailure) {
             setIsLoading(false)
@@ -593,6 +719,10 @@ function Index() {
 
     useEffect(() => {
         if (getStaffDetailsSuccess) {
+            if (isPrint) {
+                navigate('/staff-biodata-report', { state: getStaffDetailsList });
+                return;
+            }
             setIsLoading(false)
             setMultiStateValue([getStaffDetailsList])
             setWizardModel(true)
@@ -621,6 +751,24 @@ function Index() {
             dispatch(resetGetBranch())
         }
     }, [getBranchSuccess, getBranchFailure]);
+
+    useEffect(() => {
+        if (getRoleSuccess) {
+            setIsLoading(false)
+            setOptionListState({
+                ...optionListState,
+                roleList: getRoleList
+            })
+            dispatch(resetGetRole())
+        } else if (getRoleFailure) {
+            setIsLoading(false)
+            setOptionListState({
+                ...optionListState,
+                roleList: []
+            })
+            dispatch(resetGetRole())
+        }
+    }, [getRoleSuccess, getRoleFailure]);
 
     useEffect(() => {
         if (getDesignationSuccess) {
@@ -682,21 +830,27 @@ function Index() {
         if (createStaffSuccess) {
             const temp_state = [createStaffData[0], ...parentList];
             setParentList(temp_state)
-            showMessage('success', 'Created Successfully');
-            closeModel()
-            dispatch(resetCreateStaff())
-
             const formData = new FormData();
-            state.proofImage.map((ele) => {
+            if (state?.staffProfileImageName.length > 0) {
+                const originalFile = state?.staffProfileImageName[0];
+                const renamedFile = new File([originalFile], `staff-profile-${createStaffData[0].staffCode}-${originalFile.name}`, {
+                    type: originalFile.type,
+                    lastModified: originalFile.lastModified,
+                });
+                formData.append('staffProfileImageName', renamedFile);
+            }
+            (state?.proofImage || []).map((ele) => {
                 const originalFile = ele[0];
-                const renamedFile = new File([originalFile], `${createStaffData[0].staffCode}-${originalFile.name}`, {
+                const renamedFile = new File([originalFile], `staff-proof-${createStaffData[0].staffCode}-${originalFile.name}`, {
                     type: originalFile.type,
                     lastModified: originalFile.lastModified,
                 });
                 formData.append("proofImages", renamedFile);
-                // filterImageName.push([renamedFile]);
             })
-            dispatch(createUploadImagesRequest(formData))
+            dispatch(createUploadImagesRequest(formData, createStaffData[0].staffId))
+            showMessage('success', 'Created Successfully');
+            closeModel()
+            dispatch(resetCreateStaff())
         } else if (createStaffFailure) {
             showMessage('warning', errorMessage);
             dispatch(resetCreateStaff())
@@ -708,22 +862,31 @@ function Index() {
             const temp_state = [...parentList];
             temp_state[selectedIndex] = updateStaffData[0];
             setParentList(temp_state)
+
+            const formData = new FormData();
+
+            if (state?.staffProfileImageName.length > 0) {
+                const originalFile = state?.staffProfileImageName[0];
+                const renamedFile = new File([originalFile], `staff-profile-${updateStaffData[0].staffCode}-${originalFile.name}`, {
+                    type: originalFile.type,
+                    lastModified: originalFile.lastModified,
+                });
+                formData.append('staffProfileImageName', renamedFile);
+            }
+
+            (state?.proofImage || []).map((ele) => {
+                const originalFile = ele[0];
+                const renamedFile = new File([originalFile], `staff-proof-${updateStaffData[0].staffCode}-${originalFile.name}`, {
+                    type: originalFile.type,
+                    lastModified: originalFile.lastModified,
+                });
+                formData.append("proofImages", renamedFile);
+            })
+            dispatch(createUploadImagesRequest(formData, updateStaffData[0].staffId))
+
             isEdit && showMessage('success', 'Updated Successfully');
             closeModel()
             dispatch(resetUpdateStaff())
-            if (uploadImages) {
-                uploadImages = false;
-                const formData = new FormData();
-                state.proofImage.map((ele) => {
-                    const originalFile = ele[0];
-                    const renamedFile = new File([originalFile], `${updateStaffData[0].staffCode}-${originalFile.name}`, {
-                        type: originalFile.type,
-                        lastModified: originalFile.lastModified,
-                    });
-                    formData.append("proofImages", renamedFile);
-                })
-                dispatch(createUploadImagesRequest(formData))
-            }
         } else if (updateStaffFailure) {
             showMessage('warning', errorMessage);
             dispatch(resetUpdateStaff())
@@ -796,33 +959,52 @@ function Index() {
     }, [createDesignationSuccess, createDesignationFailure]);
 
     useEffect(() => {
-        if (isEdit && tab === "jobRoleDetails" && Number.isInteger(state?.userId)) {
-            const updatedTabList = _.cloneDeep(tabList);
-            const changedArr = [
-                {
-                    'label': 'User Name',
-                    'name': 'userName',
-                    'inputType': 'text',
-                    'placeholder': "Enter User Name",
-                    'classStyle': 'col-3',
-                },
-                {
-                    'label': 'Password',
-                    'name': 'password',
-                    'inputType': 'text',
-                    'placeholder': "Enter Password",
-                    'classStyle': 'col-3',
-                },
-            ]
-            updatedTabList[1].children[1].formFields = _.concat(
-                updatedTabList[1].children[1].formFields,
-                changedArr
-            );
-            setTabList(updatedTabList);
-        } else if (state?.userId === null || state?.userId === undefined) {
-            setTabList(staffTabs);
+        const updatedTabList = _.cloneDeep(tabList);
+        if (tab === "jobRoleDetails" || tab === "personalInfo") {
+            if (tab === "personalInfo" && Number.isInteger(state?.workingAtRepcoInstitution) || state?.workingAtRepcoInstitution) {
+                const workingRepcoField = [
+                    {
+                        label: 'Working At Repco Institution',
+                        name: 'workingAtRepcoInstitutionDescription',
+                        inputType: 'textarea',
+                        placeholder: "Enter working at repco institution detail",
+                        classStyle: 'col-4',
+                    },
+                ];
+                updatedTabList[0].children[6].formFields = _.concat(
+                    updatedTabList[0].children[6].formFields,
+                    workingRepcoField
+                );
+            }
+            if (tab === "jobRoleDetails" && Number.isInteger(state?.userId) || state?.userId) {
+                const userFields = [
+                    {
+                        label: 'User Name',
+                        name: 'userName',
+                        inputType: 'text',
+                        placeholder: "Enter User Name",
+                        classStyle: 'col-3',
+                    },
+                    {
+                        label: 'Password',
+                        name: 'password',
+                        inputType: 'text',
+                        placeholder: "Enter Password",
+                        classStyle: 'col-3',
+                    },
+                ];
+                updatedTabList[1].children[1].formFields = _.concat(
+                    updatedTabList[1].children[1].formFields,
+                    userFields
+                );
+            }
         }
-    }, [tab, state.userId])
+        if (!state?.workingAtRepcoInstitution && !state?.userId) {
+            setTabList(staffTabs);
+        } else {
+            setTabList(updatedTabList);
+        }
+    }, [tab, state?.workingAtRepcoInstitution, state?.userId]);
 
     useEffect(() => {
         if (IsEditArrVal != true) {
@@ -863,6 +1045,14 @@ function Index() {
         }
     }, [arrVal, IsEditArrVal])
 
+    const onPrintDesign = (data) => {
+        const printReq = {
+            staffId: data?.staffId
+        }
+        isPrint = true;
+        dispatch(getStaffDetailsRequest(printReq))
+    }
+
     const closeModel = () => {
         onFormClear()
         setWizardModel(false)
@@ -877,7 +1067,8 @@ function Index() {
     const onFormClear = () => {
         setState({
             ...state,
-            maximumDOB: moment().format("YYYY-MM-DD")
+            maximumDOB: moment().format("YYYY-MM-DD"),
+            dateOfJoining: moment().format("YYYY-MM-DD"),
         });
         setErrors([]);
     };
@@ -898,7 +1089,7 @@ function Index() {
         const editReq = {
             staffId: data.staffId
         }
-
+        isPrint = false;
         dispatch(getStaffDetailsRequest(editReq))
         setSelectedItem(data)
         setSelectedIndex(index)
@@ -910,6 +1101,13 @@ function Index() {
 
     const onFormSubmit = async () => {
         let proofImage = []
+
+        const keysToMove = ['departmentId', 'designationId', 'branchId', 'dateOfJoining', 'roleId'];
+
+        const extracted = _.pick(multiStateValue[0]?.jobRoleDetails, keysToMove);
+        const newSourceObj = _.omit(multiStateValue[0]?.jobRoleDetails, keysToMove);
+        const targetObj = { ...multiStateValue[0]?.personalInfo, ...extracted };
+
         multiStateValue[0].idProof.map((item, index) => {
             if (item.imageProof) {
                 uploadImages = true;
@@ -920,15 +1118,12 @@ function Index() {
         })
         setState({
             ...state,
-            proofImage: proofImage
+            proofImage: proofImage,
+            staffProfileImageName: targetObj.staffProfileImageName
         })
-
-        const keysToMove = ['departmentId', 'designationId', 'branchId', 'dateOfJoining', 'roleId'];
-
-        const extracted = _.pick(multiStateValue[0]?.jobRoleDetails, keysToMove);
-        const newSourceObj = _.omit(multiStateValue[0]?.jobRoleDetails, keysToMove);
-        const targetObj = { ...multiStateValue[0]?.personalInfo, ...extracted };
-
+        targetObj.staffProfileImageName = '';
+        targetObj.referencesBy = targetObj?.referencesBy.toString()
+        targetObj.preferredLocationId = targetObj?.preferredLocationId.toString()
         const submitRequest = {
             personalInfoData: targetObj || {},
             jobRoleDetails: newSourceObj || {},
@@ -937,7 +1132,9 @@ function Index() {
             staffQualification: multiStateValue[0]?.staffQualification || [],
             language: multiStateValue[0]?.language || [],
             workExperience: multiStateValue[0]?.workExperience || [],
+            staffAchievements: multiStateValue[0]?.achievements || [],
         }
+        // return;
         if (isEdit) {
             dispatch(updateStaffRequest(submitRequest, selectedItem.staffId))
         } else {
@@ -964,45 +1161,79 @@ function Index() {
         }));
     }
 
-    const onHandleUserCreditial = (e, formName) => {
-        setState((prev) => ({
-            ...prev,
-            [formName]: e.target.checked,
-        }));
+    console.log(state)
+
+    // const onHandleUserCreditial = (e, formName) => {
+    //     setState((prev) => ({
+    //         ...prev,
+    //         [formName]: e.target.checked,
+    //     }));
 
 
-        const updatedTabList = _.cloneDeep(tabList);
-        const changedArr = [
-            {
-                'label': 'User Name',
-                'name': 'userName',
-                'inputType': 'text',
-                'placeholder': "Enter User Name",
-                'classStyle': 'col-3',
-                // require: true,
-            },
-            {
-                'label': 'Password',
-                'name': 'password',
-                'inputType': 'text',
-                'placeholder': "Enter Password",
-                'classStyle': 'col-3',
-                // require: true,
-            },
-        ]
-        if (e.target.checked) {
-            updatedTabList[1].children[1].formFields = _.concat(
-                updatedTabList[1].children[1].formFields,
-                changedArr
-            );
-        } else {
-            updatedTabList[1].children[1].formFields = _.reject(
-                updatedTabList[1].children[1].formFields,
-                (field) => _.some(changedArr, { name: field.name })
-            );
-        }
-        setTabList(updatedTabList);
-    }
+    //     const updatedTabList = _.cloneDeep(tabList);
+    //     const changedArr = [
+    //         {
+    //             'label': 'User Name',
+    //             'name': 'userName',
+    //             'inputType': 'text',
+    //             'placeholder': "Enter User Name",
+    //             'classStyle': 'col-3',
+    //             // require: true,
+    //         },
+    //         {
+    //             'label': 'Password',
+    //             'name': 'password',
+    //             'inputType': 'text',
+    //             'placeholder': "Enter Password",
+    //             'classStyle': 'col-3',
+    //             // require: true,
+    //         },
+    //     ]
+    //     if (e.target.checked) {
+    //         updatedTabList[1].children[1].formFields = _.concat(
+    //             updatedTabList[1].children[1].formFields,
+    //             changedArr
+    //         );
+    //     } else {
+    //         updatedTabList[1].children[1].formFields = _.reject(
+    //             updatedTabList[1].children[1].formFields,
+    //             (field) => _.some(changedArr, { name: field.name })
+    //         );
+    //     }
+    //     setTabList(updatedTabList);
+    // }
+
+
+    // const onHandleRepcoInstitution = (e, formName) => {
+    //     setState((prev) => ({
+    //         ...prev,
+    //         [formName]: e.target.checked,
+    //     }));
+
+    //     const updatedTabList = _.cloneDeep(tabList);
+    //     const changedArr = [
+    //         {
+    //             'label': 'Working At Repco Institution',
+    //             'name': 'workingAtRepcoInstitutionDescription',
+    //             'inputType': 'textarea',
+    //             'placeholder': "Enter working at repco institution detail",
+    //             'classStyle': 'col-4',
+    //             // require: true,
+    //         },
+    //     ]
+    //     if (e.target.checked) {
+    //         updatedTabList[1].children[3].formFields = _.concat(
+    //             updatedTabList[1].children[3].formFields,
+    //             changedArr
+    //         );
+    //     } else {
+    //         updatedTabList[1].children[3].formFields = _.reject(
+    //             updatedTabList[1].children[3].formFields,
+    //             (field) => _.some(changedArr, { name: field.name })
+    //         );
+    //     }
+    //     setTabList(updatedTabList);
+    // }
 
     const onHandleSalary = (e) => {
         const esi = 0.0175
@@ -1084,11 +1315,7 @@ function Index() {
         const submitRequest = {
             isActive: activeChecker == 0 ? 1 : 0,
         }
-        console.log("data")
-        console.log(data.staffId)
         setSelectedIndex(index)
-        console.log("submitRequest")
-        console.log(submitRequest)
         dispatch(deleteStaffRequest(submitRequest, data.staffId))
     };
 
@@ -1176,7 +1403,8 @@ function Index() {
                             isEdit={isEdit}
                             setTab={setTab}
                             tab={tab}
-                            onChangeCallBack={{ "onHandleSalary": onHandleSalary, "onHandleProofType": onHandleProofType, "handleDateChange": handleDateChange, "onHandleUserCreditial": onHandleUserCreditial }}
+                            onChangeCallBack={{ "onHandleSalary": onHandleSalary, "onHandleProofType": onHandleProofType, "handleDateChange": handleDateChange, }}
+                            // "onHandleUserCreditial": onHandleUserCreditial, "onHandleRepcoInstitution": onHandleRepcoInstitution 
                             state={state}
                             setState={setState}
                             multiStateValue={multiStateValue}

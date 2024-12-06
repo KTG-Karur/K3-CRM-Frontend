@@ -124,6 +124,7 @@ import {
     BirthDayClaimReport,
     ClaimReport,
     LedgerReport,
+    StaffBiodataReport,
 } from './Route_Menu';
 
 const loading = () => <div className=""></div>;
@@ -307,6 +308,10 @@ const AllRoutes = () => {
                 {
                     path: 'petrol-allowance-report',
                     element: <LoadComponent component={PetrolAllowanceReportDoc} />,
+                },
+                {
+                    path: 'staff-biodata-report',
+                    element: <LoadComponent component={StaffBiodataReport} />,
                 },
                 {
                     path: 'permission-report',

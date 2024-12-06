@@ -303,8 +303,6 @@ function Index() {
         if (createClaimSuccess) {
             const temp_state = [createClaimData[0], ...parentList];
             setParentList(temp_state)
-            console.log("state.uploadImage")
-            console.log(state.uploadImage)
             if (state.uploadImage.length > 0) {
                 const formData = new FormData();
                 const originalFile = state.uploadImage[0];
