@@ -41,6 +41,7 @@ const apiContainer = {
   petrolAllowanceReport: "/petrol-allowance-report",
   rolePermission: "/role-permission",
   staffAdvanceLedger: "/staff-advance-ledger",
+  salaryIncreamentHistory: "/salary-increament-history",
 };
 
 export default apiContainer;

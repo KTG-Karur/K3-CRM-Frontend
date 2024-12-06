@@ -125,6 +125,7 @@ import {
     ClaimReport,
     LedgerReport,
     StaffBiodataReport,
+    SalaryIncreamentHistory,
 } from './Route_Menu';
 
 const loading = () => <div className=""></div>;
@@ -256,6 +257,19 @@ const AllRoutes = () => {
                             element: <LoadComponent component={Claim} />,
                         },
                     ],
+                    element: <LoadComponent component={Claim} />,
+                },
+                {
+                    path: 'salary-increament',
+                    element: <LoadComponent component={SalaryIncreamentHistory} />,
+                },
+                // {
+                //     path: 'claim-approved',
+                //     element: <LoadComponent component={ClaimTemplate} />,
+                // },
+                {
+                    path: 'staff-attendance',
+                    element: <LoadComponent component={Attendance} />,
                 },
                 {
                     path: 'attendance',
