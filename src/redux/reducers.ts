@@ -37,6 +37,7 @@ import staffOnDutyReducer from './staff-onduty/reducers';
 import trainingTypeReducer from './training-type/reducers';
 import staffTrainingReducer from './staff-training/reducers';
 import rolePermissionReducer from './role-permission/reducers';
+import salaryIncreamentHistoryReducer from './salary-increament-history/reducers';
 
 export default combineReducers({
     Auth,
@@ -76,4 +77,5 @@ export default combineReducers({
     trainingTypeReducer,
     staffTrainingReducer,
     rolePermissionReducer,
+    salaryIncreamentHistoryReducer,
 });

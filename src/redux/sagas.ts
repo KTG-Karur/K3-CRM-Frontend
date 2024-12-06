@@ -36,6 +36,7 @@ import StaffOnDutySaga from './staff-onduty/saga';
 import trainingTypeSaga from './training-type/saga';
 import staffTrainingSaga from './staff-training/saga';
 import rolePermissionSaga from './role-permission/saga';
+import salaryIncreamentHistorySaga from './salary-increament-history/saga';
 
 export default function* rootSaga() {
     yield all([
@@ -75,5 +76,6 @@ export default function* rootSaga() {
         trainingTypeSaga(),
         staffTrainingSaga(),
         rolePermissionSaga(),
+        salaryIncreamentHistorySaga(),
     ]);
 }

@@ -121,6 +121,7 @@ import {
     StaffTraining,
     StaffAttendanceReport,
     BirthDayClaimReport,
+    SalaryIncreamentHistory,
 } from './Route_Menu';
 
 const loading = () => <div className=""></div>;
@@ -213,6 +214,10 @@ const AllRoutes = () => {
                 {
                     path: 'claim',
                     element: <LoadComponent component={Claim} />,
+                },
+                {
+                    path: 'salary-increament',
+                    element: <LoadComponent component={SalaryIncreamentHistory} />,
                 },
                 // {
                 //     path: 'claim-approved',

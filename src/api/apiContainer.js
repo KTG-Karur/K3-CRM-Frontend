@@ -40,6 +40,7 @@ const apiContainer = {
   staffAttendanceReport: "/staff-attendance-report",
   petrolAllowanceReport: "/petrol-allowance-report",
   rolePermission: "/role-permission",
+  salaryIncreamentHistory: "/salary-increament-history",
 };
 
 export default apiContainer;

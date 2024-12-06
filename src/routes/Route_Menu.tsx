@@ -41,6 +41,7 @@ export const SettingBenefit = React.lazy(() => import('../view/setting-benefit')
 export const AttendanceIncharge = React.lazy(() => import('../view/attendance-incharge'));
 export const StaffAdvance = React.lazy(() => import('../view/staff-advance'));
 export const Deputation = React.lazy(() => import('../view/deputation'));
+export const SalaryIncreamentHistory = React.lazy(() => import('../view/salary-increament-history'));
 
 // user rights
 export const UserRights = React.lazy(() => import('../view/staff-rights'));

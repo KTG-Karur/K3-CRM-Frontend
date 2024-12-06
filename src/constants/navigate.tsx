@@ -109,6 +109,12 @@ const Navigate: NavigateTypes[] = [
         url: '/view/role',
     },
     {
+        label: 'Salary Increament',
+        isTitle: false,
+        icon: 'mdi mdi-account-cash',
+        url: '/salary-increament',
+    },
+    {
         label: 'Master',
         isTitle: false,
         icon: 'mdi mdi-chart-donut-variant',
@@ -505,38 +511,38 @@ const Navigate: NavigateTypes[] = [
     //         },
     //     ],
     // },
-    // {
-    //     label: 'Icons',
-    //     isTitle: false,
-    //     icon: 'mdi mdi-shield-outline',
-    //     children: [
-    //         {
-    //             label: 'Feather Icons',
-    //             url: '/icons/feather',
-    //             parentKey: 'Icons',
-    //         },
-    //         {
-    //             label: 'Material Design Icons',
-    //             url: '/icons/mdi',
-    //             parentKey: 'Icons',
-    //         },
-    //         {
-    //             label: 'DripIcons',
-    //             url: '/icons/dripIcons',
-    //             parentKey: 'Icons',
-    //         },
-    //         {
-    //             label: 'Font Awesome 5',
-    //             url: '/icons/font-awesome',
-    //             parentKey: 'Icons',
-    //         },
-    //         {
-    //             label: 'Themify',
-    //             url: '/icons/themify',
-    //             parentKey: 'Icons',
-    //         },
-    //     ],
-    // },
+    {
+        label: 'Icons',
+        isTitle: false,
+        icon: 'mdi mdi-shield-outline',
+        children: [
+            {
+                label: 'Feather Icons',
+                url: '/icons/feather',
+                parentKey: 'Icons',
+            },
+            {
+                label: 'Material Design Icons',
+                url: '/icons/mdi',
+                parentKey: 'Icons',
+            },
+            {
+                label: 'DripIcons',
+                url: '/icons/dripIcons',
+                parentKey: 'Icons',
+            },
+            {
+                label: 'Font Awesome 5',
+                url: '/icons/font-awesome',
+                parentKey: 'Icons',
+            },
+            {
+                label: 'Themify',
+                url: '/icons/themify',
+                parentKey: 'Icons',
+            },
+        ],
+    },
     // {
     //     label: 'Forms',
     //     isTitle: false,
