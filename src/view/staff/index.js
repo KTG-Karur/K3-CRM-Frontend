@@ -721,11 +721,13 @@ function Index() {
         if (getStaffDetailsSuccess) {
             if (isPrint) {
                 navigate('/staff-biodata-report', { state: getStaffDetailsList });
-                return;
+                closeModel();
+                isPrint = false;
+            } else {
+                setMultiStateValue([getStaffDetailsList])
+                setWizardModel(true)
             }
             setIsLoading(false)
-            setMultiStateValue([getStaffDetailsList])
-            setWizardModel(true)
             dispatch(resetGetDetailsStaff())
         } else if (getStaffDetailsFailure) {
             setIsLoading(false)
@@ -1160,8 +1162,6 @@ function Index() {
             age: age
         }));
     }
-
-    console.log(state)
 
     // const onHandleUserCreditial = (e, formName) => {
     //     setState((prev) => ({

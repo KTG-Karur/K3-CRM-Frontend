@@ -6,14 +6,11 @@ import { Link, useLocation } from 'react-router-dom';
 import noProfile from '../../../assets/images/noprofile_images.jpg';
 import { Table } from 'react-bootstrap';
 import moment from 'moment';
-import { findArrObj } from '../../../utils/AllFunction';
 // import CompanyDetails from '../../components/Atom/CompanyDetails';
 import _ from "lodash";
 
 function Index() {
     const baseUrl = process.env?.baseURL || "http://localhost:5059";
-
-    const today = new Date().toLocaleDateString();
 
     const { state } = useLocation();
 
@@ -33,13 +30,6 @@ function Index() {
             setStateVal(state || {});
         }
     }, [state])
-
-    console.log("stateVal")
-    console.log(stateVal)
-    console.log("state")
-    console.log(state)
-
-    // console.log(findArrObj(stateVal?.idProof || [], "proofTypeId", 1))
 
     const staffBiodata = {
         profileImg: `${baseUrl}${stateVal?.personalInfo?.staffProfileImageName || noProfile}`,
@@ -96,33 +86,32 @@ function Index() {
             expectedSalary: `${stateVal?.personalInfo?.expectedSalary || ''}`,
             timeNeededToJoin: `${stateVal?.personalInfo?.timeToJoinName || ''}`,
             preferredlocation: `${stateVal?.personalInfo?.preferenceLocationList || ''}`,
-            whetherRepatriate: `${stateVal?.personalInfo?.repatriate ? "Yes": "No" || ''}`,
+            whetherRepatriate: `${stateVal?.personalInfo?.repatriate ? "Yes" : "No" || ''}`,
             reference: {
-                refDetails: [
-                    {
-                        name: 'V.Jayavarshini',
-                        desigination: 'App developer',
-                        mobileNumber: '9078564312',
-                        email: 'jvarshini@gmail.com',
-                    },
-                    {
-                        name: 'V.Jayavarshini',
-                        desigination: 'App developer',
-                        mobileNumber: '9078564312',
-                        email: 'jvarshini@gmail.com',
-                    },
-                ],
+                refDetails: (() => {
+                    let parsedList = stateVal?.personalInfo?.referenceList;
+            
+                    if (typeof parsedList === "string") {
+                        try {
+                            parsedList = JSON.parse(parsedList);
+                        } catch (error) {
+                            console.error("Invalid JSON string:", error);
+                            parsedList = [];
+                        }
+                    }
+            
+                    return (parsedList || [{}]).map(item => ({
+                        name: item?.staffName || "",
+                        contactNo: item?.contactNo || "",
+                        emailId: item?.emailId || "",
+                    }));
+                })(),
             },
             repcoInstitutionBelongs: {
-                status: true,
-                details: {
-                    name: 'V.Jayavarshini',
-                    desigination: 'App developer',
-                    mobileNumber: '9078564312',
-                    email: 'jvarshini@gmail.com',
-                },
+                status:  `${stateVal?.personalInfo?.workingAtRepcoInstitution ? true : false || false}`,
+                details: `${stateVal?.personalInfo?.workingAtRepcoInstitutionDescription || ""}`
             },
-            otherInformation: 'haii hello good bye',
+            otherInformation:  `${stateVal?.personalInfo?.otherInformation || ""}`,
         },
     };
 
@@ -571,7 +560,7 @@ function Index() {
                                                         fontSize: '16px',
                                                         margin: 0,
                                                     }}>
-                                                    {ref.mobileNumber}
+                                                    {ref.contactNo}
                                                 </p>
                                                 <p
                                                     style={{
@@ -580,7 +569,7 @@ function Index() {
                                                         fontSize: '16px',
                                                         margin: 0,
                                                     }}>
-                                                    {ref.email}
+                                                    {ref.emailId}
                                                 </p>
                                             </div>
                                         ))}
@@ -600,34 +589,7 @@ function Index() {
                             <div className="mx-4">
                                 <p style={{ color: '#000', fontSize: '16px', marginBottom: '5px' }}>Yes</p>
                                 <p style={{ color: '#000', fontSize: '16px', marginBottom: '5px' }}>
-                                    1. {staffBiodata.staffDetails.repcoInstitutionBelongs.details.name}
-                                </p>
-                                <p
-                                    style={{
-                                        color: '#000',
-                                        fontSize: '16px',
-                                        marginBottom: '5px',
-                                        paddingLeft: '10px',
-                                    }}>
-                                    {staffBiodata.staffDetails.repcoInstitutionBelongs.details.desigination}
-                                </p>
-                                <p
-                                    style={{
-                                        color: '#000',
-                                        fontSize: '16px',
-                                        marginBottom: '5px',
-                                        paddingLeft: '10px',
-                                    }}>
-                                    {staffBiodata.staffDetails.repcoInstitutionBelongs.details.mobileNumber}
-                                </p>
-                                <p
-                                    style={{
-                                        color: '#000',
-                                        fontSize: '16px',
-                                        marginBottom: '5px',
-                                        paddingLeft: '10px',
-                                    }}>
-                                    {staffBiodata.staffDetails.repcoInstitutionBelongs.details.email}
+                                    {staffBiodata.staffDetails.repcoInstitutionBelongs.details}
                                 </p>
                             </div>
                         ) : (
