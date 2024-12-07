@@ -9,6 +9,7 @@ import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 import { createStaffSalaryRequest, getStaffSalaryRequest, resetCreateStaffSalary, resetGetStaffSalary, resetUpdateStaffSalary, updateStaffSalaryRequest } from '../../redux/staff-salary/actions';
 import { getBranchRequest, getDepartmentRequest, getSettingBenefitRequest, resetGetBranch, resetGetDepartment, resetGetSettingBenefit } from '../../redux/actions';
+import moment from 'moment';
 
 let isEdit = false;
 
@@ -70,18 +71,12 @@ function Index() {
             sort: true,
         },
         {
-            Header: 'Tol Salary',
-            accessor: 'salaryMonth',
-            Cell: ({ row }) => {
-                return (
-                    <div>
-                        {row.original?.salaryMonth ? row.original?.salaryMonth : 0}
-                    </div>
-                )
-            },
+            Header: 'Working Days',
+            accessor: 'workingDays',
+            sort: true,
         },
         {
-            Header: 'No.of leave days',
+            Header: 'Leave Count',
             accessor: 'leaveCount',
             Cell: ({ row }) => {
                 return (
@@ -92,84 +87,46 @@ function Index() {
             },
         },
         {
-            Header: 'Leave sal',
-            accessor: 'Leavesalary',
-            Cell: ({ row }) => {
-                return (
-                    <div>
-                    {row.original?.Leavesalary ? row.original?.Leavesalary : 0}
-                </div>
-                )
-            },
-        },
-        {
-            Header: 'Sal after Leave amt',
-            accessor: 'SalaryafterLeaveamount',
-            sort: true,
-        },
-        {
-            Header: 'ESI 1.75%',
-            accessor: 'ESI',
-            sort: true,
-        },
-        {
-            Header: 'PF 12%',
-            accessor: 'PF',
-            sort: true,
-        },
-        {
-            Header: 'Adv amt',
+            Header: 'Advance Amount',
             accessor: 'advanceAmount',
             sort: true,
         },
         {
-            Header: 'Ded Amt',
-            accessor: 'DeductedAmtthisMonth',
+            Header: 'Salary Amount',
+            accessor: 'Salary Amount',
             sort: true,
         },
         {
-            Header: 'Sal on Hand',
-            accessor: 'SalonHand',
-            sort: true,
-        },
-        {
-            Header: 'Incentive',
-            accessor: 'incentiveAmount',
+            Header: 'Working Days',
+            accessor: 'salaryMonth',
             Cell: ({ row }) => {
                 return (
                     <div>
-                        <Form.Control
-                            type="number"
-                            name={"incentiveAmount"}
-                            className="mb-1"
-                            placeholder={"0.00"}
-                            value={state.staffSalary[row.index]?.incentiveAmount || ""}
-                            onWheel={(e) => e.target.blur()}
-                            ref={(el) => (incentiveAmountRefs.current[row.index] = el)}
-                            onChange={(e) => {
-                                handleChange(row.original, e.target.value, row.index)
-                            }}
-                        />
+                        {row.original?.salaryMonth ? row.original?.salaryMonth : 0}
                     </div>
                 )
             },
-            Footer: () => {
+        },
+        {
+            Header: 'Actions',
+            accessor: 'actions',
+            Cell: ({ row }) => {
                 return (
-
-                    <Button
-                        variant="success"
-                        onClick={onFormSubmit}
-                        style={{ width: "100%", padding: '10px' }}
-                    >
-                        {isEdit ? 'Update' : 'Submit'}
-                    </Button>
+                    <div>
+                        <span className="text-success  me-2 cursor-pointer" onClick={() => onIncentiveForm(row.original, row.index)}>
+                            <i className={'fe-arrow-right-circle'}></i>
+                        </span>
+                    </div>
                 )
-            }
-        }
+            },
+        },
     ];
 
     const [state, setState] = useState({
-        staffSalary: [{}]
+        staffSalary: [{}],
+        departmentId: 0,
+        branchId: 0,
+        salaryDate: moment().format("YYYY-MM-DD")
     });
     const [optionListState, setOptionListState] = useState({
         branchList: [],
@@ -205,8 +162,6 @@ function Index() {
         if (getSettingBenefitSuccess) {
             setIsLoading(false)
             // setParentList(getSettingBenefitList)
-            console.log("getSettingBenefitList")
-            console.log(getSettingBenefitList)
             setState({
                 ...state,
                 benefitList: getSettingBenefitList
@@ -310,6 +265,19 @@ function Index() {
             dispatch(resetUpdateStaffSalary())
         }
     }, [updateStaffSalarySuccess, updateStaffSalaryFailure]);
+
+    useEffect(() => {
+        const date = new Date(state.salaryDate);
+        const result = !isNaN(date.getTime());
+        if (state.branchId > 0 && result) {
+            const staffReq = {
+                branchId: state.branchId,
+                departmentId: state.departmentId
+            }
+            state.departmentId <= 0 && delete staffReq.departmentId
+            // dispatch(getStaffSalary)
+        }
+    }, [state.departmentId, state.branchId, state.salaryDate]);
 
     const closeModel = () => {
         isEdit = false;
@@ -415,6 +383,13 @@ function Index() {
         })
     }
 
+    const onIncentiveForm = (data, index) => {
+        setSelectedIndex(index)
+        setSelectedItem(data)
+    }
+
+
+
     return (
         <React.Fragment>
             <NotificationContainer />
@@ -423,22 +398,24 @@ function Index() {
                     <Spinner className='mt-5 mb-5' animation="border" />
                 </div>
             </div> :
-                <Table
-                    columns={columns}
-                    Title={'Salary List'}
-                    data={parentList || []}
-                    pageSize={5}
-                    toggle={false}
-                    pagination={false}
-                    filterTbl={true}
-                    footerTbl={true}
-                    filterFormContainer={staffFilterFormContainer}
-                    onChangeCallBack={{ "handleDate": handleDate, "handleDepartment": handleDepartment, "handleBranch": handleBranch }}
-                    optionListState={optionListState}
-                    setState={setState}
-                    state={state}
-                    noOfColumns={1}
-                />}
+                <div>
+                    <Table
+                        columns={columns}
+                        Title={'Salary List'}
+                        data={parentList || []}
+                        pageSize={5}
+                        toggle={false}
+                        pagination={false}
+                        filterTbl={true}
+                        footerTbl={true}
+                        filterFormContainer={staffFilterFormContainer}
+                        onChangeCallBack={{ "handleDate": handleDate, "handleDepartment": handleDepartment, "handleBranch": handleBranch }}
+                        optionListState={optionListState}
+                        setState={setState}
+                        state={state}
+                        noOfColumns={1}
+                    />
+                </div>}
 
             <ModelViewBox
                 modal={modal}
