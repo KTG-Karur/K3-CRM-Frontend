@@ -3,9 +3,12 @@ const staffFilterFormContainer = [
         formFields: [
             {
                 'label': 'Salary Month',
-                'name': 'salaryDate',
+                'name': 'filterSalaryMonth',
                 'inputType': 'date',
                 'classStyle': 'col-3',
+                'type':"month",
+                'maximumDate':'maximumDate',
+                'minmumDate':'minmumDate'
             },
             {
                 'label': 'Branch',

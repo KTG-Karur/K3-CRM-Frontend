@@ -348,7 +348,14 @@ function Index() {
     }
 
     const onPrintDesign = (data) => {
-        navigate('/birthday-claim-report', { state: data });
+        console.log("onPrintDesign")
+        console.log(data)
+        if (data?.claimTypeId == 1) {
+            navigate('/birthday-claim-report', { state: data });
+        } else {
+            navigate('/common-claim-report', { state: data });
+        }
+        return;
     }
 
     const onApprovedClaim = (data, index) => {

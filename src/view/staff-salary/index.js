@@ -123,11 +123,16 @@ function Index() {
     ];
 
     const [state, setState] = useState({
+        minmumDate: moment().subtract(1,'months').endOf('month').format('YYYY-MM'),
+        maximumDate: moment().subtract(1,'months').endOf('month').format('YYYY-MM'),
         staffSalary: [{}],
         departmentId: 0,
         branchId: 0,
-        salaryDate: moment().format("YYYY-MM-DD")
+        filterSalaryMonth: moment().subtract(1,'months').endOf('month').format('YYYY-MM')
     });
+
+    console.log("state")
+    console.log(state)
     const [optionListState, setOptionListState] = useState({
         branchList: [],
         departmentList: [],
@@ -179,17 +184,19 @@ function Index() {
         if (getStaffSalarySuccess) {
             setIsLoading(false)
             // setParentList(getStaffSalaryList)
-            const staffSalaryList = getStaffSalaryList.map(item => {
-                return {
-                    staffId: item.staffId,
-                    staffName: item?.staffName || '',
-                    incentiveAmount: item?.incentiveAmount || 0,
-                }
-            })
-            setState({
-                ...state,
-                staffSalary: staffSalaryList
-            })
+            // const staffSalaryList = (getStaffSalaryList || []).map(item => {
+            //     return {
+            //         staffId: item?.staffId || '',
+            //         staffName: item?.staffName || '',
+            //         incentiveAmount: item?.incentiveAmount || 0,
+            //     }
+            // })
+            // console.log("staffSalaryList")
+            // console.log(staffSalaryList)
+            // setState({
+            //     ...state,
+            //     staffSalary: staffSalaryList || []
+            // })
             dispatch(resetGetStaffSalary())
         } else if (getStaffSalaryFailure) {
             setIsLoading(false)
@@ -267,7 +274,7 @@ function Index() {
     }, [updateStaffSalarySuccess, updateStaffSalaryFailure]);
 
     useEffect(() => {
-        const date = new Date(state.salaryDate);
+        const date = new Date(state.filterSalaryMonth);
         const result = !isNaN(date.getTime());
         if (state.branchId > 0 && result) {
             const staffReq = {
@@ -277,7 +284,7 @@ function Index() {
             state.departmentId <= 0 && delete staffReq.departmentId
             // dispatch(getStaffSalary)
         }
-    }, [state.departmentId, state.branchId, state.salaryDate]);
+    }, [state.departmentId, state.branchId, state.filterSalaryMonth]);
 
     const closeModel = () => {
         isEdit = false;
@@ -351,7 +358,7 @@ function Index() {
             [formName]: event.target.value
         })
         const filterDepartment = {
-            salaryDate: event.target.value
+            filterSalaryMonth: event.target.value
         }
         dispatch(getStaffSalaryRequest(filterDepartment));
     }

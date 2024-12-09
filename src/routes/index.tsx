@@ -126,6 +126,7 @@ import {
     LedgerReport,
     StaffBiodataReport,
     SalaryIncreamentHistory,
+    CommonClaimReport,
 } from './Route_Menu';
 
 const loading = () => <div className=""></div>;
@@ -342,6 +343,10 @@ const AllRoutes = () => {
                 {
                     path: 'on-duty-report',
                     element: <LoadComponent component={PermissionLeaveOdReport} />,
+                },
+                {
+                    path: 'common-claim-report',
+                    element: <LoadComponent component={CommonClaimReport} />,
                 },
                 //end report
                 {

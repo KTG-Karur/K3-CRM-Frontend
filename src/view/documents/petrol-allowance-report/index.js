@@ -507,9 +507,9 @@ function Index() {
                         }}>
                         <i className="fa fa-print"></i>
                     </Link>
-                    <Link to="#" className="btn btn-success me-1">
+                    {/* <Link to="#" className="btn btn-success me-1">
                         <i className="fa fa-download"></i> Download as PDF
-                    </Link>
+                    </Link> */}
                 </Col>
             </Row>
 
