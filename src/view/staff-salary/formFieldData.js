@@ -6,7 +6,6 @@ const staffFilterFormContainer = [
                 'name': 'salaryDate',
                 'inputType': 'date',
                 'classStyle': 'col-3',
-                'onChange': 'handleDate',
             },
             {
                 'label': 'Branch',
@@ -16,7 +15,6 @@ const staffFilterFormContainer = [
                 'displayKey': 'branchName',
                 'uniqueKey': 'branchId',
                 'classStyle': 'col-3',
-                onChange: 'handleBranch',
             },
             {
                 'label': 'Department',
@@ -26,7 +24,6 @@ const staffFilterFormContainer = [
                 'displayKey': 'departmentName',
                 'uniqueKey': 'departmentId',
                 'classStyle': 'col-3',
-                onChange: 'handleDepartment',
             },
         ]
     },
