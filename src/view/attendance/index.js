@@ -207,7 +207,7 @@ function Index() {
                     return {
                         ...staffData,
                         attendanceStatusId: attendanceData
-                            ? (attendanceData.leaveStatusId === 29 ? 0 : 1)
+                            ? (attendanceData.statusId === 29 ? 0 : 1)
                             : staffData.attendanceStatusId,
                         attendanceDate: state.attendanceDate,
                     };
@@ -217,7 +217,6 @@ function Index() {
                     staffAttendance: updateStaffData,
                 };
             });
-
             dispatch(resetGetStaffLeave());
         } else if (getStaffLeaveFailure) {
             setIsLoading(false);
@@ -465,7 +464,7 @@ function Index() {
                 isShowBtn = false;
                 modelHead = true;
                 const leaveStatusId = {
-                    leaveStatusId: 29,
+                    statusId: 29,
                     attendanceDate: arg?.dateStr || state.attendanceDate,
                 };
                 dispatch(getStaffLeaveRequest(leaveStatusId));

@@ -1,17 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Badge, Button, Form, Spinner } from 'react-bootstrap';
+import { Badge, Button, Col, Form, Row, Spinner } from 'react-bootstrap';
 import ModelViewBox from '../../components/Atom/ModelViewBox';
 import FormLayout from '../../utils/formLayout';
-import { staffFilterFormContainer, staffSalaryBtn } from './formFieldData';
+import { staffFilterFormContainer, staffSalaryBtn, staffSalaryDetailsFormContainer } from './formFieldData';
 import Table from '../../components/Table';
 import { showConfirmationDialog, showMessage } from '../../utils/AllFunction';
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
-import { createStaffSalaryRequest, getStaffSalaryRequest, resetCreateStaffSalary, resetGetStaffSalary, resetUpdateStaffSalary, updateStaffSalaryRequest } from '../../redux/staff-salary/actions';
+import { createStaffSalaryRequest, getStaffSalaryDetailRequest, getStaffSalaryRequest, resetCreateStaffSalary, resetGetStaffSalary, resetGetStaffSalaryDetail, resetUpdateStaffSalary, updateStaffSalaryRequest } from '../../redux/staff-salary/actions';
 import { getBranchRequest, getDepartmentRequest, getSettingBenefitRequest, resetGetBranch, resetGetDepartment, resetGetSettingBenefit } from '../../redux/actions';
 import moment from 'moment';
+import { alignPropType } from 'react-bootstrap/esm/types';
 
-let isEdit = false;
+let isEditStaffSalaryDetail = false;
 
 function Index() {
 
@@ -20,7 +21,6 @@ function Index() {
     const incentiveAmountRefs = useRef([]);
 
     const {
-        getSettingBenefitSuccess, getSettingBenefitList, getSettingBenefitFailure,
         getStaffSalarySuccess, getStaffSalaryList, getStaffSalaryFailure,
         updateStaffSalarySuccess, updateStaffSalaryData, updateStaffSalaryFailure,
         createStaffSalarySuccess, createStaffSalaryFailure, createStaffSalaryData,
@@ -28,6 +28,11 @@ function Index() {
 
         getBranchSuccess, getBranchList, getBranchFailure,
         getDepartmentSuccess, getDepartmentList, getDepartmentFailure,
+
+
+        getStaffSalaryDetailSuccess,
+        getStaffSalaryDetailData,
+        getStaffSalaryDetailFailure,
 
     } = appSelector((state) => ({
 
@@ -40,13 +45,13 @@ function Index() {
         getDepartmentList: state.departmentReducer.getDepartmentList,
         getDepartmentFailure: state.departmentReducer.getDepartmentFailure,
 
-        getSettingBenefitSuccess: state.settingBenefitReducer.getSettingBenefitSuccess,
-        getSettingBenefitList: state.settingBenefitReducer.getSettingBenefitList,
-        getSettingBenefitFailure: state.settingBenefitReducer.getSettingBenefitFailure,
-
         getStaffSalarySuccess: state.staffsalaryReducer.getStaffSalarySuccess,
         getStaffSalaryList: state.staffsalaryReducer.getStaffSalaryList,
         getStaffSalaryFailure: state.staffsalaryReducer.getStaffSalaryFailure,
+
+        getStaffSalaryDetailSuccess: state.staffsalaryReducer.getStaffSalaryDetailSuccess,
+        getStaffSalaryDetailData: state.staffsalaryReducer.getStaffSalaryDetailData,
+        getStaffSalaryDetailFailure: state.staffsalaryReducer.getStaffSalaryDetailFailure,
 
         createStaffSalarySuccess: state.staffsalaryReducer.createStaffSalarySuccess,
         createStaffSalaryData: state.staffsalaryReducer.createStaffSalaryData,
@@ -58,6 +63,9 @@ function Index() {
 
         errorMessage: state.staffsalaryReducer.errorMessage,
     }));
+
+
+    const [isAlreadyCreated, setisAlreadyCreated] = useState(true);
 
     const columns = [
         {
@@ -73,39 +81,83 @@ function Index() {
         {
             Header: 'Working Days',
             accessor: 'workingDays',
-            sort: true,
-        },
-        {
-            Header: 'Leave Count',
-            accessor: 'leaveCount',
             Cell: ({ row }) => {
                 return (
                     <div>
-                        {row.original?.leaveCount ? row.original?.leaveCount : 0}
+                        {`${Number(row.original?.workingDays || 0) - Number(row.original?.totalLeave || 0)} / ${row.original?.workingDays || 0}`}
                     </div>
                 )
-            },
+            }
         },
+        // {
+        //     Header: 'Leave Count',
+        //     accessor: 'leaveCount',
+        //     Cell: ({ row }) => {
+        //         return (
+        //             <div>
+        //                 {row.original?.totalLeave || 0}
+        //             </div>
+        //         )
+        //     },
+        // },
         {
             Header: 'Advance Amount',
             accessor: 'advanceAmount',
-            sort: true,
         },
         {
-            Header: 'Salary Amount',
-            accessor: 'Salary Amount',
-            sort: true,
+            Header: 'Paid Amount',
+            accessor: 'paidAdvanceAmount',
         },
         {
-            Header: 'Working Days',
-            accessor: 'salaryMonth',
+            Header: 'Monthly Amount',
+            accessor: 'monthlyAmount',
             Cell: ({ row }) => {
                 return (
                     <div>
-                        {row.original?.salaryMonth ? row.original?.salaryMonth : 0}
+                        {`${row.original?.monthlyAmount || 0}.00`}
                     </div>
                 )
             },
+        },
+        {
+            Header: 'Deduction Amount',
+            accessor: 'deductionAmount',
+            Cell: ({ row }) => {
+                return (
+                    <div>
+                        {row.original?.deductionAmount || 0}
+                    </div>
+                )
+            },
+        },
+        {
+            Header: 'Total Salary Amount',
+            accessor: 'totalSalaryAmount',
+            Cell: ({ row }) => {
+                return (
+                    <div>
+                        {row.original?.totalSalaryAmount || 0}
+                    </div>
+                )
+            },
+            Footer: () => {
+                return (
+                    <div>
+                        {
+                            isAlreadyCreated ?
+                                (<Button
+                                    variant={'success'}
+                                    onClick={onFormSubmit}
+                                    style={{ padding: '10px' }}
+                                >
+                                    {'Submit'}
+                                </Button>)
+                                :
+                                `Salary inserted on ${moment(state?.filterSalaryMonth).format('MMMM YYYY')}`
+                        }
+                    </div>
+                )
+            }
         },
         {
             Header: 'Actions',
@@ -113,42 +165,38 @@ function Index() {
             Cell: ({ row }) => {
                 return (
                     <div>
-                        <span className="text-success  me-2 cursor-pointer" onClick={() => onIncentiveForm(row.original, row.index)}>
+                        <span className="text-success  me-2 cursor-pointer" style={{ fontSize: "18px" }} onClick={() => onModalForm(row.original, row.index)}>
                             <i className={'fe-arrow-right-circle'}></i>
                         </span>
                     </div>
                 )
-            },
+            }
         },
     ];
 
     const [state, setState] = useState({
-        minmumDate: moment().subtract(1,'months').endOf('month').format('YYYY-MM'),
-        maximumDate: moment().subtract(1,'months').endOf('month').format('YYYY-MM'),
+        minmumDate: moment().subtract(1, 'months').endOf('month').format('YYYY-MM'),
+        maximumDate: moment().subtract(1, 'months').endOf('month').format('YYYY-MM'),
         staffSalary: [{}],
         departmentId: 0,
         branchId: 0,
-        filterSalaryMonth: moment().subtract(1,'months').endOf('month').format('YYYY-MM')
+        filterSalaryMonth: moment().subtract(1, 'months').endOf('month').format('YYYY-MM'),
+        staffSalaryDetails: {},
     });
 
-    console.log("state")
-    console.log(state)
     const [optionListState, setOptionListState] = useState({
-        branchList: [],
-        departmentList: [],
+        departmentList: [
+            {
+                "departmentId": 0,
+                "departmentName": "All",
+            },
+        ],
+        branchList: [{
+            "branchId": 0,
+            "branchName": "All",
+        }],
     })
-    const [parentList, setParentList] = useState([{
-        staffName: "surya",
-        salaryMonth: "20,000",
-        leaveCount: "2",
-        Leavesalary: "230",
-        SalaryafterLeaveamount: "19770",
-        ESI: "100",
-        PF: "50",
-        advanceAmount: "500",
-        DeductedAmtthisMonth: "410",
-        SalonHand: "19,590",
-    }]);
+    const [parentList, setParentList] = useState([]);
     const [selectedItem, setSelectedItem] = useState({});
     const [selectedIndex, setSelectedIndex] = useState(false);
     const [modal, setModal] = useState(false);
@@ -158,73 +206,20 @@ function Index() {
     useEffect(() => {
         setIsLoading(true)
         dispatch(getSettingBenefitRequest());
-        dispatch(getStaffSalaryRequest());
+        const searchReq = {
+            salaryDate: `${state.filterSalaryMonth}-01`
+        }
+        dispatch(getStaffSalaryRequest(searchReq));
         dispatch(getBranchRequest());
         dispatch(getDepartmentRequest());
     }, []);
-
-    useEffect(() => {
-        if (getSettingBenefitSuccess) {
-            setIsLoading(false)
-            // setParentList(getSettingBenefitList)
-            setState({
-                ...state,
-                benefitList: getSettingBenefitList
-            });
-            dispatch(resetGetSettingBenefit())
-        } else if (getSettingBenefitFailure) {
-            setIsLoading(false)
-            setParentList([])
-            dispatch(resetGetSettingBenefit())
-        }
-    }, [getSettingBenefitSuccess, getSettingBenefitFailure]);
-
-
-    useEffect(() => {
-        if (getStaffSalarySuccess) {
-            setIsLoading(false)
-            // setParentList(getStaffSalaryList)
-            // const staffSalaryList = (getStaffSalaryList || []).map(item => {
-            //     return {
-            //         staffId: item?.staffId || '',
-            //         staffName: item?.staffName || '',
-            //         incentiveAmount: item?.incentiveAmount || 0,
-            //     }
-            // })
-            // console.log("staffSalaryList")
-            // console.log(staffSalaryList)
-            // setState({
-            //     ...state,
-            //     staffSalary: staffSalaryList || []
-            // })
-            dispatch(resetGetStaffSalary())
-        } else if (getStaffSalaryFailure) {
-            setIsLoading(false)
-            dispatch(resetGetStaffSalary())
-        }
-    }, [getStaffSalarySuccess, getStaffSalaryFailure]);
-
-    useEffect(() => {
-        if (createStaffSalarySuccess) {
-            const temp_state = [createStaffSalaryData[0], ...parentList];
-            console.log("createStaffSalarySuccess temp_state")
-            console.log(temp_state)
-            // setParentList(temp_state)
-            showMessage('success', 'Created Successfully');
-            closeModel()
-            dispatch(resetCreateStaffSalary())
-        } else if (createStaffSalaryFailure) {
-            showMessage('warning', errorMessage);
-            dispatch(resetCreateStaffSalary())
-        }
-    }, [createStaffSalarySuccess, createStaffSalaryFailure]);
 
     useEffect(() => {
         if (getBranchSuccess) {
             setIsLoading(false)
             setOptionListState({
                 ...optionListState,
-                branchList: getBranchList
+                branchList: [...optionListState.branchList, ...getBranchList],
             })
             dispatch(resetGetBranch())
         } else if (getBranchFailure) {
@@ -242,7 +237,7 @@ function Index() {
             setIsLoading(false)
             setOptionListState({
                 ...optionListState,
-                departmentList: getDepartmentList
+                departmentList: [...optionListState.departmentList, ...getDepartmentList],
             })
             dispatch(resetGetDepartment())
         } else if (getDepartmentFailure) {
@@ -255,16 +250,114 @@ function Index() {
         }
     }, [getDepartmentSuccess, getDepartmentFailure]);
 
+    useEffect(() => {
+        if (getStaffSalaryDetailSuccess) {
+            setIsLoading(false)
+            // setParentList(getSettingBenefitList)
+            const { deductionAmount, totalSalaryAmount } = onHandleDeductionAmount(getStaffSalaryDetailData[0]?.incentiveAmount || 0, getStaffSalaryDetailData[0]?.bonusAmount || 0, getStaffSalaryDetailData[0]);
+
+            if (getStaffSalaryDetailData[0].staffSalaryHistoryId) {
+                isEditStaffSalaryDetail = true;
+            } else {
+                isEditStaffSalaryDetail = false;
+            }
+            setState((prevState) => {
+                const updatedStaffSalary = [...prevState.staffSalary];
+                const selectedStaff = updatedStaffSalary[selectedIndex];
+                return {
+                    ...prevState,
+                    staffSalaryDetails: getStaffSalaryDetailData[0],
+                    deductionAmount: getStaffSalaryDetailData[0]?.deductionAmount || deductionAmount,
+                    totalSalaryAmount: getStaffSalaryDetailData[0]?.totalSalaryAmount || totalSalaryAmount,
+                    incentiveAmount: selectedStaff.incentiveAmount,
+                    bonusAmount: selectedStaff.bonusAmount
+                }
+            })
+            dispatch(resetGetStaffSalaryDetail())
+        } else if (getStaffSalaryDetailFailure) {
+            setIsLoading(false)
+            setParentList([])
+            dispatch(resetGetStaffSalaryDetail())
+        }
+    }, [getStaffSalaryDetailSuccess, getStaffSalaryDetailFailure]);
+
+    useEffect(() => {
+        if (getStaffSalarySuccess) {
+            setIsLoading(false)
+            setParentList(() => {
+                const salaryList = (getStaffSalaryList || []).map(item => {
+                    const { deductionAmount, totalSalaryAmount } = onHandleDeductionAmount(item?.incentiveAmount, item?.bonusAmount, item);
+                    return {
+                        ...item,
+                        deductionAmount: item?.deductionAmount || deductionAmount || 0,
+                        totalSalaryAmount: item?.totalSalaryAmount || totalSalaryAmount || 0,
+                    }
+                })
+                return salaryList
+            });
+
+            let count = 0;
+            const staffSalaryList = (getStaffSalaryList || []).map((item, i) => {
+                const { deductionAmount, totalSalaryAmount } = onHandleDeductionAmount(item?.incentiveAmount, item?.bonusAmount, item);
+
+                if (item?.staffSalaryHistoryId) {
+                    count++;
+                }
+
+                return {
+                    staffSalaryHistoryId: item?.staffSalaryHistoryId,
+                    staffId: item?.staffId,
+                    incentiveAmount: item?.incentiveAmount || 0,
+                    bonusAmount: item?.bonusAmount || 0,
+                    branchId: item?.branchId || '',
+                    departmentId: item?.departmentId || '',
+                    esiAmount: item?.esiAmount || '',
+                    pfAmount: item?.pfAmount || '',
+                    salaryDate: `${state.filterSalaryMonth}-01` || '',
+                    monthlyAmount: item?.monthlyAmount || 0,
+                    deductionAmount: item?.deductionAmount || deductionAmount || 0,
+                    totalSalaryAmount: item?.totalSalaryAmount || totalSalaryAmount || 0,
+                }
+            });
+            if (count == staffSalaryList.length) {
+                setisAlreadyCreated(false);
+            }
+            setState({
+                ...state,
+                staffSalary: staffSalaryList || []
+            })
+            dispatch(resetGetStaffSalary())
+        } else if (getStaffSalaryFailure) {
+            setIsLoading(false)
+            dispatch(resetGetStaffSalary())
+        }
+    }, [getStaffSalarySuccess, getStaffSalaryFailure]);
+
+    useEffect(() => {
+        if (createStaffSalarySuccess) {
+            const searchReq = {
+                salaryDate: `${state.filterSalaryMonth}-01`
+            }
+            dispatch(getStaffSalaryRequest(searchReq));
+            showMessage('success', 'Created Successfully');
+            setIsLoading(true)
+            closeModel()
+            dispatch(resetCreateStaffSalary())
+        } else if (createStaffSalaryFailure) {
+            showMessage('warning', errorMessage);
+            dispatch(resetCreateStaffSalary())
+        }
+    }, [createStaffSalarySuccess, createStaffSalaryFailure]);
 
 
     useEffect(() => {
         if (updateStaffSalarySuccess) {
-            const temp_state = [...parentList];
-            temp_state[selectedIndex] = updateStaffSalaryData[0];
-            console.log("updateStaffSalarySuccess temp_state");
-            console.log(temp_state);
-            // setParentList(temp_state)
-            isEdit && showMessage('success', 'Updated Successfully');
+            const searchReq = {
+                salaryDate: `${state.filterSalaryMonth}-01`
+            }
+            dispatch(getStaffSalaryRequest(searchReq));
+            isEditStaffSalaryDetail && showMessage('success', 'Updated Successfully');
+            setIsLoading(false)
             closeModel()
             dispatch(resetUpdateStaffSalary())
         } else if (updateStaffSalaryFailure) {
@@ -287,45 +380,56 @@ function Index() {
     }, [state.departmentId, state.branchId, state.filterSalaryMonth]);
 
     const closeModel = () => {
-        isEdit = false;
+        isEditStaffSalaryDetail = false;
         onFormClear()
         setModal(false)
     }
 
     const onFormClear = () => {
-        setState({
-            ...state,
-            departmentName: '',
-        });
+        setState((prevState) => ({
+            ...prevState,
+            staffSalaryDetails: {},
+            deductionAmount: 0,
+            totalSalaryAmount: 0,
+            incentiveAmount: 0,
+            bonusAmount: 0,
+        }));
     };
 
     const createModel = () => {
         onFormClear()
-        isEdit = false;
+        isEditStaffSalaryDetail = false;
         setModal(true)
     };
-
-    const onEditForm = (data, index) => {
-        setState({
-            ...state,
-            departmentName: data?.departmentName || "",
-        });
-        isEdit = true;
-        setSelectedItem(data)
-        setSelectedIndex(index)
-        setModal(true)
-    };
-
 
     const onFormSubmit = async () => {
         const submitRequest = {
             staffSalary: state?.staffSalary || ""
         }
-        console.log("submitRequest");
-        console.log(submitRequest);
-        return;
-        if (isEdit) {
-            dispatch(updateStaffSalaryRequest(submitRequest, selectedItem.departmentId))
+        dispatch(createStaffSalaryRequest(submitRequest))
+    };
+
+    const onStaffSubmit = async () => {
+        const submitRequest = {
+            staffSalary: [{
+                staffId: state?.staffSalaryDetails?.staffId || "",
+                branchId: state?.staffSalaryDetails?.branchId || "",
+                departmentId: state?.staffSalaryDetails?.departmentId || "",
+                salaryDate: `${state.filterSalaryMonth}-01`,
+                monthlyAmount: state?.staffSalaryDetails?.monthlyAmount || 0,
+
+                esiAmount: state?.staffSalaryDetails?.esiAmount || 0,
+                pfAmount: state?.staffSalaryDetails?.pfAmount || 0,
+
+                incentiveAmount: state?.staffSalaryDetails?.incentiveAmount || 0,
+                bonusAmount: state?.staffSalaryDetails?.bonusAmount || 0,
+
+                deductionAmount: state?.staffSalaryDetails?.deductionAmount || 0,
+                totalSalaryAmount: state?.staffSalaryDetails?.totalSalaryAmount || 0,
+            }]
+        }
+        if (isEditStaffSalaryDetail) {
+            dispatch(updateStaffSalaryRequest(submitRequest, selectedItem.staffSalaryHistoryId))
         } else {
             dispatch(createStaffSalaryRequest(submitRequest))
         }
@@ -367,7 +471,8 @@ function Index() {
     const handleDepartment = (option, formName, uniqueKey, displayKey) => {
         const filterDepartment = {
             departmentId: option[uniqueKey] || '',
-            branchId: state?.branchId || ''
+            branchId: state?.branchId || '',
+            salaryDate: `${state.filterSalaryMonth}-01`
         }
         dispatch(getStaffSalaryRequest(filterDepartment));
         setIsLoading(true);
@@ -380,7 +485,8 @@ function Index() {
     const handleBranch = (option, formName, uniqueKey, displayKey) => {
         const filterBranch = {
             branchId: option[uniqueKey] || '',
-            departmentId: state?.departmentId || ''
+            departmentId: state?.departmentId || '',
+            salaryDate: `${state.filterSalaryMonth}-01`
         }
         dispatch(getStaffSalaryRequest(filterBranch));
         setIsLoading(true);
@@ -390,10 +496,79 @@ function Index() {
         })
     }
 
-    const onIncentiveForm = (data, index) => {
-        setSelectedIndex(index)
-        setSelectedItem(data)
+    const onModalForm = (data, index) => {
+        createModel();
+        setSelectedIndex(index);
+        setSelectedItem(data);
+
+        const salaryDetailsReq = {
+            staffId: data.staffId,
+            salaryDate: `${state?.filterSalaryMonth}-01`
+        }
+        dispatch(getStaffSalaryDetailRequest(salaryDetailsReq));
     }
+
+    const onHandleDeductionAmount = (incentiveAmount = 0, bonusAmount = 0, data) => {
+        const casualLeaveCount = Number(data?.casualLeaveCount);
+        const sickLeaveCount = Number(data?.sickLeaveCount);
+        const lopDays = (casualLeaveCount + sickLeaveCount) > 0 ?
+            (casualLeaveCount - 1) + (sickLeaveCount - 1) > 0 ? (casualLeaveCount - 1) + (sickLeaveCount - 1) : 0 : 0;
+        const perDaysalary = Number(data?.monthlyAmount) / Number(data?.workingDays);
+        const leaveDeductionAmount = perDaysalary * lopDays;
+        let deductionAmount = Number(leaveDeductionAmount - (Number(incentiveAmount) + Number(bonusAmount))).toFixed(2);
+        const totalSalaryAmount = Number(Number(data?.monthlyAmount) - deductionAmount).toFixed(2);
+        if (deductionAmount < 0) {
+            deductionAmount = Number(0).toFixed(2);
+        }
+        return { deductionAmount, totalSalaryAmount };
+    }
+
+    const onIncentiveorBonusAmount = (event, name) => {
+        const { value } = event.target
+        setState((prevState) => {
+            const updatedStaffSalary = [...prevState.staffSalary];
+            const updatedStaffSalaryDetails = prevState.staffSalaryDetails;
+            const selectedStaff = updatedStaffSalary[selectedIndex];
+
+            const incentiveAmountORbonusAmount = Number(value)
+
+            let bonus = selectedStaff.bonusAmount;
+            let incentive = selectedStaff.incentiveAmount;
+            if (name == "bonusAmount") {
+                bonus = incentiveAmountORbonusAmount;
+            } else {
+                incentive = incentiveAmountORbonusAmount;
+            }
+
+            const { deductionAmount, totalSalaryAmount } = onHandleDeductionAmount(incentive, bonus, state?.staffSalaryDetails);
+
+            updatedStaffSalaryDetails[name] = incentiveAmountORbonusAmount;
+            updatedStaffSalaryDetails.deductionAmount = deductionAmount;
+            updatedStaffSalaryDetails.totalSalaryAmount = totalSalaryAmount;
+
+            updatedStaffSalary[selectedIndex] = {
+                ...selectedStaff,
+                [name]: incentiveAmountORbonusAmount,
+                deductionAmount,
+                totalSalaryAmount,
+            }
+            return (
+                {
+                    ...prevState,
+                    staffSalary: updatedStaffSalary,
+                    [name]: Number(value),
+                    deductionAmount: deductionAmount,
+                    totalSalaryAmount: totalSalaryAmount,
+                    updatedStaffSalaryDetails
+                }
+            )
+        })
+    }
+
+    // console.log("state");
+    // console.log(state);
+    // console.log("state?.staffSalaryDetails")
+    // console.log(state?.staffSalaryDetails)
 
 
 
@@ -427,14 +602,47 @@ function Index() {
             <ModelViewBox
                 modal={modal}
                 setModel={setModal}
-                modelHeader={'Department'}
-                modelSize={'md'}
-                isEdit={isEdit}>
+                modelHeader={`Salary Details - (${state?.staffSalaryDetails?.staffName || ""} - ${state?.staffSalaryDetails?.staffCode || ""})`}
+                modelSize={'lg'}
+                isEdit={isEditStaffSalaryDetail}
+                modelHead={true}
+                handleSubmit={onStaffSubmit}
+            >
+                <Row className='mb-4 mt-2'>
+                    <Col md={6}>
+                        <h3 className="header-title">Staff Leave Information</h3>
+                        <Row>
+                            <Col md={5} className='mt-3'>Casual Leave</Col>
+                            <Col md={1} className='mt-3'>:</Col>
+                            <Col md={6} className='mt-3'>{`${state?.staffSalaryDetails?.casualLeaveCount || 0} Days`}</Col>
+                            <Col md={5} className='mt-3'>Sick Leave</Col>
+                            <Col md={1} className='mt-3'>:</Col>
+                            <Col md={6} className='mt-3'>{`${state?.staffSalaryDetails?.sickLeaveCount || 0} Days`}</Col>
+                            <Col md={5} className='mt-3'>Loss of Pay</Col>
+                            <Col md={1} className='mt-3'>:</Col>
+                            <Col md={6} className='mt-3'>{`${(state?.staffSalaryDetails?.casualLeaveCount + state?.staffSalaryDetails?.sickLeaveCount) > 0 ? (state?.staffSalaryDetails?.casualLeaveCount - 1) + (state?.staffSalaryDetails?.sickLeaveCount - 1) > 0 ? (state?.staffSalaryDetails?.casualLeaveCount - 1) + (state?.staffSalaryDetails?.sickLeaveCount - 1) : 0 : 0} Days`}</Col>
+                        </Row>
+                    </Col>
+                    <Col md={6}>
+                        <h3 className="header-title">Staff Benifit Information</h3>
+                        <Row>
+                            <Col md={5} className='mt-3'>ESI</Col>
+                            <Col md={1} className='mt-3'>:</Col>
+                            <Col md={6} className='mt-3'>{`Rs. ${state?.staffSalaryDetails?.esiAmount || 0}.00`}</Col>
+                            <Col md={5} className='mt-3'>PF</Col>
+                            <Col md={1} className='mt-3'>:</Col>
+                            <Col md={6} className='mt-3'>{`Rs. ${state?.staffSalaryDetails?.pfAmount || 0}.00`}</Col>
+                            <Col md={5} className='mt-3'>Monthly Salary</Col>
+                            <Col md={1} className='mt-3'>:</Col>
+                            <Col md={6} className='mt-3'>{`Rs. ${state?.staffSalaryDetails?.monthlyAmount || 0}.00`}</Col>
+                        </Row>
+                    </Col>
+                </Row>
                 <FormLayout
-                    dynamicForm={staffFilterFormContainer}
-                    handleSubmit={onFormSubmit}
+                    dynamicForm={staffSalaryDetailsFormContainer}
                     setState={setState}
                     state={state}
+                    onChangeCallBack={{ "onIncentiveorBonusAmount": onIncentiveorBonusAmount }}
                     noOfColumns={1}
                     errors={errors}
                     setErrors={setErrors}

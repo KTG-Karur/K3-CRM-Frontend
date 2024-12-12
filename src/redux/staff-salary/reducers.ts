@@ -1,10 +1,13 @@
 // employee/reducers.ts
 const initialState = {
   getStaffSalaryList: [],
+  getStaffSalaryDetailData: {},
   createStaffSalaryData: null,
   updateStaffSalaryData: null,
   isLoading: false,
   errorMessage: null,
+  getStaffSalaryDetailSuccess: false,
+  getStaffSalaryDetailFailure: false,
   getStaffSalarySuccess: false,
   getStaffSalaryFailure: false,
   createStaffSalarySuccess: false,
@@ -39,6 +42,31 @@ export default function staffsalaryReducer(state = initialState, action: any) {
         getStaffSalarySuccess: false,
         getStaffSalaryFailure: false,
         getStaffSalaryList: [],
+        errorMessage: null,
+      };
+    }
+    case "GET_STAFFSALARY_DETAIL_SUCCESS": {
+      return {
+        ...state,
+        getStaffSalaryDetailSuccess: true,
+        getStaffSalaryDetailData: action.payload.data.data,
+        getStaffSalaryDetailFailure: false,
+      };
+    }
+    case "GET_STAFFSALARY_DETAIL_FAILURE": {
+      return {
+        ...state,
+        getStaffSalaryDetailFailure: true,
+        errorMessage: action.errorMessage.errorMessage,
+        getStaffSalaryDetailSuccess: false,
+      };
+    }
+    case "RESET_GET_STAFFSALARY_DETAIL": {
+      return {
+        ...state,
+        getStaffSalaryDetailSuccess: false,
+        getStaffSalaryDetailFailure: false,
+        getStaffSalaryDetailData: [],
         errorMessage: null,
       };
     }

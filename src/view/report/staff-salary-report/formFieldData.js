@@ -3,10 +3,11 @@ const staffFilterFormContainer = [
         formFields: [
             {
                 'label': 'Salary Month',
-                'name': 'salaryDate',
+                'name': 'filterSalaryMonth',
                 'inputType': 'date',
                 'classStyle': 'col-3',
-                'onChange': 'handleDate',
+                'type': "month",
+                'maximumDate': 'maximumDate',
             },
             {
                 'label': 'Branch',
@@ -28,8 +29,48 @@ const staffFilterFormContainer = [
                 'classStyle': 'col-3',
                 onChange: 'handleDepartment',
             },
+            {
+                'label': "Excel",
+                'inputType': "button",
+                'onClick': "onDownload",
+                'classStyle': 'col-12',
+            },
         ]
     },
+]
+
+const staffSalaryDetailsFormContainer = [
+    {
+        formFields: [
+            {
+                'label': 'Insentive Amount',
+                'name': 'incentiveAmount',
+                'inputType': 'number',
+                'classStyle': 'col-6',
+                'placeholder': "0",
+                'maxlength': 4,
+                'onChange': 'onIncentiveorBonusAmount'
+            },
+            {
+                'label': 'Bounus Amount',
+                'name': 'bonusAmount',
+                'inputType': 'number',
+                'classStyle': 'col-6',
+                'maxlength': 4,
+                'placeholder': "0",
+                'onChange': 'onIncentiveorBonusAmount'
+            },
+            {
+                'label': 'Deduction Amount',
+                'name': 'deductionAmount',
+                'inputType': 'number',
+                'classStyle': 'col-6',
+                'placeholder': "0",
+                'isDisabled': true
+            },
+        ]
+    },
+
 ]
 
 const staffSalaryBtn = [
@@ -48,5 +89,6 @@ const staffSalaryBtn = [
 
 export {
     staffFilterFormContainer,
-    staffSalaryBtn
+    staffSalaryBtn,
+    staffSalaryDetailsFormContainer
 }

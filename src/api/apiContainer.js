@@ -42,6 +42,7 @@ const apiContainer = {
   rolePermission: "/role-permission",
   staffAdvanceLedger: "/staff-advance-ledger",
   salaryIncreamentHistory: "/salary-increament-history",
+  staffSalaryDetail: "/staff-salary-history-details",
 };
 
 export default apiContainer;

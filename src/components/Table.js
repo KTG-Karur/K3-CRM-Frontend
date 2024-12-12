@@ -67,6 +67,7 @@ const Table = (props) => {
     const isSortable = props['isSortable'] || true;
     const pagination = props['pagination'] === undefined ? true : false;
     const isSelectable = props['isSelectable'] || false;
+    const footerTbl = props['footerTbl'] || false;
     const isExpandable = props['isExpandable'] || false;
     const sizePerPageListData = sizePerPageList
     const columnData = props['columns']
@@ -258,33 +259,19 @@ const Table = (props) => {
                                                     </tr>
                                                 );
                                             })}
-                                        {
-                                            footerTable ?
-                                                (
-                                                    <>
-                                                        <tr>
-                                                            {/* Dynamically calculate colSpan based on the number of columns */}
-                                                            <td colSpan={columnLength - 3}></td>
-
-                                                            {/* Dynamically render the label and currency */}
-                                                            <td><b>{footerLabel || 'Total Amount'}</b></td>
-
-                                                            {/* Dynamically render the amount with optional currency */}
-                                                            <td>
-                                                                <b>
-
-                                                                    {defaultState?.totalAmount?.toLocaleString() || "0"}
-                                                                </b>
-                                                            </td>
-
-                                                            <td></td>
-                                                        </tr>
-
-                                                    </>
-                                                )
-                                                : ""
-                                        }
                                     </tbody>
+                                    {
+                                        footerTbl &&
+                                        <tfoot>
+                                            <tr>
+                                                {dataTable.footerGroups[0].headers.map((column) => (
+                                                    <td {...column.getFooterProps()} >
+                                                        {column.render('Footer')}
+                                                    </td>
+                                                ))}
+                                            </tr>
+                                        </tfoot>
+                                    }
                                 </table>
                             </div>
 

@@ -18,6 +18,26 @@ export const resetGetStaffSalary = () => ({
   type: 'RESET_GET_STAFFSALARY',
 });
 
+//Get Reducer Call--->
+export const getStaffSalaryDetailRequest = (params?: any) => ({
+  type: 'GET_STAFFSALARY_DETAIL_REQUEST',
+  payload: params,
+});
+
+export const getStaffSalaryDetailSuccess = (data: any) => ({
+  type: 'GET_STAFFSALARY_DETAIL_SUCCESS',
+  payload: { data },
+});
+
+export const getStaffSalaryDetailFailure = (errorMessage: string) => ({
+  type: 'GET_STAFFSALARY_DETAIL_FAILURE',
+  errorMessage: { errorMessage },
+});
+
+export const resetGetStaffSalaryDetail = () => ({
+  type: 'RESET_GET_STAFFSALARY_DETAIL',
+});
+
 //Create Reducer Call--->
 export const createStaffSalaryRequest = (data: any) => ({
   type: 'CREATE_STAFFSALARY_REQUEST',

@@ -20,7 +20,7 @@ function ModelViewBox(props) {
 
                         <div className='d-flex justify-content-end'>
                             {saveBtn && <Button
-                                variant="primary"
+                                variant={isEdit ? 'success' : 'primary'}
                                 className="waves-effect waves-light me-1"
                                 type="button"
                                 onClick={handleSubmit}>

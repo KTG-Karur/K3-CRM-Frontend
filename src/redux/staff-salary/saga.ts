@@ -1,12 +1,14 @@
 // saga.ts
 import { call, put, takeEvery } from 'redux-saga/effects';
-import { createStaffSalary, getStaffSalary, updateStaffSalary } from '../../api/StaffSalaryApi'; // Adjust the path as needed
+import { createStaffSalary, getStaffSalary, getStaffSalaryDetail, updateStaffSalary } from '../../api/StaffSalaryApi'; // Adjust the path as needed
 import { 
   getStaffSalarySuccess, getStaffSalaryFailure,
   createStaffSalarySuccess,
   createStaffSalaryFailure,
   updateStaffSalarySuccess,
   updateStaffSalaryFailure,
+  getStaffSalaryDetailSuccess,
+  getStaffSalaryDetailFailure,
 } from './actions';
 
 // Saga to handle fetching staffsalarys
@@ -22,6 +24,22 @@ function* fetchStaffSalarySaga(action: any): Generator<any, any, any> {
       : 'An unexpected error occurred';
 
     yield put(getStaffSalaryFailure(errorMessage));
+  }
+}
+
+// Saga to handle fetching staffsalarys
+function* fetchStaffSalaryDetailSaga(action: any): Generator<any, any, any> {
+  try {
+    const data = yield call(getStaffSalaryDetail, action.payload);
+    yield put(getStaffSalaryDetailSuccess(data));
+  } catch (error: any) {
+    const errorMessage = error.response && error.response.data && error.response.data.message
+    ? error.response.data.message
+    : error.message
+      ? error.message
+      : 'An unexpected error occurred';
+
+    yield put(getStaffSalaryDetailFailure(errorMessage));
   }
 }
 
@@ -68,6 +86,7 @@ function* updateStaffSalarySaga(action: any): Generator<any, any, any> {
 // }
 
 export default function* staffsalarySaga() {
+  yield takeEvery('GET_STAFFSALARY_DETAIL_REQUEST', fetchStaffSalaryDetailSaga);
   yield takeEvery('GET_STAFFSALARY_REQUEST', fetchStaffSalarySaga);
   yield takeEvery('CREATE_STAFFSALARY_REQUEST', createStaffSalarySaga);
   yield takeEvery('UPDATE_STAFFSALARY_REQUEST', updateStaffSalarySaga);

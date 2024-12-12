@@ -211,28 +211,28 @@ const Navigate: NavigateTypes[] = [
             // },
         ],
     },
-    {
-        label: 'Setting',
-        isTitle: false,
-        icon: 'fe-settings',
-        children: [
-            {
-                label: 'Working Day',
-                url: '/view/setting-working-day',
-                parentKey: 'Setting',
-            },
-            {
-                label: 'Leave Deduction',
-                url: '/view/setting-leave-deduction',
-                parentKey: 'Setting',
-            },
-            {
-                label: 'Benefit',
-                url: '/view/setting-benefit',
-                parentKey: 'Setting',
-            },
-        ],
-    },
+    // {
+    //     label: 'Setting',
+    //     isTitle: false,
+    //     icon: 'fe-settings',
+    //     children: [
+    //         {
+    //             label: 'Working Day',
+    //             url: '/view/setting-working-day',
+    //             parentKey: 'Setting',
+    //         },
+    //         // {
+    //         //     label: 'Leave Deduction',
+    //         //     url: '/view/setting-leave-deduction',
+    //         //     parentKey: 'Setting',
+    //         // },
+    //         // {
+    //         //     label: 'Benefit',
+    //         //     url: '/view/setting-benefit',
+    //         //     parentKey: 'Setting',
+    //         // },
+    //     ],
+    // },
 
     { label: 'Reports', isTitle: true },
     {
@@ -240,6 +240,12 @@ const Navigate: NavigateTypes[] = [
         isTitle: false,
         icon: 'fe-calendar',
         url: '/report/staff-attendance-report',
+    },
+    {
+        label: 'Salary Report',
+        isTitle: false,
+        icon: 'fe-dollar-sign',
+        url: '/report/staff-salary-report',
     },
     {
         label: 'Claim Report',
@@ -525,38 +531,38 @@ const Navigate: NavigateTypes[] = [
     //         },
     //     ],
     // },
-    {
-        label: 'Icons',
-        isTitle: false,
-        icon: 'mdi mdi-shield-outline',
-        children: [
-            {
-                label: 'Feather Icons',
-                url: '/icons/feather',
-                parentKey: 'Icons',
-            },
-            {
-                label: 'Material Design Icons',
-                url: '/icons/mdi',
-                parentKey: 'Icons',
-            },
-            {
-                label: 'DripIcons',
-                url: '/icons/dripIcons',
-                parentKey: 'Icons',
-            },
-            {
-                label: 'Font Awesome 5',
-                url: '/icons/font-awesome',
-                parentKey: 'Icons',
-            },
-            {
-                label: 'Themify',
-                url: '/icons/themify',
-                parentKey: 'Icons',
-            },
-        ],
-    },
+    // {
+    //     label: 'Icons',
+    //     isTitle: false,
+    //     icon: 'mdi mdi-shield-outline',
+    //     children: [
+    //         {
+    //             label: 'Feather Icons',
+    //             url: '/icons/feather',
+    //             parentKey: 'Icons',
+    //         },
+    //         {
+    //             label: 'Material Design Icons',
+    //             url: '/icons/mdi',
+    //             parentKey: 'Icons',
+    //         },
+    //         {
+    //             label: 'DripIcons',
+    //             url: '/icons/dripIcons',
+    //             parentKey: 'Icons',
+    //         },
+    //         {
+    //             label: 'Font Awesome 5',
+    //             url: '/icons/font-awesome',
+    //             parentKey: 'Icons',
+    //         },
+    //         {
+    //             label: 'Themify',
+    //             url: '/icons/themify',
+    //             parentKey: 'Icons',
+    //         },
+    //     ],
+    // },
     // {
     //     label: 'Forms',
     //     isTitle: false,

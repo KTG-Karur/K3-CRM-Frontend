@@ -193,11 +193,11 @@ function Index() {
     }
     const onEditForm = (data) => {
         const pagesListData = JSON.parse(JSON.stringify(pagesList))
-        const selectedIds = JSON.parse(data[0].accessIds)
+        const selectedIds = data.length > 0 ? JSON.parse(data[0]?.accessIds) : []
         
         pagesListData.map((item)=>{
             const selectedId = item.id
-            const page = selectedIds.access.find(p => p.pageId === selectedId);
+            const page =data.length > 0 ? selectedIds?.access.find(p => p.pageId === selectedId) : false;
             if(page){
                 item.state = 1
                 item.children.map((ele)=>{

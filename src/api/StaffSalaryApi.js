@@ -1,10 +1,25 @@
 import { apiReturnCallBack } from './ApiConfig';
 import apiContainer from './apiContainer';
 const staffsalary = apiContainer.staffSalary
+const staffSalaryDetail = apiContainer.staffSalaryDetail
 //GET--->
 export async function getStaffSalary(request) {
   try {
     const response = await apiReturnCallBack("GET", staffsalary, request);
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || JSON.stringify(data));
+    }    
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+//GET Detail--->
+export async function getStaffSalaryDetail(request) {
+  try {
+    const response = await apiReturnCallBack("GET", staffSalaryDetail, request);
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.message || JSON.stringify(data));

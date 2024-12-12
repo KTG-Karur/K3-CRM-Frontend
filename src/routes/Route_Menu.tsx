@@ -58,6 +58,7 @@ export const CommonClaimReport = React.lazy(() => import('../view/documents/comm
 
 //report
 export const StaffAttendanceReport = React.lazy(() => import('../view/report/staff-attendance-report'));
+export const StaffSalaryReport = React.lazy(() => import('../view/report/staff-salary-report'));
 export const ClaimReport = React.lazy(() => import('../view/report/claim-report'));
 export const PetrolAllowanceReport = React.lazy(() => import('../view/report/petrol-allowance-report'));
 

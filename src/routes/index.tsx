@@ -127,6 +127,7 @@ import {
     StaffBiodataReport,
     SalaryIncreamentHistory,
     CommonClaimReport,
+    StaffSalaryReport,
 } from './Route_Menu';
 
 const loading = () => <div className=""></div>;
@@ -355,6 +356,10 @@ const AllRoutes = () => {
                         {
                             path: 'staff-attendance-report',
                             element: <LoadComponent component={StaffAttendanceReport} />,
+                        },
+                        {
+                            path: 'staff-salary-report',
+                            element: <LoadComponent component={StaffSalaryReport} />,
                         },
                         {
                             path: 'claim-report',

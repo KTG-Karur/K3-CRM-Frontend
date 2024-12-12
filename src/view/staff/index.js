@@ -1240,8 +1240,8 @@ function Index() {
         const pf = 0.12
         const annualAmount = e.target.value
         const monthlyAmount = parseInt(annualAmount / 12)
-        const esiAmount = parseInt(monthlyAmount * esi / 100)
-        const pfAmount = parseInt(monthlyAmount * pf / 100)
+        const esiAmount = parseInt(monthlyAmount * (esi / 100))
+        const pfAmount = parseInt(monthlyAmount * (pf / 100))
         const monthlySalary = monthlyAmount - esiAmount - pfAmount
         setState({
             ...state,

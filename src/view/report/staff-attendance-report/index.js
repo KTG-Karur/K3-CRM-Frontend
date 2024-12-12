@@ -263,6 +263,7 @@ function Index() {
         const rows = [
             ...header,
             ...data.map(item => [
+                item ["s.no"],
                 item.staffCode,
                 item.staffName,
                 item.branchName,
@@ -283,6 +284,7 @@ function Index() {
             { wch: 12 },
             { wch: 12 },
             { wch: 10 },
+            { wch: 12 },
             { wch: 12 }
         ];
 
