@@ -81,15 +81,16 @@ const Login = () => {
         // dispatch(resetGetEmployeeLogin())
     }, [dispatch]);
 
-    // useEffect(() => {
-    //     if (getEmployeeLoginSuccess) {
-    //         setUserLoggedIn(true)
-    //         setLoading(false)
-    //         sessionStorage.setItem("loginInfo", JSON.stringify(getEmployeeLoginList));
-    //     } else if (getEmployeeLoginFailure) {
-    //         dispatch(resetGetEmployeeLogin())
-    //     }
-    // }, [getEmployeeLoginSuccess, getEmployeeLoginFailure]);
+    useEffect(() => {
+        if (getEmployeeLoginSuccess) {
+            setUserLoggedIn(true)
+            setLoading(false)
+            sessionStorage.setItem("loginInfo", JSON.stringify(getEmployeeLoginList));
+            localStorage.setItem("loginInfo", JSON.stringify(getEmployeeLoginList));
+        } else if (getEmployeeLoginFailure) {
+            dispatch(resetGetEmployeeLogin())
+        }
+    }, [getEmployeeLoginSuccess, getEmployeeLoginFailure]);
 
     /*
     form validation schema
@@ -112,13 +113,13 @@ const Login = () => {
          setLoading(true)
          dispatch(getEmployeeLoginRequest(sumbitReq))
 
-        setUserLoggedIn(true)
-        const getEmployeeLoginList = [
-            {
-                userId : 1
-            }
-        ]
-        sessionStorage.setItem("loginInfo", JSON.stringify(getEmployeeLoginList));
+        // setUserLoggedIn(true)
+        // const getEmployeeLoginList = [
+        //     {
+        //         userId : 1
+        //     }
+        // ]
+        // sessionStorage.setItem("loginInfo", JSON.stringify(getEmployeeLoginList));
     };
 
     const location = useLocation();
@@ -153,13 +154,13 @@ const Login = () => {
                 <VerticalForm<UserData>
                     onSubmit={onSubmit}
                     resolver={schemaResolver}
-                    defaultValues={{ email: 'suki@k3.com', password: '123456' }}
+                    defaultValues={{ email: 'mohan@k3.com', password: 'mohan@k3' }}
                 >
                     <FormInput
                         type="email"
                         name="email"
                         label={t('User Name')}
-                        placeholder={t('hello@coderthemes.com')}
+                        placeholder={t('hello@K3.com')}
                         containerClass={'mb-3'}
                     />
                     <FormInput
@@ -170,13 +171,13 @@ const Login = () => {
                         containerClass={'mb-3'}
                     ></FormInput>
 
-                    <FormInput
+                    {/* <FormInput
                         type="checkbox"
                         name="checkbox"
                         label={t('Remember me')}
                         containerClass={'mb-3'}
                         defaultChecked
-                    />
+                    /> */}
 
                     <div className="text-center d-grid mb-3">
                         <Button variant="primary" type="submit" disabled={loading}>

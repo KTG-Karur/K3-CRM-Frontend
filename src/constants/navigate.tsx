@@ -12,7 +12,12 @@ export type NavigateTypes = {
     children?: NavigateTypes[];
 };
 
-const Navigate: NavigateTypes[] = [
+const userDetails: any = localStorage.getItem("loginInfo");
+const localData: any = userDetails ? JSON.parse(userDetails) : null;
+
+const Navigate: NavigateTypes[] = localData[0].pagePermission
+
+const Navigateold: NavigateTypes[] = [
     // { label: 'Dashboard', isTitle: true },
     // {
     //     label: 'Dashboard',

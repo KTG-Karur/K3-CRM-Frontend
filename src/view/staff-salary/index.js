@@ -97,17 +97,6 @@ function Index() {
             sort: true,
         },
         {
-            Header: 'Working Days',
-            accessor: 'salaryMonth',
-            Cell: ({ row }) => {
-                return (
-                    <div>
-                        {row.original?.salaryMonth ? row.original?.salaryMonth : 0}
-                    </div>
-                )
-            },
-        },
-        {
             Header: 'Actions',
             accessor: 'actions',
             Cell: ({ row }) => {
@@ -131,24 +120,24 @@ function Index() {
         filterSalaryMonth: moment().subtract(1,'months').endOf('month').format('YYYY-MM')
     });
 
-    console.log("state")
-    console.log(state)
     const [optionListState, setOptionListState] = useState({
         branchList: [],
         departmentList: [],
     })
-    const [parentList, setParentList] = useState([{
-        staffName: "surya",
-        salaryMonth: "20,000",
-        leaveCount: "2",
-        Leavesalary: "230",
-        SalaryafterLeaveamount: "19770",
-        ESI: "100",
-        PF: "50",
-        advanceAmount: "500",
-        DeductedAmtthisMonth: "410",
-        SalonHand: "19,590",
-    }]);
+    const [parentList, setParentList] = useState([
+    //     {
+    //     staffName: "surya",
+    //     salaryMonth: "20,000",
+    //     leaveCount: "2",
+    //     Leavesalary: "230",
+    //     SalaryafterLeaveamount: "19770",
+    //     ESI: "100",
+    //     PF: "50",
+    //     advanceAmount: "500",
+    //     DeductedAmtthisMonth: "410",
+    //     SalonHand: "19,590",
+    // }
+]);
     const [selectedItem, setSelectedItem] = useState({});
     const [selectedIndex, setSelectedIndex] = useState(false);
     const [modal, setModal] = useState(false);
@@ -158,7 +147,7 @@ function Index() {
     useEffect(() => {
         setIsLoading(true)
         dispatch(getSettingBenefitRequest());
-        dispatch(getStaffSalaryRequest());
+        // dispatch(getStaffSalaryRequest());
         dispatch(getBranchRequest());
         dispatch(getDepartmentRequest());
     }, []);
@@ -183,7 +172,7 @@ function Index() {
     useEffect(() => {
         if (getStaffSalarySuccess) {
             setIsLoading(false)
-            // setParentList(getStaffSalaryList)
+            setParentList(getStaffSalaryList)
             // const staffSalaryList = (getStaffSalaryList || []).map(item => {
             //     return {
             //         staffId: item?.staffId || '',
@@ -282,7 +271,7 @@ function Index() {
                 departmentId: state.departmentId
             }
             state.departmentId <= 0 && delete staffReq.departmentId
-            // dispatch(getStaffSalary)
+            dispatch(getStaffSalaryRequest(staffReq))
         }
     }, [state.departmentId, state.branchId, state.filterSalaryMonth]);
 

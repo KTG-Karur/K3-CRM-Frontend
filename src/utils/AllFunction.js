@@ -289,8 +289,14 @@ const calculateTotalInterestPayable = (principal, annualInterest, tenurePeriod) 
     return totalInterestPayable;
 };
 
-const removeNullKeyFromObj = (obj) => {
-    return _.omitBy(obj, (value) => value === null)
+const removeNullKeyFromObj = (data) => {
+    let result =""
+    if(Array.isArray(data)){
+        result = data.map((obj) => _.omitBy(obj, (value) => value === null));
+    }else{
+        result = _.omitBy(data, (value) => value === null)
+    }
+    return result;
 }
 
 function numberToRupeesWords(number) {

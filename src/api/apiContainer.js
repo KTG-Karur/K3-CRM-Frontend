@@ -4,7 +4,9 @@ const apiContainer = {
   setting: "/setting",
   designation: "/designation",
   bankAccount: "/bank-account",
+
   employeeLogin: "/organization-login",
+  
   role: "/role",
   uploadImages: "/upload-proof",
   petrolAllowance: "/petrol-allowance",
@@ -42,6 +44,8 @@ const apiContainer = {
   rolePermission: "/role-permission",
   staffAdvanceLedger: "/staff-advance-ledger",
   salaryIncreamentHistory: "/salary-increament-history",
+  staffSalaryHistory: "/staff-salary-history",
+  page: "/page",
 };
 
 export default apiContainer;

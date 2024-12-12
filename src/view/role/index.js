@@ -4,8 +4,8 @@ import ModelViewBox from '../../components/Atom/ModelViewBox';
 import FormLayout from '../../utils/formLayout';
 import { formContainer } from './formFieldData';
 import Table from '../../components/Table';
-import { showConfirmationDialog, showMessage } from '../../utils/AllFunction';
-import { createRoleRequest, getRolePermissionRequest, getRoleRequest, resetCreateRole, resetGetRole, resetGetRolePermission, resetUpdateRole, updateRoleRequest } from '../../redux/actions';
+import { removeNullKeyFromObj, showConfirmationDialog, showMessage } from '../../utils/AllFunction';
+import { createRoleRequest, getPageRequest, getRolePermissionRequest, getRoleRequest, resetCreateRole, resetGetPage, resetGetRole, resetGetRolePermission, resetUpdateRole, updateRoleRequest } from '../../redux/actions';
 import { useRedux } from '../../hooks'
 import { NotificationContainer } from 'react-notifications';
 import RoleTreeView from '../../components/Atom/RoleTreeView';
@@ -18,16 +18,21 @@ function Index() {
 
     const { dispatch, appSelector } = useRedux();
 
-    const { 
+    const {
         getRoleSuccess, getRoleList, getRoleFailure,
+        getPageSuccess, getPageList, getPageFailure,
         getRolePermissionSuccess, getRolePermissionList, getRolePermissionFailure,
         createRoleSuccess, createRoleData, createRoleFailure,
-        updateRoleSuccess, updateRoleData, updateRoleFailure,errorMessage
+        updateRoleSuccess, updateRoleData, updateRoleFailure, errorMessage
 
     } = appSelector((state) => ({
         getRoleSuccess: state.roleReducer.getRoleSuccess,
         getRoleList: state.roleReducer.getRoleList,
         getRoleFailure: state.roleReducer.getRoleFailure,
+
+        getPageSuccess: state.pageReducer.getPageSuccess,
+        getPageList: state.pageReducer.getPageList,
+        getPageFailure: state.pageReducer.getPageFailure,
 
         getRolePermissionSuccess: state.rolePermissionReducer.getRolePermissionSuccess,
         getRolePermissionList: state.rolePermissionReducer.getRolePermissionList,
@@ -101,7 +106,8 @@ function Index() {
 
     const [state, setState] = useState({});
     const [parentList, setParentList] = useState([]);
-    const [checkboxListData, setCheckboxListData] = useState(pagesList);
+    const [defaultCheckboxListData, setDefaultCheckboxListData] = useState([]);
+    const [checkboxListData, setCheckboxListData] = useState([]);
     const [selectedItem, setSelectedItem] = useState({});
     const [selectedIndex, setSelectedIndex] = useState(false);
     const [modal, setModal] = useState(false);
@@ -113,6 +119,7 @@ function Index() {
     useEffect(() => {
         setIsLoading(true)
         dispatch(getRoleRequest());
+        dispatch(getPageRequest());
     }, []);
 
     useEffect(() => {
@@ -126,6 +133,30 @@ function Index() {
             dispatch(resetGetRole())
         }
     }, [getRoleSuccess, getRoleFailure]);
+
+    useEffect(() => {
+        if (getPageSuccess) {
+            setIsLoading(false)
+            let filterArr = []
+            getPageList.forEach((ele) => {
+                if(ele.isTitle == 1){
+                    return false;
+                }else{
+                    ele.expanded = true
+                    ele.children = JSON.parse(ele.access)
+                    filterArr.push(ele)
+                }
+            })
+            const removedNullKey = removeNullKeyFromObj(filterArr)
+            setCheckboxListData(removedNullKey)
+            setDefaultCheckboxListData(removedNullKey)
+            dispatch(resetGetPage())
+        } else if (getPageFailure) {
+            setIsLoading(false)
+            setParentList([])
+            dispatch(resetGetPage())
+        }
+    }, [getPageSuccess, getPageFailure]);
 
     useEffect(() => {
         if (getRolePermissionSuccess) {
@@ -179,29 +210,30 @@ function Index() {
 
     const createModel = () => {
         onFormClear()
-        setCheckboxListData(JSON.parse(JSON.stringify(pagesList)))
+        console.log(defaultCheckboxListData)
+        setCheckboxListData(JSON.parse(JSON.stringify(defaultCheckboxListData)))
         isEdit = false;
         setModal(true)
     };
 
-    const rolePermissionCall = (data, index)=>{
-        const req={
-            roleId : data.roleId
+    const rolePermissionCall = (data, index) => {
+        const req = {
+            roleId: data.roleId
         }
         dispatch(getRolePermissionRequest(req));
         setSelectedIndex(index)
     }
     const onEditForm = (data) => {
-        const pagesListData = JSON.parse(JSON.stringify(pagesList))
+        const pagesListData = JSON.parse(JSON.stringify(defaultCheckboxListData))
         const selectedIds = JSON.parse(data[0].accessIds)
-        
-        pagesListData.map((item)=>{
+
+        pagesListData.map((item) => {
             const selectedId = item.id
             const page = selectedIds.access.find(p => p.pageId === selectedId);
-            if(page){
+            if (page) {
                 item.state = 1
-                item.children.map((ele)=>{
-                    if(page.accessPermission.includes(ele.extraKey) ){
+                item.children.map((ele) => {
+                    if (page.accessPermission.includes(ele.extraKey)) {
                         ele.state = 1
                     }
                 })
@@ -224,28 +256,28 @@ function Index() {
 
     const onFormSubmit = async () => {
         let selectedData = []
-        checkboxListData.map((item,index)=>{
+        checkboxListData.map((item, index) => {
             const childrenData = item.children
             let tempArr = []
             const accessPermission = childrenData.map((data) => {
-                if(data.state === 1){
+                if (data.state === 1) {
                     tempArr.push(data.extraKey)
                 }
             });
-            if(tempArr.length > 0){
+            if (tempArr.length > 0) {
                 const filterData = [
                     {
-                        pageId : item.id,
-                        accessPermission : tempArr
+                        pageId: item.id,
+                        accessPermission: tempArr
                     }
                 ]
                 selectedData = [...selectedData, ...filterData];
             }
         })
-        if(selectedData.length > 0){
+        if (selectedData.length > 0) {
             const submitRequest = {
                 roleName: state?.roleName || "",
-                accessIds : JSON.stringify({"access" : selectedData})
+                accessIds: JSON.stringify({ "access": selectedData })
             }
             if (isEdit) {
                 submitRequest.roleName === selectedItem.roleName && delete submitRequest.roleName
@@ -254,7 +286,7 @@ function Index() {
             } else {
                 dispatch(createRoleRequest(submitRequest))
             }
-        }else{
+        } else {
             showMessage('warning', 'Please Select Pages or Permission');
             return false;
         }
@@ -270,21 +302,21 @@ function Index() {
 
     return (
         <React.Fragment>
-        <NotificationContainer />
-           { isLoading ? <div className='bg-light opacity-0.25'>
-            <div className="d-flex justify-content-center m-5">
-                <Spinner className='mt-5 mb-5' animation="border" />
-            </div>
+            <NotificationContainer />
+            {isLoading ? <div className='bg-light opacity-0.25'>
+                <div className="d-flex justify-content-center m-5">
+                    <Spinner className='mt-5 mb-5' animation="border" />
+                </div>
             </div> :
-            <div>
-                <Table
-                columns={columns}
-                Title={'Role List'}
-                data={parentList || []}
-                pageSize={5}
-                toggle={createModel}
-            />
-            </div>
+                <div>
+                    <Table
+                        columns={columns}
+                        Title={'Role List'}
+                        data={parentList || []}
+                        pageSize={5}
+                        toggle={createModel}
+                    />
+                </div>
             }
 
             <ModelViewBox
