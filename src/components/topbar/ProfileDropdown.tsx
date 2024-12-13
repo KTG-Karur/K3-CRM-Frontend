@@ -12,10 +12,11 @@ import { ProfileMenu } from '../../layouts/types';
 type ProfileDropdownProps = {
     userImage: string;
     username: string;
+    staffname: string;
     menuItems: ProfileMenu[];
 };
 
-const ProfileDropdown = ({ userImage, username, menuItems }: ProfileDropdownProps) => {
+const ProfileDropdown = ({ userImage, username, menuItems, staffname }: ProfileDropdownProps) => {
     const [isOpen, show, hide] = useToggle();
 
     /*
@@ -27,6 +28,7 @@ const ProfileDropdown = ({ userImage, username, menuItems }: ProfileDropdownProp
 
     const handleLogout = () => {
         sessionStorage.clear();
+        localStorage.clear();
         console.log('logout');
     };
 
@@ -47,7 +49,7 @@ const ProfileDropdown = ({ userImage, username, menuItems }: ProfileDropdownProp
             <Dropdown.Menu align="end" className="profile-dropdown">
                 <div onClick={toggleDropdown}>
                     <Dropdown.Header className="noti-title">
-                        <h6 className="text-overflow m-0">Welcome !</h6>
+                        <h6 className="text-overflow m-0">{`Welcome ${staffname} !`}</h6>
                     </Dropdown.Header>
 
                     {(menuItems || []).map((menu, i) => {

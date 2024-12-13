@@ -270,10 +270,6 @@ const AllRoutes = () => {
                 //     element: <LoadComponent component={ClaimTemplate} />,
                 // },
                 {
-                    path: 'staff-attendance',
-                    element: <LoadComponent component={Attendance} />,
-                },
-                {
                     path: 'attendance',
                     children: [
                         {

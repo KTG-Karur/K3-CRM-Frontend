@@ -52,11 +52,11 @@ const notifications: Notification[] = [
 
 // get the profilemenu
 const profileMenus: ProfileMenu[] = [
-    {
-        label: 'My Account',
-        icon: 'fe-user',
-        redirectTo: '/apps/contacts/profile',
-    },
+    // {
+    //     label: 'My Account',
+    //     icon: 'fe-user',
+    //     redirectTo: '/apps/contacts/profile',
+    // },
     // {
     //     label: 'Lock Screen',
     //     icon: 'fe-lock',

@@ -119,7 +119,10 @@ function Index() {
     useEffect(() => {
         setIsLoading(true)
         dispatch(getRoleRequest());
-        dispatch(getPageRequest());
+        const req = {
+            isActive: 1
+        }
+        dispatch(getPageRequest(req));
     }, []);
 
     useEffect(() => {
@@ -139,9 +142,9 @@ function Index() {
             setIsLoading(false)
             let filterArr = []
             getPageList.forEach((ele) => {
-                if(ele.isTitle == 1){
+                if (ele.isTitle == 1) {
                     return false;
-                }else{
+                } else {
                     ele.expanded = true
                     ele.children = JSON.parse(ele.access)
                     filterArr.push(ele)
@@ -210,7 +213,6 @@ function Index() {
 
     const createModel = () => {
         onFormClear()
-        console.log(defaultCheckboxListData)
         setCheckboxListData(JSON.parse(JSON.stringify(defaultCheckboxListData)))
         isEdit = false;
         setModal(true)
@@ -240,7 +242,6 @@ function Index() {
             }
         })
         setCheckboxListData(pagesListData)
-        console.log()
         setSelectedItem(data)
         setState({
             ...state,

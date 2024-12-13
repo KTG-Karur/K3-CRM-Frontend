@@ -40,14 +40,14 @@ const Calendar = ({ onDateClick, onEventClick, onDrop, onEventDrop, events, Titl
                         // week: 'Week',
                         // day: 'Day',
                         // list: 'List',
-                        prev: 'Prev',
+                        // prev: 'Prev',
                         next: 'Next',
                     }}
                     headerToolbar={{
                         left: '',
                         center: 'title',
-                        right: 'prev,next today',
-                        // right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth',
+                        right: 'next today',
+                        // right: 'prev,dayGridMonth,timeGridWeek,timeGridDay,listMonth',
                     }}
                     editable={false}
                     selectable={true}

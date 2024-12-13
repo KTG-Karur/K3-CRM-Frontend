@@ -6,7 +6,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useTranslation } from 'react-i18next';
 import LogoDark from '../../assets/images/K3_Logo.png';
 import { APICore } from '../../helpers/api/apiCore';
-
 //hooks
 import { useRedux } from '../../hooks/';
 
@@ -35,12 +34,12 @@ const BottomLink = () => {
     return (
         <Row className="mt-3">
             <Col xs={12} className="text-center">
-                <p className="text-muted text-light">
+                {/* <p className="text-muted text-light">
                     <Link to="/auth/forget-password" className="text-muted ms-1">
                         <i className="fa fa-lock me-1"></i>
                         {t('Forgot your password?')}
                     </Link>
-                </p>
+                </p> */}
                 {/* <p className="text-muted">
                     {t("Don't have an account?")}{' '}
                     <Link to={'/auth/register'} className="text-dark ms-1">
@@ -65,10 +64,7 @@ const Login = () => {
     //     userLoggedIn: state.Auth.userLoggedIn,
     // }));
 
-    const {
-        getEmployeeLoginSuccess, getEmployeeLoginList, getEmployeeLoginFailure, error
-
-    } = appSelector((state) => ({
+    const { getEmployeeLoginSuccess, getEmployeeLoginList, getEmployeeLoginFailure, error } = appSelector((state) => ({
         getEmployeeLoginSuccess: state.loginReducer.getEmployeeLoginSuccess,
         getEmployeeLoginList: state.loginReducer.getEmployeeLoginList,
         getEmployeeLoginFailure: state.loginReducer.getEmployeeLoginFailure,
@@ -83,12 +79,17 @@ const Login = () => {
 
     useEffect(() => {
         if (getEmployeeLoginSuccess) {
-            setUserLoggedIn(true)
-            setLoading(false)
-            sessionStorage.setItem("loginInfo", JSON.stringify(getEmployeeLoginList));
-            localStorage.setItem("loginInfo", JSON.stringify(getEmployeeLoginList));
+            setUserLoggedIn(true);
+            setLoading(false);
+            sessionStorage.setItem('loginInfo', JSON.stringify(getEmployeeLoginList));
+            localStorage.setItem('loginInfo', JSON.stringify(getEmployeeLoginList));
+            dispatch(resetGetEmployeeLogin());
         } else if (getEmployeeLoginFailure) {
-            dispatch(resetGetEmployeeLogin())
+            setLoading(false);
+            setUserLoggedIn(false);
+            setTimeout(() => {
+                dispatch(resetGetEmployeeLogin());
+            }, 3000);
         }
     }, [getEmployeeLoginSuccess, getEmployeeLoginFailure]);
 
@@ -106,12 +107,12 @@ const Login = () => {
     handle form submission
     */
     const onSubmit = (formData: UserData) => {
-        const sumbitReq={
-            userName : formData['email'],
-            password : formData['password']
-        }
-         setLoading(true)
-         dispatch(getEmployeeLoginRequest(sumbitReq))
+        const sumbitReq = {
+            userName: formData['email'],
+            password: formData['password'],
+        };
+        setLoading(true);
+        dispatch(getEmployeeLoginRequest(sumbitReq));
 
         // setUserLoggedIn(true)
         // const getEmployeeLoginList = [
@@ -122,12 +123,12 @@ const Login = () => {
         // sessionStorage.setItem("loginInfo", JSON.stringify(getEmployeeLoginList));
     };
 
-    const location = useLocation();
-    let redirectUrl = '/';
+    const userDetails: any = localStorage.getItem('loginInfo');
+    const localData: any = userDetails ? JSON.parse(userDetails) : false;
+    let redirectUrl = '/auth/login';
 
-    if (location.state) {
-        const { from } = location.state as LocationState;
-        redirectUrl = from ? from.pathname : '/dashboard';
+    if (localData) {
+        redirectUrl = '/attendance/staff-attendance';
     }
 
     return (
@@ -154,7 +155,7 @@ const Login = () => {
                 <VerticalForm<UserData>
                     onSubmit={onSubmit}
                     resolver={schemaResolver}
-                    defaultValues={{ email: 'mohan@k3.com', password: 'mohan@k3' }}
+                    // defaultValues={{ email: 'mohan@k3.com', password: 'mohan@k3' }}
                 >
                     <FormInput
                         type="email"
@@ -168,8 +169,7 @@ const Login = () => {
                         type="password"
                         name="password"
                         placeholder="Enter your password"
-                        containerClass={'mb-3'}
-                    ></FormInput>
+                        containerClass={'mb-3'}></FormInput>
 
                     {/* <FormInput
                         type="checkbox"

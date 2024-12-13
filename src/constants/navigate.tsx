@@ -15,7 +15,7 @@ export type NavigateTypes = {
 const userDetails: any = localStorage.getItem("loginInfo");
 const localData: any = userDetails ? JSON.parse(userDetails) : null;
 
-const Navigate: NavigateTypes[] = localData[0].pagePermission
+const Navigate: NavigateTypes[] = localData[0]?.pagePermission
 
 const Navigateold: NavigateTypes[] = [
     // { label: 'Dashboard', isTitle: true },

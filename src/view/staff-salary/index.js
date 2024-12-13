@@ -153,7 +153,7 @@ function Index() {
                                     {'Submit'}
                                 </Button>)
                                 :
-                                `Salary inserted on ${moment(state?.filterSalaryMonth).format('MMMM YYYY')}`
+                                `${moment(state?.filterSalaryMonth).format('MMMM YYYY')} Salary inserted `
                         }
                     </div>
                 )

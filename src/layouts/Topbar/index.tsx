@@ -24,6 +24,7 @@ import { notifications, profileMenus, searchOptions } from './data';
 // images
 import logoSm from '../../assets/images/k3Icon.png';
 import avatar1 from '../../assets/images/users/user-1.jpg';
+import k3Avatar from '../../assets/images/k3Icon.png';
 import logoDark from '../../assets/images/K3_Logo.png';
 import logoLight from '../../assets/images/K3_Logo.png';
 
@@ -56,6 +57,11 @@ const Topbar = ({ openLeftMenuCallBack, containerClass }: TopbarProps) => {
         dispatch(showRightSidebar());
     };
 
+    const userDetails: any = localStorage.getItem('loginInfo');
+    const localData: any = userDetails ? JSON.parse(userDetails) : null;
+    const roleName = localData[0]?.roleName || 'unAuthorized';
+    const staffName = localData[0]?.staffName || 'unAuthorized';
+
     return (
         <div className="navbar-custom">
             <div className={containerClass}>
@@ -72,7 +78,12 @@ const Topbar = ({ openLeftMenuCallBack, containerClass }: TopbarProps) => {
                     </li> */}
                     <li className="dropdown notification-list topbar-dropdown">
                         {/* User */}
-                        <ProfileDropdown userImage={avatar1} username={'Admin'} menuItems={profileMenus} />
+                        <ProfileDropdown
+                            userImage={k3Avatar}
+                            username={roleName}
+                            staffname={staffName}
+                            menuItems={profileMenus}
+                        />
                     </li>
                     {/* <li className="dropdown notification-list">
                         <ThemeSetting handleRightSideBar={handleRightSideBar} />
@@ -119,8 +130,7 @@ const Topbar = ({ openLeftMenuCallBack, containerClass }: TopbarProps) => {
                                     className={classNames('navbar-toggle nav-link', {
                                         open: isopen,
                                     })}
-                                    onClick={handleLeftMenuCallBack}
-                                >
+                                    onClick={handleLeftMenuCallBack}>
                                     <div className="lines">
                                         <span></span>
                                         <span></span>
