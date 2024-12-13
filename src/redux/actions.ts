@@ -35,3 +35,4 @@ export * from './training-type/actions';
 export * from './staff-training/actions';
 export * from './role-permission/actions';
 export * from './salary-increament-history/actions';
+export * from './page/actions';

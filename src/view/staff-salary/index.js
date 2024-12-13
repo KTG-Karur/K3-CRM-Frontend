@@ -375,7 +375,7 @@ function Index() {
                 departmentId: state.departmentId
             }
             state.departmentId <= 0 && delete staffReq.departmentId
-            // dispatch(getStaffSalary)
+            dispatch(getStaffSalaryRequest(staffReq))
         }
     }, [state.departmentId, state.branchId, state.filterSalaryMonth]);
 

@@ -17,7 +17,7 @@ const CustomTabComponent = (props) => {
                         onClick={onSubmit}>
                         <i className={`mdi mdi-book-edit-outline `}></i>
                         {"Day Closing"}
-                    </Button>
+                    </Button> 
                 </div>
                 {openingShowKey && <div className='d-flex justify-content-between mb-2'>
                     <h5>

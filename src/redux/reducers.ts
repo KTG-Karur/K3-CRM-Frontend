@@ -38,6 +38,7 @@ import trainingTypeReducer from './training-type/reducers';
 import staffTrainingReducer from './staff-training/reducers';
 import rolePermissionReducer from './role-permission/reducers';
 import salaryIncreamentHistoryReducer from './salary-increament-history/reducers';
+import pageReducer from './page/reducers';
 
 export default combineReducers({
     Auth,
@@ -78,4 +79,5 @@ export default combineReducers({
     staffTrainingReducer,
     rolePermissionReducer,
     salaryIncreamentHistoryReducer,
+    pageReducer,
 });
