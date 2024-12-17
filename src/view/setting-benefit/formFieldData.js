@@ -8,12 +8,13 @@ const settingBenefitContainer = [
                 'inputType': "text",
                 'placeholder': "Enter Benefit Name",
                 'require': true,
+                'isDisabled':true,
                 'classStyle' : 'col-6'
             },
             {
                 'label': "Benefit Percentage",
                 'name': "benefitPercentage",
-                'inputType': "text",
+                'inputType': "number",
                 'placeholder': "Enter Benefit Percentage",
                 'require': true,
                 'classStyle' : 'col-6'

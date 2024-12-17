@@ -1,10 +1,10 @@
 import { apiReturnCallBack } from './ApiConfig';
 import apiContainer from './apiContainer';
-const staffWorkExperience = apiContainer.staffWorkExperience
+const staffAchievement = apiContainer.staffAchievement
 //GET--->
-export async function getStaffWorkExperience(request) {
+export async function getStaffAchievement(request) {
   try {
-    const response = await apiReturnCallBack("GET", staffWorkExperience, request);
+    const response = await apiReturnCallBack("GET", staffAchievement, request);
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.message || JSON.stringify(data));
@@ -16,9 +16,9 @@ export async function getStaffWorkExperience(request) {
   }
 }
 //CREATE---->
-export async function createStaffWorkExperience(request) {
+export async function createStaffAchievement(request) {
   try {
-    const response = await apiReturnCallBack("POST", staffWorkExperience, request);
+    const response = await apiReturnCallBack("POST", staffAchievement, request);
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.message || JSON.stringify(data));
@@ -30,9 +30,9 @@ export async function createStaffWorkExperience(request) {
   }
 }
 //UPDATE---->
-export async function updateStaffWorkExperience(request, staffWorkExperienceId) {
+export async function updateStaffAchievement(request, staffAchievementId) {
   try {
-    const response = await apiReturnCallBack("PUT", staffWorkExperience+`/${staffWorkExperienceId}`, request);
+    const response = await apiReturnCallBack("PUT", staffAchievement+`/${staffAchievementId}`, request);
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.message || JSON.stringify(data));
@@ -44,11 +44,9 @@ export async function updateStaffWorkExperience(request, staffWorkExperienceId) 
   }
 }
 //DELETE---->
-export async function deleteStaffWorkExperience(staffWorkExperienceId) {
+export async function deleteStaffAchievement(staffAchievementId) {
   try {
-    console.log("staffWorkExperienceId api called; ")
-    console.log(staffWorkExperienceId)
-    const response = await apiReturnCallBack("DELETE", staffWorkExperience+`/${staffWorkExperienceId}`);
+    const response = await apiReturnCallBack("DELETE", staffAchievement+`/${staffAchievementId}`);
     if (!response.ok) {
       throw new Error(data.message || JSON.stringify(data));
     }

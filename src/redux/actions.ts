@@ -36,3 +36,7 @@ export * from './staff-training/actions';
 export * from './role-permission/actions';
 export * from './salary-increament-history/actions';
 export * from './page/actions';
+export * from './staff-achievement/actions';
+export * from './staff-work-experience/actions';
+export * from './staff-relation/actions';
+export * from './staff-language/actions';

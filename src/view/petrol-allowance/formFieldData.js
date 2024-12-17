@@ -43,7 +43,7 @@ const petrolAllowanceContainer = [
             {
                 'label': "Total Amount",
                 'name': "totalAmount",
-                'inputType': "text",
+                'inputType': "number",
                 'placeholder': "Enter Total Amount",
                 'require': true,
                 'classStyle': 'col-6'

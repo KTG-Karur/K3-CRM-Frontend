@@ -290,7 +290,7 @@ const staffTabs = [
                     {
                         'label': 'Salary Package (Annual)',
                         'name': 'annualAmount',
-                        'inputType': 'text',
+                        'inputType': 'number',
                         'placeholder': "Enter Annual Package",
                         'classStyle': 'col-3',
                         'onChange': 'onHandleSalary'
@@ -449,7 +449,7 @@ const staffTabs = [
                     {
                         label: 'Gross Pay',
                         name: 'grossPay',
-                        inputType: 'text',
+                        inputType: 'number',
                         'classStyle': 'col-3'
                     },
                     {
@@ -493,7 +493,8 @@ const staffTabs = [
                     {
                         label: 'Contact Number',
                         name: 'contactNo',
-                        inputType: 'text',
+                        maxlength: '10',
+                        inputType: 'number',
                         placeholder: 'Enter Contact Number',
                         'classStyle': 'col-3'
                     },
@@ -547,10 +548,10 @@ const staffTabs = [
             {
                 formFields: [
                     {
-                        label: 'Passing Year',
+                        label: 'Passout Year',
                         name: 'passingYear',
                         inputType: 'text',
-                        placeholder: 'Enter Passing Year',
+                        placeholder: 'Enter Passout Year',
                         'classStyle': 'col-3'
                     },
                     {
@@ -563,7 +564,7 @@ const staffTabs = [
                     {
                         label: 'Percentage',
                         name: 'percentage',
-                        inputType: 'text',
+                        inputType: 'number',
                         placeholder: 'Enter Percentage',
                         'classStyle': 'col-3'
                     },

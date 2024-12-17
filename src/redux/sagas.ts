@@ -38,6 +38,10 @@ import staffTrainingSaga from './staff-training/saga';
 import rolePermissionSaga from './role-permission/saga';
 import salaryIncreamentHistorySaga from './salary-increament-history/saga';
 import pageSaga from './page/saga';
+import staffAchievementSaga from './staff-achievement/saga';
+import staffWorkExperienceSaga from './staff-work-experience/saga';
+import staffRelationSaga from './staff-relation/saga';
+import staffLanguageSaga from './staff-language/saga';
 
 export default function* rootSaga() {
     yield all([
@@ -79,5 +83,9 @@ export default function* rootSaga() {
         rolePermissionSaga(),
         salaryIncreamentHistorySaga(),
         pageSaga(),
+        staffAchievementSaga(),
+        staffWorkExperienceSaga(),
+        staffRelationSaga(),
+        staffLanguageSaga(),
     ]);
 }

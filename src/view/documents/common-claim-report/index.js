@@ -79,7 +79,7 @@ the set targets for the year end.`,
             modeOfPayment: ` ${stateVal?.paymentModeName  || "Cash"}`,
         },
         branchRecommendation: {
-            rupees: `${stateVal?.claimAmount}.00`,
+            rupees: `${stateVal?.claimAmount || 0}.00`,
             to: `${stateVal.requestedBy || ""}`,
         },
         officeUse: {
@@ -323,8 +323,8 @@ the set targets for the year end.`,
                     </p>
                     <span style={{ fontWeight: 'bold', fontSize: '16px', color: '#000', marginTop: '10px' }}>
                         We recommend to sanction Staff {stateVal?.claimTypeName} of Rs.{' '}
-                        <span style={underlineStyle(commonClaim.branchRecommendation?.rupees || '0')}>
-                            {commonClaim.branchRecommendation?.rupees || ''}{' '}
+                        <span style={underlineStyle(commonClaim?.branchRecommendation?.rupees || '0')}>
+                            {commonClaim?.branchRecommendation?.rupees || '0'}{' '}
                         </span>
                         to{' '}
                         <span style={underlineStyle(commonClaim.branchRecommendation?.to || '')}>

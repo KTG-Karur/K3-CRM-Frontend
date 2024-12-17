@@ -59,7 +59,7 @@ const employeeFormContainer = [
             {
                 'label': "Bill Amount",
                 'name': "requestedAmount",
-                'inputType': "text",
+                'inputType': "number",
                 'placeholder': "Enter Requested Amount",
                 'require': true,
                 'classStyle': 'col-6'
@@ -95,14 +95,14 @@ const approvedFormContainer = [
             {
                 'label': "Eligible Amount",
                 'name': "eligibleAmount",
-                'inputType': "text",
+                'inputType': "number",
                 'classStyle': 'col-6',
                 'isDisabled': true,
             },
             {
                 'label': "Claim Amount",
                 'name': "claimAmount",
-                'inputType': "text",
+                'inputType': "number",
                 'placeholder': "Enter Claim Amount",
                 'require': true,
                 'classStyle': 'col-6'

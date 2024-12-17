@@ -30,7 +30,7 @@ const staffAdvanceContainer = [
             {
                 'label': "Amount",
                 'name': "amount",
-                'inputType': "text",
+                'inputType': "number",
                 'placeholder': "Enter Amount",
                 'require': true,
             },

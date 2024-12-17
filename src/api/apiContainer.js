@@ -38,6 +38,7 @@ const apiContainer = {
   staffRights: "/staff-rights",
   trainingType: "/training-type",
   staffTraining: "/staff-training",
+  staffAchievement: "/staff-achievement",
   //report
   staffAttendanceReport: "/staff-attendance-report",
   petrolAllowanceReport: "/petrol-allowance-report",

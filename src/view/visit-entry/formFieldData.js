@@ -32,7 +32,7 @@ const petrolAllowanceContainer = [
             {
                 'label': "Total Km",
                 'name': "totalKm",
-                'inputType': "text",
+                'inputType': "number",
                 'placeholder': "Enter Total Km",
                 'require': true,
                 'classStyle': 'col-6'

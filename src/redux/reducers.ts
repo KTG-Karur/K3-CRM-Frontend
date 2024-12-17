@@ -39,6 +39,10 @@ import staffTrainingReducer from './staff-training/reducers';
 import rolePermissionReducer from './role-permission/reducers';
 import salaryIncreamentHistoryReducer from './salary-increament-history/reducers';
 import pageReducer from './page/reducers';
+import staffAchievementReducer from './staff-achievement/reducers';
+import staffWorkExperienceReducer from './staff-work-experience/reducers';
+import staffRelationReducer from './staff-relation/reducers';
+import staffLanguageReducer from './staff-language/reducers';
 
 export default combineReducers({
     Auth,
@@ -80,4 +84,8 @@ export default combineReducers({
     rolePermissionReducer,
     salaryIncreamentHistoryReducer,
     pageReducer,
+    staffAchievementReducer,
+    staffWorkExperienceReducer,
+    staffRelationReducer,
+    staffLanguageReducer,
 });
