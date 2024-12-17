@@ -577,7 +577,8 @@ function Index() {
     const onStatusForm = (data, index, statusId) => {
         const submitRequest = {
             statusId: statusId,
-            isActive: statusId == 30 ? 0 : 1
+            isActive: statusId == 30 ? 0 : 1,
+            // staffAdvanceId: data.staffAdvanceId 
         };
         if (statusId == 29) {
             submitRequest.approvedDate = moment().format('YYYY-MM-DD')

@@ -42,7 +42,7 @@ const permissionContainer = [
                 'classStyle': 'col-6'
             },
             {
-                label: 'Spoken Staff',
+                label: 'Intimate Staff',
                 name: 'spokenStaffId',
                 inputType: 'select',
                 optionList: 'spokenStaffList',
@@ -52,7 +52,7 @@ const permissionContainer = [
                 'classStyle': 'col-6'
             },
             {
-                label: 'Spoken Time',
+                label: 'Intimate Time',
                 name: 'spokenTime',
                 inputType: 'time',
                 displayKey: 'staffName',
@@ -61,7 +61,7 @@ const permissionContainer = [
                 'classStyle': 'col-6'
             },
             {
-                'label': "Spoken Date",
+                'label': "Intimate Date",
                 'name': "spokenDate",
                 'inputType': "date",
                 'require': true,

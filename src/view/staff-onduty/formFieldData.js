@@ -40,7 +40,7 @@ const staffOnDutyContainer = [
                 'minmumDate': 'minmumTo',
             },
             {
-                'label': "No Of Leave Days",
+                'label': "No Of Od Days",
                 'name': "dayCount",
                 'inputType': "number",
                 'placeholder': "0",
@@ -48,7 +48,7 @@ const staffOnDutyContainer = [
                 'classStyle': 'col-6'
             },
             {
-                label: 'Spoken Staff',
+                label: 'Intimate Staff',
                 name: 'spokenStaffId',
                 inputType: 'select',
                 optionList: 'spokenStaffList',
@@ -58,7 +58,7 @@ const staffOnDutyContainer = [
                 'classStyle': 'col-6'
             },
             {
-                label: 'Spoken Time',
+                label: 'Intimate Time',
                 name: 'spokenTime',
                 inputType: 'time',
                 displayKey: 'staffName',
@@ -67,7 +67,7 @@ const staffOnDutyContainer = [
                 'classStyle': 'col-6'
             },
             {
-                'label': "Spoken Date",
+                'label': "Intimate Date",
                 'name': "spokenDate",
                 'inputType': "date",
                 'require': true,

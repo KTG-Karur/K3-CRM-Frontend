@@ -223,9 +223,6 @@ function Index() {
         }
     }, [getDepartmentSuccess, getDepartmentFailure]);
 
-
-
-
     // useEffect(() => {
     //     if (getStaffSuccess) {
     //         setIsLoading(false);
@@ -247,7 +244,7 @@ function Index() {
     useEffect(() => {
         if (getPetrolAllowanceReportSuccess) {
             setIsLoading(false);
-            if (getPetrolAllowanceReportData.length > 0) {
+            if (getPetrolAllowanceReportData?.length > 0) {
                 navigate('/petrol-allowance-report', { state: getPetrolAllowanceReportData[0] })
             }
             dispatch(resetGetPetrolAllowanceReport());
@@ -273,7 +270,7 @@ function Index() {
         if (createPetrolAllowanceSuccess) {
             const temp_state = [createPetrolAllowanceData[0], ...parentList];
             try {
-                if (state.billImageName.length > 0) {
+                if (state.billImageName?.length > 0) {
                     const formData = new FormData();
                     const originalFile = state.billImageName[0];
                     const renamedFile = new File(
@@ -305,7 +302,7 @@ function Index() {
             const temp_state = [...parentList];
             temp_state[selectedIndex] = updatePetrolAllowanceData[0];
             try {
-                if (state.billImageName.length > 0) {
+                if (state.billImageName?.length > 0) {
                     const formData = new FormData();
                     const originalFile = state.billImageName[0];
                     const renamedFile = new File(
