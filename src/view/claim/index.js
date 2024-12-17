@@ -348,8 +348,6 @@ function Index() {
     }
 
     const onPrintDesign = (data) => {
-        console.log("onPrintDesign")
-        console.log(data)
         if (data?.claimTypeId == 1) {
             navigate('/birthday-claim-report', { state: data });
         } else {
@@ -359,8 +357,6 @@ function Index() {
     }
 
     const onApprovedClaim = (data, index) => {
-        console.log("onApprovedClaim")
-        console.log(data)
         setState({
             ...state,
             approvedDate: moment().format("YYYY-MM-DD"),

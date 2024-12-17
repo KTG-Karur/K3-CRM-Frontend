@@ -14,9 +14,11 @@ import { Table } from 'react-bootstrap';
 import moment from 'moment';
 import CompanyDetails from '../../../components/Atom/CompanyDetails';
 import { numberToRupeesWords } from '../../../utils/AllFunction';
+import { baseURL } from '../../../api/ApiConfig';
 
 function Index() {
-    const baseUrl = process.env?.baseURL || "http://localhost:5059";
+   
+    const baseUrl = baseURL || "https://crmapi.repatriatepeoples.com";
 
     const { state } = useLocation();
 

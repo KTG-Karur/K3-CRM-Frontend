@@ -8,9 +8,10 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { fiscalYear } from '../../../utils/AllFunction';
 import moment from 'moment';
+import { baseURL } from '../../../api/ApiConfig';
 
 function Index() {
-    const baseUrl = process.env?.baseURL || "http://localhost:5059";
+    const baseUrl = baseURL || "https://crmapi.repatriatepeoples.com";
 
     const today = moment().format('DD-MM-YYYY');
     const { state } = useLocation();
@@ -34,7 +35,7 @@ performance of the branches and to motivate them to put in their fullest efforts
 the set targets for the year end.`,
             birthdayClaimBody: `Reimbursement of Birthday gift is one such benefit which is 
             introduced to benefit all categories of staff members equally. Now the limit for 
-            “Reimbursement of Birthday Gift” is announced Rs.${stateVal?.claimAmount}.00/- for all category of employees 
+            “Reimbursement of Birthday Gift” is announced Rs.${stateVal?.claimAmount || 0}.00/- for all category of employees 
             and enclosed herewith format for applying staff birthday claim format and forward 
             through branch head for sanctioning process.`,
             acknowlegement: 'Receipt of the circular shall be acknowledged.',
@@ -72,7 +73,7 @@ the set targets for the year end.`,
             modeOfPayment: ` ${stateVal?.paymentModeName || "Cash"}`,
         },
         branchRecommendation: {
-            rupees: `${stateVal?.claimAmount}.00`,
+            rupees: `${stateVal?.claimAmount || 0}.00`,
             to: ` ${stateVal?.requestedBy}`,
             on: ` ${moment(stateVal?.dob).format('DD-MM-YYYY')}`,
         },

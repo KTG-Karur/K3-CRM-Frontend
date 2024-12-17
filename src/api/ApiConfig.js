@@ -1,6 +1,6 @@
-// const baseURL = 'https://crmapi.repatriatepeoples.com';
-const baseURL = 'http://localhost:5059';
-// const baseURL = 'http://localhost:5007'; // live port
+export const baseURL = 'https://crmapi.repatriatepeoples.com';
+// export const baseURL = 'http://localhost:5059';
+// export const baseURL = 'http://localhost:5007'; // 5007 is live port
 // const ports = '5059';
 
 const getBaseUrl = (url) => {

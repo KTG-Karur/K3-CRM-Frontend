@@ -9,9 +9,12 @@ import html2canvas from 'html2canvas';
 import companyLogo from '../../../assets/images/K3_Logo.png';
 import moment from 'moment';
 import { fiscalYear } from '../../../utils/AllFunction';
+import { baseURL } from '../../../api/ApiConfig';
 
 function Index() {
-    // const stateVal.claimTypeName = 'Travel Expenses';
+
+    
+    const baseUrl = baseURL || "https://crmapi.repatriatepeoples.com";
     const claimAmount = '1000';
     const today = moment().format("DD-MM-YYYY");
 
@@ -24,9 +27,6 @@ function Index() {
             setStateVal(state || {});
         }
     }, [state]);
-
-    console.log("common claim stateVal")
-    console.log(stateVal)
 
     const commonClaim = {
         header: {
@@ -89,8 +89,10 @@ the set targets for the year end.`,
                 passedForPayment: `${stateVal?.claimAmount || 0}.00`,
             },
         },
-        receiptImage: companyLogo
+        receiptImage: `${baseUrl}${stateVal?.recepitImageName}` || false
     };
+
+    console.log(stateVal)
 
     const downloadPDF = () => {
         const element = document.querySelector('.letter-container');
